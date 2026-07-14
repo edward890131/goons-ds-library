@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>DS 元件陳列 · L3 複雜度溝通</title>
+<title>Design System Library</title>
 <style>
   :root{
     --canvas:#F6F7FA; --panel:#FFFFFF; --panel-2:#F1F3F7; --panel-3:#EAEDF2;
@@ -56,54 +56,66 @@
   }
 
   *{box-sizing:border-box}
-  html,body{margin:0}
-  body{background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;line-height:1.5;}
+  html,body{margin:0;height:100%;}
+  body{background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;line-height:1.5;overflow:hidden;} /* app-shell：document 不捲，捲動交給 sidebar / main */
+
+  /* ---------- scrollbar：純標準屬性一套（scrollbar-width/color 會被繼承，整頁與側邊欄自動一致）。
+       不混用 ::-webkit-scrollbar——同時存在會讓 Chrome 對 root 與元素捲軸挑不同渲染路徑，一粗一細。
+       無底色（track = transparent）、深淺不同色 ---------- */
+  html,body,*{scrollbar-width:thin;scrollbar-color:#C4C9D3 transparent;}
+  :root[data-theme="light"],:root[data-theme="light"] *{scrollbar-color:#C4C9D3 transparent;}
+  :root[data-theme="dark"],:root[data-theme="dark"] *{scrollbar-color:#3D4553 transparent;}
+  @media(prefers-color-scheme:dark){html,body,*{scrollbar-color:#3D4553 transparent;}}
 
   /* ---------- topbar ---------- */
-  .topbar{position:sticky;top:0;z-index:30;height:58px;display:flex;align-items:center;gap:14px;
+  .topbar{z-index:30;height:58px;flex:0 0 58px;display:flex;align-items:center;gap:14px;
     padding:0 18px;background:var(--panel);border-bottom:1px solid var(--line);}
   .hamb{display:none;width:38px;height:38px;border:1px solid var(--line-strong);border-radius:9px;background:var(--panel);
     color:var(--muted);cursor:pointer;align-items:center;justify-content:center;transition:.13s;flex:0 0 auto;}
   .hamb:hover{color:var(--ink);border-color:var(--accent);}
   .hamb svg{width:19px;height:19px;}
-  .brand{font-size:14px;font-weight:640;display:flex;align-items:baseline;gap:9px;}
-  .brand .muted2{color:var(--faint);font-weight:400;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.02em;}
+  .brand{display:flex;align-items:center;gap:11px;min-width:0;}
+  .brand-logo{height:20px;width:auto;display:block;color:var(--ink);flex:0 0 auto;}
+  .brand .divider{width:1px;height:18px;background:var(--line-strong);flex:0 0 auto;}
+  .brand-title{font-size:14px;font-weight:640;color:var(--ink);white-space:nowrap;letter-spacing:-.005em;}
   .spacer{flex:1}
-  .theme-toggle{display:inline-flex;align-items:center;gap:8px;background:var(--panel-2);
-    border:1px solid var(--line-strong);color:var(--muted);border-radius:999px;padding:7px 8px 7px 14px;
-    font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:.15s;}
-  .theme-toggle:hover{color:var(--ink);border-color:var(--accent);}
-  .theme-toggle .knob{width:22px;height:22px;border-radius:999px;background:var(--accent);color:#fff;
-    display:inline-flex;align-items:center;justify-content:center;}
-  .theme-toggle .knob svg{width:13px;height:13px}
+  .theme-toggle{position:relative;width:46px;height:26px;box-sizing:border-box;flex:0 0 auto;background:var(--panel-3);
+    border:1px solid var(--line-strong);border-radius:999px;padding:0;cursor:pointer;transition:background .18s,border-color .18s;}
+  .theme-toggle:hover{border-color:var(--accent);}
+  .theme-toggle .knob{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:999px;background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;transition:transform .22s cubic-bezier(.4,0,.2,1);}
+  .theme-toggle .knob svg{width:12px;height:12px;}
+  :root[data-theme="dark"] .theme-toggle .knob{transform:translateX(20px);}
 
   /* ---------- layout ---------- */
-  .shell{--sb:250px;}
-  .layout{display:grid;grid-template-columns:var(--sb) 1fr;align-items:start;}
-  .sidebar{position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto;
-    border-right:1px solid var(--line);background:var(--panel);padding:16px 12px;}
-  .main{min-width:0;padding:34px 34px 96px;}
-  .container{max-width:1060px;}
+  .shell{--sb:max(200px,20vw);height:100vh;height:100dvh;display:flex;flex-direction:column;} /* 整個 app 固定一屏；側邊欄＝20vw，最小 200px */
+  .layout{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:var(--sb) 1fr;} /* 填滿 topbar 以下的剩餘高度；min-height:0 讓子欄可各自內捲 */
+  .sidebar{min-height:0;overflow-y:auto;border-right:1px solid var(--line);background:var(--panel);padding:16px 12px;} /* 撐滿 layout 高度、自身垂直捲動 */
+  .main{min-width:0;min-height:0;overflow:auto;padding:34px 34px 96px;} /* 填滿右側、內容過寬/過高皆可上下左右捲 */
+  .container{max-width:none;} /* 右側內容填滿寬度 */
 
-  .nav-group{margin-bottom:10px;}
-  .nav-group .gh{display:flex;align-items:center;gap:7px;width:100%;background:transparent;border:none;cursor:pointer;
-    font-family:var(--font-mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
-    color:var(--faint);padding:8px 10px 6px;transition:color .12s;}
-  .nav-group .gh:hover{color:var(--muted);}
-  .nav-group .gh .gh-caret{display:inline-flex;transition:transform .18s;}
-  .nav-group .gh .gh-caret svg{width:12px;height:12px;display:block;}
-  .nav-group .gh .gh-n{margin-left:auto;font-variant-numeric:tabular-nums;opacity:.7;}
+  /* 類別間以淺灰細線分隔；類別標題與頁籤標題同字級/字重/顏色 */
+  .nav-group{border-top:1px solid var(--line);margin-top:8px;padding-top:8px;margin-bottom:2px;}
+  .nav-group .gh{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;
+    font-family:var(--font-sans);font-size:13.5px;font-weight:600;color:var(--muted);
+    padding:7px 10px;border-radius:8px;transition:.12s;}
+  .nav-group .gh:hover{background:var(--canvas);}
+  .nav-group .gh .gh-n{font-family:var(--font-mono);font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;min-width:13px;text-align:center;flex:0 0 auto;} /* 計數在 chevron 左邊、無底色 */
+  .nav-group .gh .gh-caret{display:inline-flex;transition:transform .18s;color:var(--faint);flex:0 0 auto;} /* 計數＋chevron 靠標題右側，標題靠左 */
+  .nav-group .gh .gh-caret svg{width:13px;height:13px;display:block;}
+  .nav-group .gh .gh-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .nav-group.collapsed .gh .gh-caret{transform:rotate(-90deg);}
   .nav-group.collapsed .ng-items{display:none;}
+  .ng-items{position:relative;padding-left:23px;} /* 展開內層往內縮 */
+  .ng-items::before{content:'';position:absolute;left:14px;top:1px;bottom:1px;width:1px;background:var(--line);}
   .nav-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:none;background:transparent;
-    color:var(--muted);font-family:var(--font-sans);font-size:13.5px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:.12s;}
-  .nav-item:hover{background:var(--panel-2);color:var(--ink);}
-  .nav-item[aria-current="true"]{background:var(--i-primary-tint);color:var(--accent);font-weight:600;}
-  .nav-item .tag{margin-left:auto;font-family:var(--font-mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--faint);border:1px solid var(--line-strong);border-radius:5px;padding:1px 6px;}
-  .nav-item[aria-current="true"] .tag{color:var(--accent);border-color:var(--accent);}
-  .nav-item .tag.st-ready{color:var(--ok);border-color:var(--ok);}
-  .nav-item .tag.st-partial{color:var(--warn);border-color:var(--warn);}
+    color:var(--muted);font-family:var(--font-sans);font-size:13.5px;font-weight:600;padding:7px 10px;border-radius:8px;cursor:pointer;transition:.12s;}
+  .nav-item:hover{background:var(--canvas);}
+  .nav-item[aria-current="true"]{background:var(--i-primary-tint);color:var(--accent);} /* 當前頁淺藍底 */
+  .nav-item .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .nav-item .dot{margin-left:auto;width:7px;height:7px;border-radius:999px;flex:0 0 auto;background:var(--line-strong);} /* 建立狀態＝色圈 */
+  .nav-item .dot.st-ready{background:var(--ok);}
+  .nav-item .dot.st-partial{background:var(--warn);}
 
   /* ---------- headings / spec ---------- */
   .eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
@@ -171,7 +183,7 @@
   .btn{--fill:var(--i-primary);--fill-h:var(--i-primary-h);--fill-p:var(--i-primary-p);--on:var(--primary-on);
     --edge:var(--i-primary);--fg:var(--i-primary);--tint:var(--i-primary-tint);--tint2:var(--i-primary-tint2);
     display:inline-flex;align-items:center;justify-content:center;gap:.5em;font-family:var(--font-sans);font-weight:600;
-    line-height:1;border:1px solid transparent;border-radius:8px;cursor:pointer;white-space:nowrap;
+    line-height:1;border:0.75px solid transparent;border-radius:8px;cursor:pointer;white-space:nowrap;
     transition:background .13s,border-color .13s,transform .06s,box-shadow .13s;}
   .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
   .btn svg{width:1.15em;height:1.15em;flex:0 0 auto;}
@@ -241,22 +253,47 @@
   .famhead .fz{font-size:16px;font-weight:680;color:var(--ink);letter-spacing:-.01em;}
   .famhead .fe{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
 
-  /* ---------- 側邊欄置頂：複雜度確認 ---------- */
-  .nav-pin{margin-bottom:10px;background:var(--i-primary-tint);color:var(--accent);font-weight:600;border:1px solid transparent;}
-  .nav-pin:hover{background:var(--i-primary-tint2);color:var(--accent);}
-  .nav-pin[aria-current="true"]{background:var(--accent);color:#fff;}
+  /* ---------- 側邊欄置頂：複雜度確認（與其他頁同一套 current 高亮邏輯）---------- */
+  .nav-pin{margin-bottom:2px;}
 
   /* ---------- 複雜度確認總覽 ---------- */
-  .sumbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:22px 0 20px;}
-  .sumtotal{font-family:var(--font-mono);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;}
-  .sumtotal b{color:var(--accent);font-size:18px;} .sumtotal .full{color:var(--faint);}
+  .sum-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .sum-top .sum-head{min-width:0;} .sum-top .copybtn{flex:0 0 auto;}
+  .sum-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 20px;}
+  .sum-actions .spacer{flex:1;}
+  .sumtotal{font-family:var(--font-mono);font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .sumtotal b{color:var(--accent);font-size:16px;} .sumtotal .full{color:var(--faint);}
+  .aitoggle{display:inline-flex;align-items:center;gap:9px;height:38px;padding:0 8px 0 14px;border-radius:999px;border:1px solid var(--line-strong);
+    background:var(--panel-2);color:var(--muted);font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:.15s;}
+  .aitoggle:hover{border-color:var(--accent);color:var(--ink);}
+  .aitoggle svg{width:16px;height:16px;flex:0 0 auto;}
+  .aitoggle .sw{position:relative;width:34px;height:20px;border-radius:999px;background:var(--line-strong);transition:background .18s;flex:0 0 auto;}
+  .aitoggle .sw::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:999px;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .aitoggle.on{background:var(--i-primary-tint);border-color:transparent;color:var(--accent);}
+  .aitoggle.on .sw{background:var(--accent);}
+  .aitoggle.on .sw::after{transform:translateX(14px);}
   .copybtn{height:38px;padding:0 16px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;
     font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:.13s;}
   .copybtn:hover{filter:brightness(1.06);}
-  .sumcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;}
-  .sc-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);}
-  .sc-name{font-size:15px;font-weight:640;}
-  .sc-count{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;} .sc-count b{color:var(--accent);} .sc-count .full{color:var(--faint);}
+  .sumcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:opacity .15s,border-color .13s;}
+  .sumcard.unpicked{opacity:.5;}
+  .sc-head{display:flex;align-items:center;gap:13px;padding:15px 20px;cursor:pointer;}
+  .sc-head:hover{background:var(--canvas);}
+  .sc-check{display:inline-flex;flex:0 0 auto;align-items:center;}
+  .sc-check input{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;margin:0;}
+  .sc-name{font-size:15px;font-weight:640;flex:1;min-width:0;}
+  .sc-count{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;flex:0 0 auto;} .sc-count b{color:var(--accent);} .sc-count .full{color:var(--faint);}
+  .sc-chevron{display:inline-flex;color:var(--faint);transition:transform .18s;flex:0 0 auto;}
+  .sc-chevron svg{width:14px;height:14px;display:block;}
+  .sumcard.collapsed .sc-chevron{transform:rotate(-90deg);}
+  .sc-body{padding:4px 20px 20px;border-top:1px solid var(--line);}
+  .sumcard.collapsed .sc-body{display:none;}
+  .sc-sub{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:18px 0 10px;}
+  .sc-foot{display:flex;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
+  .adjustbtn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 14px;border-radius:8px;border:1px solid var(--line-strong);
+    background:transparent;color:var(--muted);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;transition:.13s;}
+  .adjustbtn:hover{border-color:var(--accent);color:var(--accent);}
+  .adjustbtn svg{width:14px;height:14px;flex:0 0 auto;}
   .sum-axis{display:flex;align-items:baseline;gap:12px;padding:6px 0;}
   .sum-axis .sa-name{flex:0 0 110px;font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-top:3px;}
   .sum-axis .sa-chips{flex:1;display:flex;flex-wrap:wrap;gap:6px;}
@@ -273,7 +310,7 @@
 
   /* ===== input ===== */
   .field{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 12px;border-radius:8px;
-    border:1px solid var(--i-sec-edge);background:var(--panel);color:var(--ink);font-size:14px;min-width:220px;
+    border:0.75px solid var(--i-sec-edge);background:var(--panel);color:var(--ink);font-size:14px;min-width:220px;
     font-family:var(--font-sans);transition:border-color .13s,box-shadow .13s,background .13s;}
   .field .ph{color:var(--faint);flex:1;} .field .val{color:var(--ink);flex:1;}
   .field svg{width:17px;height:17px;color:var(--muted);flex:0 0 auto;}
@@ -297,7 +334,7 @@
   .fieldwrap .fh{font-size:11.5px;color:var(--faint);} .fieldwrap .fh.err{color:var(--i-danger);}
 
   /* ===== textarea 多行輸入 ===== */
-  .tarea{display:flex;align-items:flex-start;min-height:80px;padding:10px 12px;border-radius:8px;border:1px solid var(--i-sec-edge);
+  .tarea{display:flex;align-items:flex-start;min-height:80px;padding:10px 12px;border-radius:8px;border:0.75px solid var(--i-sec-edge);
     background:var(--panel);color:var(--ink);font-size:14px;min-width:260px;font-family:var(--font-sans);line-height:1.5;transition:border-color .13s,background .13s;}
   .tarea .ph{color:var(--faint);} .tarea .val{color:var(--ink);}
   .tarea.v-filled{background:var(--panel-2);border-color:transparent;}
@@ -312,7 +349,7 @@
 
   /* ===== file 檔案上傳 ===== */
   .filefield{display:inline-flex;align-items:center;gap:10px;padding:0 10px;height:40px;border-radius:8px;
-    border:1px solid var(--i-sec-edge);background:var(--panel);min-width:260px;font-size:13.5px;color:var(--muted);transition:.13s;}
+    border:0.75px solid var(--i-sec-edge);background:var(--panel);min-width:260px;font-size:13.5px;color:var(--muted);transition:.13s;}
   .filefield.has-file{color:var(--ink);}
   /* file variant：外框／實色 對齊 input（外框＝白底實線、實色＝panel-2 填色）*/
   .filefield.v-solid{background:var(--panel-2);border-color:transparent;color:var(--ink);}
@@ -361,29 +398,30 @@
   .ddcheck svg{width:12px;height:12px;}
 
   /* ===== checkbox / radio ===== */
-  .cbx{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:6px;display:inline-flex;
+  .cbx{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:6px;display:inline-flex;box-sizing:border-box;padding:0;flex:0 0 auto;
     align-items:center;justify-content:center;color:#fff;transition:.12s;cursor:pointer;}
   .cbx svg{width:14px;height:14px;flex:0 0 auto;}
   .cbx.sz-s{width:16px;height:16px;border-radius:5px;} .cbx.sz-m{width:20px;height:20px;} .cbx.sz-l{width:24px;height:24px;border-radius:7px;}
   .cbx.sz-s svg{width:11px;height:11px;} .cbx.sz-l svg{width:16px;height:16px;}
   .cbx.st-hover{border-color:var(--accent);}
   .cbx.st-checked,.cbx.st-indeterminate{background:var(--accent);border-color:var(--accent);}
-  .cbx.st-focus{box-shadow:0 0 0 3px var(--i-primary-tint);border-color:var(--accent);}
+  .cbx.st-focus{border-color:var(--accent);}
   .cbx.st-disabled{opacity:.45;cursor:not-allowed;}
   .cbx .dash{width:60%;height:2px;background:#fff;border-radius:2px;}
-  .rdo{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:999px;display:inline-flex;
+  .rdo{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:999px;display:inline-flex;box-sizing:border-box;padding:0;flex:0 0 auto;
     align-items:center;justify-content:center;transition:.12s;cursor:pointer;}
   .rdo.sz-s{width:16px;height:16px;} .rdo.sz-m{width:20px;height:20px;} .rdo.sz-l{width:24px;height:24px;}
   .rdo .dot{width:0;height:0;border-radius:999px;background:var(--accent);transition:.12s;}
   .rdo.st-hover{border-color:var(--accent);}
   .rdo.st-checked{border-color:var(--accent);} .rdo.st-checked .dot{width:50%;height:50%;}
-  .rdo.st-focus{box-shadow:0 0 0 3px var(--i-primary-tint);border-color:var(--accent);}
+  .rdo.st-focus{border-color:var(--accent);}
   .rdo.st-disabled{opacity:.45;cursor:not-allowed;}
   .optrow{display:inline-flex;align-items:center;gap:9px;cursor:pointer;} .optrow .oplab{font-size:13.5px;color:var(--ink);}
 
   /* ===== tag ===== */
-  .tg{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 11px;border-radius:999px;font-size:12px;
-    font-weight:600;border:1px solid transparent;font-family:var(--font-sans);cursor:default;transition:.12s;}
+  .tg{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11px;
+    font-weight:600;border:0.75px solid transparent;font-family:var(--font-sans);cursor:default;transition:.12s;}
+  .tg.c-round{border-radius:999px;} .tg.c-rect{border-radius:5px;}
   .tg.i-brand{--tfill:var(--accent);--tc:var(--accent);--tedge:var(--accent);--ton:#fff;--ttint:var(--i-primary-tint);--ttint2:var(--i-primary-tint2);}
   .tg.i-neutral{--tfill:var(--i-sec-fill);--tc:var(--i-sec-fg);--tedge:var(--i-sec-edge);--ton:var(--i-sec-on);--ttint:var(--i-sec-tint);--ttint2:var(--i-sec-tint2);}
   .tg.v-solid{background:var(--tfill);color:var(--ton);border-color:var(--tfill);}
@@ -391,10 +429,9 @@
   .tg.v-soft{background:var(--ttint);color:var(--tc);border-color:transparent;}
   .tg.st-hover.v-solid{filter:brightness(.94);}
   .tg.st-hover.v-outline,.tg.st-hover.v-soft{background:var(--ttint2);}
-  .tg.st-selected{box-shadow:0 0 0 2px var(--tc);}
   .tg.st-disabled{opacity:.45;}
   .tg .x{display:inline-flex;cursor:pointer;opacity:.7;margin-right:-3px;} .tg .x:hover{opacity:1;}
-  .tg svg{width:13px;height:13px;}
+  .tg svg{width:12px;height:12px;}
 
   /* ===== tab ===== */
   .tabbar{display:inline-flex;align-items:stretch;gap:2px;}
@@ -439,12 +476,13 @@
   .dcard-body .hint{color:var(--muted);font-size:13px;margin:0 0 16px;}
 
   footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--font-mono);}
+  .site-footer{justify-content:center;text-align:center;margin-top:44px;padding:20px 0 6px;letter-spacing:.02em;}
 
   .scrim{display:none;}
   /* 平板 / 手機：側邊欄改抽屜式覆蓋，漢堡控制收合 */
   @media (max-width:900px){
     .hamb{display:inline-flex;}
-    .layout{grid-template-columns:1fr;}
+    .layout{grid-template-columns:1fr;background:none;} /* 抽屜模式關掉左欄漸層 */
     .sidebar{position:fixed;top:58px;left:0;bottom:0;height:auto;width:min(84vw,300px);z-index:40;
       transform:translateX(-100%);transition:transform .22s ease;border-right:1px solid var(--line-strong);}
     .shell.nav-open .sidebar{transform:translateX(0);}
@@ -459,10 +497,9 @@
     <button class="hamb" id="hambBtn" aria-label="切換元件選單">
       <svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
     </button>
-    <div class="brand">DS 元件陳列 <span class="muted2">L3 · goonsdesign</span></div>
+    <div class="brand"><svg class="brand-logo" viewBox="0 0 209 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M104.733 10.4818C102.566 11.349 100.515 12.6797 98.5801 14.4746C96.6451 16.2692 95.0527 18.2959 93.8027 20.5546C92.3928 23.1277 91.4031 26.212 90.8331 29.8079L99.9072 30.4678C100.761 25.684 102.467 22.1385 105.026 19.831C107.684 17.4351 110.161 16.2972 113.84 16.4887C117.519 16.6803 119.577 18.0395 121.398 20.6383C123.218 23.237 123.721 27.0597 122.906 32.1059C122.904 32.1175 122.902 32.1288 122.9 32.1402L131.999 32.8022C132.048 32.4443 132.092 32.0822 132.132 31.7167C132.91 24.497 131.561 18.8608 128.082 14.8073C124.604 10.754 120.295 8.72729 113.773 8.72729C110.169 8.72729 107.618 9.31244 104.733 10.4818ZM59.735 10.4818C57.568 11.349 55.5173 12.6797 53.582 14.4746C51.6468 16.2692 50.054 18.2959 48.804 20.5546C47.8354 22.3226 47.0652 24.3321 46.4929 26.5833L55.6668 27.2505C56.6265 24.0602 58.0802 21.5868 60.0277 19.831C62.6851 17.4351 65.1623 16.2972 68.8418 16.4887C72.5203 16.6803 74.5792 18.0395 76.3996 20.6383C77.8114 22.654 78.4308 25.4056 78.2574 28.8933L87.305 29.5511C87.6135 23.3608 86.2065 18.4463 83.0839 14.8073C79.6053 10.754 75.2969 8.72729 68.7741 8.72729C65.1708 8.72729 62.6189 9.31244 59.735 10.4818ZM4.50813 19.2046C3.59653 20.5817 2.71956 22.18 2.3151 23.3989L11.1863 24.0157C13.653 19.2594 18.6723 16.219 24.0793 16.3564C26.0393 16.4063 28.0306 16.8688 29.6489 17.9687C32.1507 19.6691 32.9742 22.5121 33.3588 25.3576L33.3774 25.392L33.3982 25.4245C33.4866 25.5513 33.6286 25.6336 33.7863 25.6455L41.7678 26.243L41.8049 26.2444L41.8421 26.2435C42.1307 26.2249 42.3501 25.9775 42.3316 25.6904C42.2173 20.9899 40.7876 16.8826 38.1217 14.0743C35.5248 11.3391 32.0475 9.77445 28.3751 9.11318C26.9499 8.85661 25.4957 8.73624 24.0521 8.73624C23.3426 8.73624 22.6356 8.76536 21.9363 8.82153C14.8389 9.39314 8.41631 13.3004 4.50813 19.2046ZM185.892 11.1552C183.416 12.1625 181.446 13.629 179.98 15.5546C178.514 17.4803 177.661 19.549 177.422 21.7609C177.049 25.1974 178.07 28.1103 180.484 30.5002C182.201 32.1987 185.353 33.6306 189.939 34.7956C193.503 35.7038 199.204 36.3348 199.204 41.424C199.154 43.3779 197.514 46.4887 192.951 47.2682C190.053 47.6679 186.473 47.6638 184.13 45.6673C181.666 43.5679 181.418 40.4199 182.387 37.5134C182.385 37.24 182.167 37.0165 181.892 37.0064L175.132 36.5208H175.122H175.113C175.049 36.5208 174.658 36.4506 174.552 36.8104C174.187 38.0494 173.987 41.2442 174.18 42.5906C174.62 45.6553 175.693 48.5982 177.991 50.778C180.666 53.3159 184.756 54.585 190.26 54.585C197.746 54.585 201.753 52.5532 205.341 48.6654C207.332 46.508 208.164 43.6811 208.264 40.8195C208.368 37.8532 207.371 35.2299 205.11 33.1117C201.923 30.125 198.664 28.988 194.445 27.8498C191.289 27.0872 185.048 25.8956 185.794 21.3842C186.222 18.801 189.138 17.4893 191.468 17.1176C195.333 16.5015 201.336 17.8394 201.014 22.8167L201.017 22.8514L201.024 22.8851C201.067 23.0621 201.221 23.196 201.409 23.2095L208.158 23.711L208.167 23.7116C208.258 23.7183 208.632 23.7421 208.745 23.3675C208.896 22.8715 209.092 18.829 206.96 15.5546C204.308 11.4819 197.992 9.64444 194.623 9.64444C190.26 9.64444 188.367 10.1484 185.892 11.1552ZM165.352 10.5616L165.315 10.563C165.07 10.5804 164.869 10.7686 164.84 11.0142L162.374 35.0272L170.701 35.633L173.41 11.1288L173.413 11.1009L173.414 11.0729C173.414 10.7906 173.183 10.5616 172.898 10.5616H165.352ZM139.31 10.5616L139.273 10.563C139.026 10.5804 138.824 10.7702 138.797 11.0172L136.351 33.1349L144.644 33.7384L145.563 24.4899L149.696 34.1054L158.027 34.7115L147.951 10.8714L147.934 10.837C147.846 10.6687 147.67 10.5616 147.477 10.5616H139.31ZM4.54001e-05 35.3526C-0.00364612 37.4226 0.217616 39.4971 0.724972 41.5069C0.81057 41.8461 0.904241 42.1833 1.00668 42.5177C2.25235 46.5953 4.68116 50.1342 8.38376 52.3535C11.6307 54.2996 15.5802 55.2728 20.2311 55.2728C20.4286 55.2728 20.6256 55.2709 20.8227 55.2661C24.4219 55.1876 28.1921 54.4923 31.506 53.0664C34.555 51.7541 37.7282 49.7907 40.1936 47.5972C40.3623 47.4474 40.469 47.2414 40.4951 47.0184L42.3048 31.7583L42.3067 31.7381L42.3083 31.7179C42.3186 31.4306 42.0926 31.1892 41.8037 31.1786L23.6979 30.291H23.6612C23.4037 30.2997 23.1875 30.4951 23.1585 30.7535L22.3881 37.3634L22.3856 37.3854L22.3849 37.4067C22.3766 37.6945 22.6047 37.9341 22.8936 37.9421L32.49 38.2122L31.8803 43.2369L31.7541 43.3357C30.7294 44.124 29.4436 44.942 28.2669 45.4313C23.0761 47.5916 15.4496 47.6928 11.6905 42.8912C9.62968 40.2598 8.48713 35.383 9.7261 29.7078L0.64399 29.3665C0.474195 29.5298 0.194082 31.9595 0.170318 32.2122C0.0711077 33.2575 0.00189119 34.3024 4.54001e-05 35.3526ZM45.5542 31.9282C44.7925 38.9863 46.1375 44.5269 49.5894 48.5499C53.0409 52.573 57.3653 54.585 63.9482 54.585C70.4512 54.585 75.171 52.5629 79.4923 48.5197C83.5797 44.6953 86.0796 39.4779 86.9918 32.8662L77.8375 32.5218C76.9857 37.4177 75.2497 41.0495 72.6292 43.4174C69.9353 45.8515 67.5005 47.0124 63.9413 46.8269C60.3831 46.6414 58.3474 45.2376 56.4506 42.5445C54.6349 39.9649 54.0576 36.335 54.719 31.6537L45.6251 31.3116C45.6002 31.5157 45.5769 31.7211 45.5542 31.9282ZM94.5874 48.5499C98.0393 52.573 102.364 54.585 108.947 54.585C115.449 54.585 120.169 52.5629 124.491 48.5197C128.225 45.0256 130.635 40.3675 131.719 34.5464L122.498 34.1999C121.563 38.2562 119.939 41.3284 117.627 43.4174C114.933 45.8515 112.499 47.0124 108.94 46.8269C105.381 46.6414 103.345 45.2376 101.449 42.5445C99.8571 40.2829 99.2172 37.2139 99.5291 33.3369L90.4522 32.9959C89.9334 39.5476 91.3118 44.7319 94.5874 48.5499ZM134.194 52.6418L134.191 52.6699L134.191 52.6976C134.191 52.98 134.422 53.2093 134.706 53.2093H142.245L142.281 53.2077C142.531 53.1907 142.734 52.9967 142.758 52.7459L144.516 35.0355L136.175 34.7222L134.194 52.6418ZM157.784 52.9166L157.802 52.9516C157.893 53.1099 158.064 53.2093 158.25 53.2093H168.295L168.332 53.2074C168.578 53.1904 168.78 53.0008 168.807 52.7535L170.658 36.0179L162.305 35.7038L161.551 43.048L158.385 35.5566L150.188 35.2487L157.784 52.9166Z"/></svg><span class="divider"></span><span class="brand-title">Design System Library</span></div>
     <div class="spacer"></div>
     <button class="theme-toggle" id="themeBtn" aria-label="切換深淺色">
-      <span id="themeLabel">Light</span>
       <span class="knob" id="themeKnob"></span>
     </button>
   </div>
@@ -470,7 +507,9 @@
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
     <div class="scrim" id="scrim"></div>
-    <main class="main"><div class="container" id="view"></div></main>
+    <main class="main"><div class="container" id="view"></div>
+      <div class="container"><footer class="site-footer">© 2026 GOONS DESIGN, all rights reserved. Powered by 最厲害的 Yuu</footer></div>
+    </main>
   </div>
 </div>
 
@@ -478,13 +517,12 @@
   /* ===== 導覽（Yuu 自訂分類藍圖：60 顆 L3 併成 43 個陳列項目）===== */
   /* st: 'ready'=已定案 / 'partial'=代表元件已建、家族其餘待補 / 省略=待建 */
   const NAV=[
-    {group:'Basic 基本',items:[
+    {group:'Basic 基本',emoji:'🧱',items:[
       {id:'button',name:'Button 按鈕',st:'ready'},
       {id:'input',name:'Input 輸入框',st:'ready'},
       {id:'dropdown',name:'Dropdown 下拉',st:'ready'},
-      {id:'selector',name:'Selector 選擇',st:'partial'},
-      {id:'tag',name:'Tag 標籤',st:'partial'},
-      {id:'step',name:'Step 步驟'},
+      {id:'selector',name:'Selector 選擇',st:'ready'},
+      {id:'tag',name:'Tag 標籤',st:'ready'},
       {id:'tab',name:'Tab 分頁',st:'partial'},
       {id:'menu',name:'Menu 選單'},
       {id:'action-menu',name:'Action Menu 動作選單'},
@@ -492,10 +530,14 @@
       {id:'icon',name:'Icon 圖示'},
       {id:'pagination',name:'Pagination 分頁器'},
       {id:'price',name:'Price 價格'},
-      {id:'section-head',name:'Section Head 區段標題'},
-      {id:'announcement-item',name:'Announcement 公告項'},
+      {id:'alert',name:'Alert 警示'},
+      {id:'tooltip',name:'Tooltip 提示'},
+      {id:'notification',name:'Notification 通知'},
+      {id:'skeleton',name:'Skeleton 骨架'},
+      {id:'loader',name:'Loader 載入器'},
+      {id:'image',name:'Image 圖片'},
     ]},
-    {group:'Complex 複雜',items:[
+    {group:'Complex 複雜',emoji:'🧩',items:[
       {id:'calendar',name:'Calendar 日曆／時間'},
       {id:'collapse',name:'Collapse 摺疊'},
       {id:'list',name:'List 列表'},
@@ -508,35 +550,15 @@
       {id:'product-card',name:'Product Card 商品卡'},
       {id:'category-tile',name:'Category Tile 分類磚'},
       {id:'article-card',name:'Article Card 文章卡'},
+      {id:'step',name:'Step 步驟'},
+      {id:'announcement-item',name:'Announcement 公告項'},
+      {id:'section-head',name:'Section Head 區段標題'},
     ]},
-    {group:'Table 表格',items:[
+    {group:'Table & Chart 表格圖表',emoji:'📊',items:[
       {id:'table',name:'Table 表格'},
-      {id:'table-header',name:'Table Header 表頭'},
-      {id:'table-row',name:'Table Row 表列'},
-      {id:'table-cell',name:'Table Cell 儲存格'},
-      {id:'table-footer',name:'Table Footer 表尾'},
-    ]},
-    {group:'Chart 圖表',items:[
-      {id:'stat-number',name:'Stat Number 數據'},
-      {id:'donut-chart',name:'Donut Chart 環圈圖'},
-      {id:'bar-chart',name:'Bar Chart 長條圖'},
-      {id:'line-chart',name:'Line Chart 折線圖'},
-    ]},
-    {group:'Feedback 回饋',items:[
-      {id:'alert',name:'Alert 警示'},
-      {id:'tooltip',name:'Tooltip 提示'},
-      {id:'notification',name:'Notification 通知'},
-    ]},
-    {group:'Loading 載入',items:[
-      {id:'skeleton',name:'Skeleton 骨架'},
-      {id:'loader',name:'Loader 載入器'},
-    ]},
-    {group:'Special 特殊',items:[
+      {id:'chart',name:'Chart 圖表'},
       {id:'tree-view',name:'Tree View 樹狀'},
       {id:'schedule-chart',name:'Schedule Chart 排程圖'},
-    ]},
-    {group:'Media 媒體',items:[
-      {id:'image',name:'Image 圖片'},
     ]},
   ];
   const STAT={ready:'已定案',partial:'部分'};
@@ -569,14 +591,14 @@
       axes:{variant:['outline','filled'],type:['single','multi'],state:['default','hover','focus','selected','open','disabled','error']},
       zh:{variant:{outline:'外框',filled:'實填'},type:{single:'單選',multi:'多選'},state:{default:'預設',hover:'滑過',focus:'聚焦',selected:'已選',open:'展開',disabled:'停用',error:'錯誤'},axisName:{variant:'Variant 風格',type:'Type 型態',state:'State 狀態'}}},
     checkbox:{label:'Checkbox 核取方塊',order:['state','size'],
-      axes:{state:['default','hover','checked','indeterminate','disabled','focus'],size:['s','m','l']},
-      zh:{state:{default:'預設',hover:'滑過',checked:'已選',indeterminate:'半選',disabled:'停用',focus:'聚焦'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
+      axes:{state:['default','hover','checked','indeterminate','disabled','focus'],size:['m']},
+      zh:{state:{default:'預設',hover:'滑過',checked:'已選',indeterminate:'半選',disabled:'停用',focus:'聚焦'},size:{m:'標準 m'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
     radio:{label:'Radio 單選鈕',order:['state','size'],
-      axes:{state:['default','hover','checked','disabled','focus'],size:['s','m','l']},
-      zh:{state:{default:'預設',hover:'滑過',checked:'已選',disabled:'停用',focus:'聚焦'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
-    tag:{label:'Tag 標籤',order:['variant','intent','state'],
-      axes:{variant:['solid','outline','soft'],intent:['brand','neutral'],state:['default','hover','selected','disabled']},
-      zh:{variant:{solid:'實心',outline:'外框',soft:'柔色'},intent:{brand:'品牌',neutral:'中性'},state:{default:'預設',hover:'滑過',selected:'選取',disabled:'停用'},axisName:{variant:'Variant 風格',intent:'Intent 意圖',state:'State 狀態'}}},
+      axes:{state:['default','hover','checked','disabled','focus'],size:['m']},
+      zh:{state:{default:'預設',hover:'滑過',checked:'已選',disabled:'停用',focus:'聚焦'},size:{m:'標準 m'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
+    tag:{label:'Tag 標籤',order:['variant','corner','intent','state'],
+      axes:{variant:['solid','outline','soft'],corner:['round','rect'],intent:['brand','neutral'],state:['default','hover','disabled']},
+      zh:{variant:{solid:'實心',outline:'外框',soft:'柔色'},corner:{round:'圓角',rect:'方角'},intent:{brand:'品牌',neutral:'中性'},state:{default:'預設',hover:'滑過',disabled:'停用'},axisName:{variant:'Variant 風格',corner:'Corner 圓角',intent:'Intent 意圖',state:'State 狀態'}}},
     tab:{label:'Tab 分頁',order:['variant','state'],
       axes:{variant:['line','contained','pill'],state:['default','hover','active','disabled']},
       zh:{variant:{line:'底線',contained:'容器',pill:'藥丸'},state:{default:'預設',hover:'滑過',active:'選中',disabled:'停用'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
@@ -772,6 +794,95 @@
     host.appendChild(wrap);rerender();
   }
 
+  /* ===== 各元件「實際操作 Live」共用 registry ===== 元件頁與「複雜度確認」頁共用同一份，改一處兩邊同步 */
+  const LIVE={};
+  LIVE.button=(host)=>mountLive(host,{
+    initial:{variant:'solid',intent:'primary',size:'m',lead:false,trail:false,disabled:false},
+    segs:[{key:'variant',label:'Variant',options:AXES.variant},{key:'intent',label:'Intent',options:AXES.intent},{key:'size',label:'Size',options:AXES.size}],
+    bools:[{key:'lead',label:'leading icon'},{key:'trail',label:'trailing icon'},{key:'disabled',label:'disabled'}],
+    render:st=>mkBtn({variant:st.variant,intent:st.intent,size:st.size,lead:st.lead,trail:st.trail,disabled:st.disabled,isLive:true}),
+    note:'↓ solid / outline / text 快速對照',
+    free:()=>['solid','outline','text'].map(v=>mkBtn({variant:v,intent:'primary',size:'m',isLive:true}))
+  });
+  LIVE.input=(host)=>mountLive(host,{
+    initial:{variant:'outline',label:true,required:false,hint:false,lead:false,eye:false},
+    segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
+    bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'lead',label:'leading icon'},{key:'eye',label:'後綴 eye'}],
+    render:st=>{
+      const wrap=ce('div','fieldwrap');wrap.style.minWidth='300px';
+      if(st.label){const fl=ce('span','fl');fl.innerHTML='電子郵件'+(st.required?' <span class="req">*</span>':'');wrap.appendChild(fl);}
+      const f=ce('div',`field live-field v-${st.variant}`);
+      if(st.lead)f.insertAdjacentHTML('beforeend',ICON_SEARCH);
+      const inp=document.createElement('input');inp.className='bare';inp.type=st.eye?'password':'text';inp.placeholder='點我輸入…';f.appendChild(inp);
+      const clr=ce('span','fieldclear');clr.innerHTML=ICON_XCIRCLE;clr.style.display='none';
+      clr.onmousedown=e=>e.preventDefault();
+      clr.onclick=()=>{inp.value='';inp.focus();clr.style.display='none';};
+      inp.addEventListener('input',()=>{clr.style.display=inp.value?'inline-flex':'none';});
+      f.appendChild(clr);
+      if(st.eye){const b=document.createElement('span');b.style.cssText='display:inline-flex;cursor:pointer;color:var(--muted);flex:0 0 auto;';b.innerHTML=ICON_EYE;
+        b.onclick=()=>{const show=inp.type==='password';inp.type=show?'text':'password';b.innerHTML=show?ICON_EYE_SLASH:ICON_EYE;};
+        f.appendChild(b);}
+      wrap.appendChild(f);
+      if(st.hint){const h=ce('span','fh');h.textContent='至少 8 碼';wrap.appendChild(h);}
+      return wrap;
+    },
+    note:'↓ outline vs filled 快速對照（滑鼠移上去試 hover）',
+    free:()=>{const mk=v=>{const f=ce('div',`field live-field v-${v}`);const i=document.createElement('input');i.className='bare';i.placeholder=v;i.style.minWidth='170px';f.appendChild(i);return f;};return [mk('outline'),mk('filled')];}
+  });
+  LIVE.dropdown=(host)=>mountLive(host,{
+    initial:{variant:'outline',type:'single',label:true,required:false,hint:false,searchable:false},
+    segs:[{key:'variant',label:'Variant',options:['outline','filled']},{key:'type',label:'Type',options:['single','multi'],labels:['單選','多選']}],
+    bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'searchable',label:'searchable'}],
+    render:st=>{const wrap=ce('div','fieldwrap');wrap.style.minWidth='300px';
+      if(st.label){const fl=ce('span','fl');fl.innerHTML='縣市'+(st.required?' <span class="req">*</span>':'');wrap.appendChild(fl);}
+      wrap.appendChild(ddField(st.variant,{searchable:st.searchable,multi:st.type==='multi'}));
+      if(st.hint){const h=ce('span','fh');h.textContent=st.type==='multi'?'可複選多個縣市':'單選一個縣市';wrap.appendChild(h);}
+      return wrap;}
+  });
+  LIVE.checkbox=(host)=>mountLive(host,{
+    initial:{size:'m',indeterminate:false,disabled:false},
+    segs:[],
+    bools:[{key:'indeterminate',label:'indeterminate'},{key:'disabled',label:'disabled'}],
+    render:st=>{
+      const row=ce('label','optrow');if(st.disabled)row.style.cursor='not-allowed';
+      let checked=false,ind=st.indeterminate;
+      const box=ce('div',`cbx sz-${st.size}${st.disabled?' st-disabled':''}${ind?' st-indeterminate':''}`);if(ind)box.innerHTML=ICON_MINUS;
+      const lab=ce('span','oplab');lab.textContent='同意條款';
+      if(!st.disabled)box.onclick=()=>{if(ind){ind=false;checked=true;}else checked=!checked;box.className='cbx sz-'+st.size+(checked?' st-checked':'');box.innerHTML=checked?ICON_CHECK:'';};
+      row.append(box,lab);return row;
+    }
+  });
+  LIVE.radio=(host)=>mountLive(host,{
+    initial:{size:'m',disabled:false},
+    segs:[],
+    bools:[{key:'disabled',label:'disabled'}],
+    render:st=>{
+      const g=ce('div');g.style.cssText='display:flex;gap:20px;flex-wrap:wrap;';const rows=[];
+      ['標準','商務','頭等'].forEach((t,i)=>{const row=ce('label','optrow');if(st.disabled)row.style.cursor='not-allowed';
+        const r=ce('div',`rdo sz-${st.size}${st.disabled?' st-disabled':''}${i===0?' st-checked':''}`);r.innerHTML='<span class="dot"></span>';
+        const lab=ce('span','oplab');lab.textContent=t;
+        if(!st.disabled)row.onclick=()=>{rows.forEach(x=>x.className='rdo sz-'+st.size);r.className='rdo sz-'+st.size+' st-checked';};
+        row.append(r,lab);g.appendChild(row);rows.push(r);});
+      return g;
+    }
+  });
+  LIVE.tag=(host)=>mountLive(host,{
+    initial:{variant:'soft',corner:'round',intent:'brand',icon:false,close:false},
+    segs:[{key:'variant',label:'Variant',options:['solid','outline','soft']},{key:'corner',label:'Corner',options:['round','rect']},{key:'intent',label:'Intent',options:['brand','neutral']}],
+    bools:[{key:'icon',label:'icon'},{key:'close',label:'removable ×'}],
+    render:st=>{
+      const t=ce('div',`tg v-${st.variant} c-${st.corner} i-${st.intent} st-default`);
+      t.innerHTML=(st.icon?ICON_SEARCH:'')+'<span>標籤</span>';
+      if(st.close){const x=ce('span','x');x.innerHTML=ICON_CLOSE;x.onclick=e=>{e.stopPropagation();t.style.transition='.15s';t.style.opacity='0';setTimeout(()=>{t.style.opacity='1';},450);};t.appendChild(x);}
+      return t;
+    }
+  });
+  LIVE.tab=(host)=>mountLive(host,{
+    initial:{variant:'line'},
+    segs:[{key:'variant',label:'Variant',options:['line','contained','pill']}],
+    render:st=>tabBarLive(st.variant)
+  });
+
   /* ---- INPUT ---- */
   function inputEl(variant,state){
     const filled=['focus','filled-value','error'].includes(state);
@@ -803,31 +914,7 @@
     ];
     demos.forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
     const sl=section(body,'實際互動 Live','用控制項調 variant／內容，下面即時預覽——欄位可真的打字、滑過看 hover、點一下看 focus。');
-    mountLive(sl,{
-      initial:{variant:'outline',label:true,required:false,hint:false,lead:false,eye:false},
-      segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
-      bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'lead',label:'leading icon'},{key:'eye',label:'後綴 eye'}],
-      render:st=>{
-        const wrap=ce('div','fieldwrap');wrap.style.minWidth='300px';
-        if(st.label){const fl=ce('span','fl');fl.innerHTML='電子郵件'+(st.required?' <span class="req">*</span>':'');wrap.appendChild(fl);}
-        const f=ce('div',`field live-field v-${st.variant}`);
-        if(st.lead)f.insertAdjacentHTML('beforeend',ICON_SEARCH);
-        const inp=document.createElement('input');inp.className='bare';inp.type=st.eye?'password':'text';inp.placeholder='點我輸入…';f.appendChild(inp);
-        const clr=ce('span','fieldclear');clr.innerHTML=ICON_XCIRCLE;clr.style.display='none';
-        clr.onmousedown=e=>e.preventDefault(); // 別讓點擊 × 時欄位失焦
-        clr.onclick=()=>{inp.value='';inp.focus();clr.style.display='none';};
-        inp.addEventListener('input',()=>{clr.style.display=inp.value?'inline-flex':'none';});
-        f.appendChild(clr); // 清除 × 在輸入後才出現
-        if(st.eye){const b=document.createElement('span');b.style.cssText='display:inline-flex;cursor:pointer;color:var(--muted);flex:0 0 auto;';b.innerHTML=ICON_EYE;
-          b.onclick=()=>{const show=inp.type==='password';inp.type=show?'text':'password';b.innerHTML=show?ICON_EYE_SLASH:ICON_EYE;}; // 顯示中→斜線眼睛、隱藏→一般眼睛
-          f.appendChild(b);}
-        wrap.appendChild(f);
-        if(st.hint){const h=ce('span','fh');h.textContent='至少 8 碼';wrap.appendChild(h);}
-        return wrap;
-      },
-      note:'↓ outline vs filled 快速對照（滑鼠移上去試 hover）',
-      free:()=>{const mk=v=>{const f=ce('div',`field live-field v-${v}`);const i=document.createElement('input');i.className='bare';i.placeholder=v;i.style.minWidth='170px';f.appendChild(i);return f;};return [mk('outline'),mk('filled')];}
-    });
+    LIVE.input(sl);
 
     /* ===== input 家族其餘子元件 ===== */
     famBlock(body,{zh:'Search 搜尋框',en:'search',note:'帶前置放大鏡的輸入，多用於列表過濾；有值時可清除。variant 同 input（外框／實填）。',
@@ -915,24 +1002,12 @@
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'State × Size 矩陣','列＝狀態、欄＝size。');p=panelsIn(sec);renderM();
     const sl=section(body,'實際互動 Live','調 size／狀態，下面預覽可真的點擊勾選。');
-    mountLive(sl,{
-      initial:{size:'m',indeterminate:false,disabled:false},
-      segs:[{key:'size',label:'Size',options:['s','m','l']}],
-      bools:[{key:'indeterminate',label:'indeterminate'},{key:'disabled',label:'disabled'}],
-      render:st=>{
-        const row=ce('label','optrow');if(st.disabled)row.style.cursor='not-allowed';
-        let checked=false,ind=st.indeterminate;
-        const box=ce('div',`cbx sz-${st.size}${st.disabled?' st-disabled':''}${ind?' st-indeterminate':''}`);if(ind)box.innerHTML=ICON_MINUS;
-        const lab=ce('span','oplab');lab.textContent='同意條款';
-        if(!st.disabled)box.onclick=()=>{if(ind){ind=false;checked=true;}else checked=!checked;box.className='cbx sz-'+st.size+(checked?' st-checked':'');box.innerHTML=checked?ICON_CHECK:'';};
-        row.append(box,lab);return row;
-      }
-    });
+    LIVE.checkbox(sl);
   }
   function buildCheckbox(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Checkbox',title:'Checkbox 核取方塊',
-      lede:'多選核取。<b>無 variant 軸</b>；狀態含 <code>indeterminate</code>（半選，父層全選常用）。三個 size。',
-      specRows:[['axes','<code>state × size</code>'],['formula','<code>6 × 3</code>'],['token-policy','<code>semantic.*.input.* / action.*</code>'],['a11y','indeterminate → aria-checked=mixed']]});
+      lede:'多選核取。<b>無 variant 軸</b>；狀態含 <code>indeterminate</code>（半選，父層全選常用）。單一 size（m）。',
+      specRows:[['axes','<code>state × size</code>'],['formula','<code>6 × 1</code>'],['token-policy','<code>semantic.*.input.* / action.*</code>'],['a11y','indeterminate → aria-checked=mixed']]});
     checkboxCore(body);
   }
 
@@ -947,25 +1022,12 @@
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'State × Size 矩陣','列＝狀態、欄＝size。');p=panelsIn(sec);renderM();
     const sl=section(body,'實際互動 Live','調 size／狀態，下面群組可真的單選。');
-    mountLive(sl,{
-      initial:{size:'m',disabled:false},
-      segs:[{key:'size',label:'Size',options:['s','m','l']}],
-      bools:[{key:'disabled',label:'disabled'}],
-      render:st=>{
-        const g=ce('div');g.style.cssText='display:flex;gap:20px;flex-wrap:wrap;';const rows=[];
-        ['標準','商務','頭等'].forEach((t,i)=>{const row=ce('label','optrow');if(st.disabled)row.style.cursor='not-allowed';
-          const r=ce('div',`rdo sz-${st.size}${st.disabled?' st-disabled':''}${i===0?' st-checked':''}`);r.innerHTML='<span class="dot"></span>';
-          const lab=ce('span','oplab');lab.textContent=t;
-          if(!st.disabled)row.onclick=()=>{rows.forEach(x=>x.className='rdo sz-'+st.size);r.className='rdo sz-'+st.size+' st-checked';};
-          row.append(r,lab);g.appendChild(row);rows.push(r);});
-        return g;
-      }
-    });
+    LIVE.radio(sl);
   }
   function buildRadio(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Radio',title:'Radio 單選鈕',
-      lede:'群組內單選（須包在 role=radiogroup）。<b>無 variant 軸</b>；狀態較 checkbox 少一個 indeterminate。三個 size。',
-      specRows:[['axes','<code>state × size</code>'],['formula','<code>5 × 3</code>'],['token-policy','<code>semantic.*.input.* / action.*</code>'],['a11y','群組 role=radiogroup、單選']]});
+      lede:'群組內單選（須包在 role=radiogroup）。<b>無 variant 軸</b>；狀態較 checkbox 少一個 indeterminate。單一 size（m）。',
+      specRows:[['axes','<code>state × size</code>'],['formula','<code>5 × 1</code>'],['token-policy','<code>semantic.*.input.* / action.*</code>'],['a11y','群組 role=radiogroup、單選']]});
     radioCore(body);
   }
 
@@ -979,35 +1041,28 @@
   }
 
   /* ---- TAG ---- */
-  function tagEl(variant,intent,state,opt){opt=opt||{};
-    const t=ce('div',`tg v-${variant} i-${intent} st-${state}`);
-    let h=(opt.icon?ICON_SEARCH:'')+`<span>標籤</span>`;if(opt.close)h+=`<span class="x">${ICON_CLOSE}</span>`;
-    t.innerHTML=h;return t;}
+  function tagEl(variant,intent,state,corner){corner=corner||'round';
+    const t=ce('div',`tg v-${variant} c-${corner} i-${intent} st-${state}`);
+    t.innerHTML=`<span>標籤</span>`;return t;}
   function buildTag(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Tag',title:'Tag 標籤 / Chip',
-      lede:'標籤與 Chip 合併。<b>variant × intent 兩軸（3 × 2 = 6）</b>，intent 只留 brand／neutral（feedback 4 色由 alert 負責）。removable／selectable 等為 feature flag。',
-      specRows:[['axes','<code>variant × intent × state</code>'],['formula','<code>3 × 2</code>（視覺全展）'],['token-policy','<code>semantic.*.tag.*</code>'],['features','removable / selectable / icon / avatar']]});
-    const Z={default:['預設','default'],hover:['滑過','hover'],selected:['選取','selected'],disabled:['停用','disabled']};
+      lede:'標籤與 Chip 合併。<b>variant × corner × intent（3 × 2 × 2 = 12）</b>，intent 只留 brand／neutral（feedback 4 色由 alert 負責）。corner 圓角／方角切換；removable／icon 為 feature flag。',
+      specRows:[['axes','<code>variant × corner × intent × state</code>'],['formula','<code>3 × 2 × 2</code>（視覺全展）'],['token-policy','<code>semantic.*.tag.*</code>'],['features','removable / icon / avatar']]});
+    const Z={default:['預設','default'],hover:['滑過','hover'],disabled:['停用','disabled']};
     const VN={solid:'實心 solid',outline:'外框 outline',soft:'柔色 soft'};
     const axes=DIAL_SPECS.tag.axes, zh=DIAL_SPECS.tag.zh, active=CHOICE.tag.active; // 接中央 store
     let p;
-    function renderM(){ if(!p)return; p.innerHTML=''; const vs=axes.variant.filter(v=>active.variant.has(v)),is=axes.intent.filter(i=>active.intent.has(i)),ss=axes.state.filter(s=>active.state.has(s));
-      vs.forEach(v=>p.appendChild(matrixPanel({badge:'variant',name:VN[v],rows:ss,cols:is,rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:c=>labHTML(c==='brand'?'品牌':'中性',c),cell:(s,c)=>tagEl(v,c,s),mincol:130}))); }
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v)),cs=axes.corner.filter(c=>active.corner.has(c)),is=axes.intent.filter(i=>active.intent.has(i)),ss=axes.state.filter(s=>active.state.has(s));
+      const cols=[];is.forEach(i=>cs.forEach(cn=>cols.push({i,cn}))); // 欄＝intent × corner
+      vs.forEach(v=>p.appendChild(matrixPanel({badge:'variant',name:VN[v],rows:ss,cols,
+        rowLab:s=>labHTML(Z[s][0],Z[s][1]),
+        colLab:o=>labHTML((o.i==='brand'?'品牌':'中性')+'·'+(o.cn==='round'?'圓角':'方角'),o.i+'·'+o.cn),
+        cell:(s,o)=>tagEl(v,o.i,s,o.cn),mincol:120}))); }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'State × Intent 矩陣','每個 variant 一塊；列＝狀態、欄＝intent。');p=panelsIn(sec);renderM();
-    const sl=section(body,'實際互動 Live','調 variant／intent／feature，下面即時預覽（selectable 可點選取、removable 可點 × 移除）。');
-    mountLive(sl,{
-      initial:{variant:'soft',intent:'brand',icon:false,close:false,selectable:false},
-      segs:[{key:'variant',label:'Variant',options:['solid','outline','soft']},{key:'intent',label:'Intent',options:['brand','neutral']}],
-      bools:[{key:'icon',label:'icon'},{key:'close',label:'removable ×'},{key:'selectable',label:'selectable'}],
-      render:st=>{
-        const t=ce('div',`tg v-${st.variant} i-${st.intent} st-default`);
-        t.innerHTML=(st.icon?ICON_SEARCH:'')+'<span>標籤</span>';
-        if(st.close){const x=ce('span','x');x.innerHTML=ICON_CLOSE;x.onclick=e=>{e.stopPropagation();t.style.transition='.15s';t.style.opacity='0';setTimeout(()=>{t.style.opacity='1';},450);};t.appendChild(x);}
-        if(st.selectable){t.style.cursor='pointer';let on=false;t.onclick=()=>{on=!on;t.className='tg v-'+st.variant+' i-'+st.intent+' st-'+(on?'selected':'default');};}
-        return t;
-      }
-    });
+    const sec=section(body,'State × (Intent·Corner) 矩陣','每個 variant 一塊；列＝狀態、欄＝intent × 圓角。');p=panelsIn(sec);renderM();
+    const sl=section(body,'實際互動 Live','調 variant／corner／intent／feature，下面即時預覽（removable 可點 × 移除）。');
+    LIVE.tag(sl);
   }
 
   /* ---- TAB ---- */
@@ -1027,11 +1082,7 @@
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'State 矩陣（tab-item，每個 variant）','列＝狀態；三個 variant 的選中樣式不同（line 底線／contained 填色／pill 藥丸）。');p=panelsIn(sec);renderM();
     const sl=section(body,'實際互動 Live','切 variant，下面分頁列可真的點擊切換選中。');
-    mountLive(sl,{
-      initial:{variant:'line'},
-      segs:[{key:'variant',label:'Variant',options:['line','contained','pill']}],
-      render:st=>tabBarLive(st.variant)
-    });
+    LIVE.tab(sl);
   }
 
   /* ---- DROPDOWN 下拉 ---- */
@@ -1097,15 +1148,7 @@
     demos.forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
 
     const sl=section(body,'實際互動 Live','切 <b>單選／多選</b>、variant、label／hint／searchable，下面下拉可真的點開、選項、關閉。多選勾選不關、選項成 chip。');
-    mountLive(sl,{
-      initial:{variant:'outline',type:'single',label:true,required:false,hint:false,searchable:false},
-      segs:[{key:'variant',label:'Variant',options:['outline','filled']},{key:'type',label:'Type',options:['single','multi'],labels:['單選','多選']}],
-      bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'searchable',label:'searchable'}],
-      render:st=>{const wrap=ce('div','fieldwrap');wrap.style.minWidth='300px';
-        if(st.label){const fl=ce('span','fl');fl.innerHTML='縣市'+(st.required?' <span class="req">*</span>':'');wrap.appendChild(fl);}
-        wrap.appendChild(ddField(st.variant,{searchable:st.searchable,multi:st.type==='multi'}));
-        if(st.hint){const h=ce('span','fh');h.textContent=st.type==='multi'?'可複選多個縣市':'單選一個縣市';wrap.appendChild(h);}
-        return wrap;}});
+    LIVE.dropdown(sl);
   }
 
   /* 家族 id → builder（button 為特例走 buttonView）。tag/tab 目前先接代表子元件，家族其餘之後補。 */
@@ -1120,38 +1163,72 @@
       rec.count=c;rec.full=f;out[id]=rec;total+=c;full+=f;});
     out._total=total;out._full=full;return out;
   }
+  const SUMSEL=new Set(Object.keys(DIAL_SPECS)); // 手動選取要產出的元件（預設全選、跨切頁持久）
+  const RECOMMEND=['button','input','dropdown','checkbox','radio','tag']; // AI 建議＝已定案的元件
+  let aiOn=false,aiSnapshot=null; // AI 建議 toggle 狀態＋開啟前的選擇快照
+  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
+  const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){
-    view.innerHTML=`<p class="eyebrow">Overview · 複雜度確認</p><h1>複雜度確認</h1>
-      <p class="lede">每個元件<b>最後選定的複雜度</b>——之後在設計稿裡就會建立這些 <b>variant × state</b> 組合。回各元件用「複雜度轉盤」勾選，這頁即時彙整。把下方結果複製給我或貼進 DS 建立流程，就知道會產出哪些元件。</p>
-      <div class="sumbar"><div class="sumtotal" id="sumTotal"></div><button class="copybtn" id="copyBtn">複製篩選結果 (JSON)</button></div>
+    const rep=choiceReport();
+    view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Overview · 匯出需求</p><h1>匯出需求</h1></div>
+        <button class="copybtn" id="copyBtn">複製並匯出JSON</button></div>
+      <p class="lede">每個元件<b>最後選定的複雜度</b>——展開牌卡可看該元件在自己頁面上的<b>實際操作</b>，牌卡前的勾選框決定<b>要不要產出</b>這顆元件。回各元件用「複雜度轉盤」調整組合，這頁即時彙整。</p>
+      <div class="sum-actions">
+        <button class="aitoggle" id="aiBtn">${ICON_SPARK}<span>AI 建議產出</span><span class="sw"></span></button>
+        <div class="spacer"></div>
+        <div class="sumtotal" id="sumTotal"></div>
+      </div>
       <div id="sumCards"></div>
       <div class="block"><h2>其餘元件</h2><p class="sub" id="sumRest"></p></div>`;
-    const rep=choiceReport();
-    document.getElementById('sumTotal').innerHTML=`共 <b>${rep._total}</b> 個變體將被建立 <span class="full">/ 全展 ${rep._full}</span>`;
     const host=document.getElementById('sumCards');
-    Object.keys(DIAL_SPECS).forEach(id=>{const spec=DIAL_SPECS[id],rec=rep[id];
-      const card=ce('div','sumcard');
+    function syncTotal(){let comp=0,vari=0;Object.keys(DIAL_SPECS).forEach(id=>{if(SUMSEL.has(id)){comp++;vari+=rep[id].count;}});
+      document.getElementById('sumTotal').innerHTML=`已選 <b>${comp}</b>/${Object.keys(DIAL_SPECS).length} 個元件 · 共 <b>${vari}</b> 個變體將建立`;}
+    Object.keys(DIAL_SPECS).forEach((id,i)=>{const spec=DIAL_SPECS[id],rec=rep[id];
+      const card=ce('div','sumcard'+(i===0?'':' collapsed'));card.dataset.id=id; // 第一張預設展開
       let axesHTML='';
       spec.order.forEach(k=>{const all=spec.axes[k];const sel=new Set(rec[k]);
         const chips=all.map(v=>`<span class="sum-chip ${sel.has(v)?'on':'off'}">${(spec.zh[k]&&spec.zh[k][v])||v}·${v}</span>`).join('');
         axesHTML+=`<div class="sum-axis"><span class="sa-name">${spec.zh.axisName[k]}</span><span class="sa-chips">${chips}</span><span class="sa-n">${rec[k].length}/${all.length}</span></div>`;});
-      card.innerHTML=`<div class="sc-head"><span class="sc-name">${spec.label}</span><span class="sc-count">${spec.order.map(k=>rec[k].length).join(' × ')} = <b>${rec.count}</b> <span class="full">/ ${rec.full}</span></span></div>${axesHTML}`;
+      card.innerHTML=`<div class="sc-head">
+          <label class="sc-check"><input type="checkbox" ${SUMSEL.has(id)?'checked':''}></label>
+          <span class="sc-name">${spec.label}</span>
+          <span class="sc-count">${spec.order.map(k=>rec[k].length).join(' × ')} = <b>${rec.count}</b> <span class="full">/ ${rec.full}</span></span>
+          <span class="sc-chevron">${ICON_CARET}</span>
+        </div>
+        <div class="sc-body">${axesHTML}<div class="sc-sub">實際操作 Live</div><div class="sc-live"></div>
+          <div class="sc-foot"><button class="adjustbtn">${ICON_PENCIL}<span>我要調整</span></button></div></div>`;
+      card.classList.toggle('unpicked',!SUMSEL.has(id));
+      const chk=card.querySelector('.sc-check input');
+      card.querySelector('.sc-check').onclick=e=>e.stopPropagation(); // 勾選不觸發展開
+      chk.onchange=()=>{chk.checked?SUMSEL.add(id):SUMSEL.delete(id);card.classList.toggle('unpicked',!chk.checked);
+        if(aiOn){aiOn=false;aiSnapshot=null;document.getElementById('aiBtn').classList.remove('on');} // 手動改動即脫離 AI 建議
+        syncTotal();};
+      const head=card.querySelector('.sc-head'),liveHost=card.querySelector('.sc-live');
+      head.onclick=()=>{const willOpen=card.classList.contains('collapsed');card.classList.toggle('collapsed');
+        if(willOpen && !liveHost.dataset.mounted && LIVE[id]){LIVE[id](liveHost);liveHost.dataset.mounted='1';}}; // 展開時 lazy 掛實際操作 Live
+      card.querySelector('.adjustbtn').onclick=()=>renderView(DIAL_PAGE[id]||id); // 右下角「我要調整」→ 跳該元件頁
+      if(i===0&&LIVE[id]){LIVE[id](liveHost);liveHost.dataset.mounted='1';} // 預設展開的第一張，立即掛 Live
       host.appendChild(card);});
-    // 其餘元件（非轉盤）
-    const dialIds=new Set(Object.keys(DIAL_SPECS).concat(['input']));
-    const built=['search','password','textarea','file（input 家族，以完整狀態建立）'];
+    syncTotal();
     const todo=NAV.flatMap(g=>g.items).filter(it=>!DIAL_SPECS[it.id]&&it.id!=='input'&&!it.st).length;
     document.getElementById('sumRest').innerHTML=`input 家族的 <code>search / password / textarea / file</code> 以完整狀態建立（無轉盤）。其餘 <b>${todo}</b> 個項目為待建，之後定案後會一併納入此總覽。`;
+    const aiBtn=document.getElementById('aiBtn');
+    function refreshCards(){host.querySelectorAll('.sumcard').forEach(c=>{const on=SUMSEL.has(c.dataset.id);c.querySelector('.sc-check input').checked=on;c.classList.toggle('unpicked',!on);});}
+    aiBtn.classList.toggle('on',aiOn); // 進頁時還原 toggle 狀態
+    aiBtn.onclick=()=>{ // AI 建議 toggle：開→套用建議並存快照；關→還原點擊前選擇
+      if(!aiOn){aiSnapshot=[...SUMSEL];SUMSEL.clear();RECOMMEND.forEach(x=>SUMSEL.add(x));aiOn=true;}
+      else{if(aiSnapshot){SUMSEL.clear();aiSnapshot.forEach(x=>SUMSEL.add(x));}aiSnapshot=null;aiOn=false;}
+      aiBtn.classList.toggle('on',aiOn);refreshCards();syncTotal();
+    };
     document.getElementById('copyBtn').onclick=()=>{
-      const json={};Object.keys(DIAL_SPECS).forEach(id=>{json[id]={};DIAL_SPECS[id].order.forEach(k=>json[id][k]=rep[id][k]);json[id].count=rep[id].count;});
-      json._total=rep._total;
-      const txt=JSON.stringify(json,null,2);
-      navigator.clipboard.writeText(txt).then(()=>{const b=document.getElementById('copyBtn');b.textContent='已複製 ✓';setTimeout(()=>b.textContent='複製篩選結果 (JSON)',1600);});
+      const json={};Object.keys(DIAL_SPECS).forEach(id=>{if(!SUMSEL.has(id))return;json[id]={};DIAL_SPECS[id].order.forEach(k=>json[id][k]=rep[id][k]);json[id].count=rep[id].count;});
+      json._selected=[...SUMSEL];json._total=[...SUMSEL].reduce((a,id)=>a+rep[id].count,0);
+      navigator.clipboard.writeText(JSON.stringify(json,null,2)).then(()=>{const b=document.getElementById('copyBtn');b.textContent='已複製 ✓';setTimeout(()=>b.textContent='複製並匯出JSON',1600);});
     };
   }
 
   /* ===== 檢視切換 ===== */
-  let current='button';
+  let current='summary';
   function renderView(id){
     current=id;const view=document.getElementById('view');
     const item=NAV.flatMap(g=>g.items).find(x=>x.id===id);
@@ -1161,18 +1238,18 @@
     else{view.innerHTML=`<div class="placeholder"><div class="em">🧩</div><h2>${item.name}</h2><p>這顆元件還沒定案。先在已完成的元件上把「元件該多複雜」的模式定下來，我再用同一套方式套到這裡。</p><div class="axhint">預定軸：variant × state × size（＋各自的內容軸）</div></div>`;}
     document.querySelectorAll('.nav-item').forEach(el=>el.setAttribute('aria-current',el.dataset.id===id));
     if(window.innerWidth<=900)document.getElementById('shell').classList.remove('nav-open'); // 窄螢幕選完自動收起
-    window.scrollTo(0,0);
+    const _m=document.querySelector('.main');if(_m)_m.scrollTo(0,0); // app-shell：捲 main 容器（非 document）
   }
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
     const pin=document.createElement('button');pin.className='nav-item nav-pin';pin.dataset.id='summary';pin.setAttribute('aria-current',current==='summary');
-    pin.innerHTML=`<span>📋 複雜度確認</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
+    pin.innerHTML=`<span>📋 匯出需求</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
     NAV.forEach((g,gi)=>{const grp=document.createElement('div');grp.className='nav-group'+(gi>0?' collapsed':'');
       const head=document.createElement('button');head.className='gh';
-      head.innerHTML=`<span class="gh-caret">${ICON_CARET}</span><span class="gh-t">${g.group}</span><span class="gh-n">${g.items.length}</span>`;
+      head.innerHTML=`<span class="gh-t">${g.emoji?g.emoji+' ':''}${g.group}</span><span class="gh-n">${g.items.length}</span><span class="gh-caret">${ICON_CARET}</span>`;
       head.onclick=()=>grp.classList.toggle('collapsed');
       const list=document.createElement('div');list.className='ng-items';
       g.items.forEach(it=>{const b=document.createElement('button');b.className='nav-item';b.dataset.id=it.id;b.setAttribute('aria-current',it.id===current);
-        const st=STAT[it.st]||'待建';b.innerHTML=`<span>${it.name}</span><span class="tag st-${it.st||'todo'}">${st}</span>`;b.onclick=()=>renderView(it.id);list.appendChild(b);});
+        b.innerHTML=`<span class="nm">${it.name}</span><span class="dot st-${it.st||'todo'}" title="${STAT[it.st]||'待建'}"></span>`;b.onclick=()=>renderView(it.id);list.appendChild(b);});
       grp.append(head,list);host.appendChild(grp);});}
 
   /* ===== topbar 行為 =====（桌機側欄常駐；窄螢幕漢堡控制抽屜）*/
@@ -1180,12 +1257,12 @@
   document.getElementById('hambBtn').onclick=()=>shell.classList.toggle('nav-open');
   document.getElementById('scrim').onclick=()=>shell.classList.remove('nav-open');
   document.addEventListener('click',e=>{const h=e.target.closest('.dcard-head');if(h)h.closest('.dcard').classList.toggle('collapsed');});
-  (function(){const btn=document.getElementById('themeBtn'),lbl=document.getElementById('themeLabel'),knob=document.getElementById('themeKnob');
+  (function(){const btn=document.getElementById('themeBtn'),knob=document.getElementById('themeKnob');
     const SUN='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg>';
     const MOON='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,96a8,8,0,0,1-8,8H216v16a8,8,0,0,1-16,0V104H184a8,8,0,0,1,0-16h16V72a8,8,0,0,1,16,0V88h16A8,8,0,0,1,240,96ZM144,56h8v8a8,8,0,0,0,16,0V56h8a8,8,0,0,0,0-16h-8V32a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16Zm72.77,97a8,8,0,0,1,1.43,8A96,96,0,1,1,95.07,37.8a8,8,0,0,1,10.6,9.06A88.07,88.07,0,0,0,209.14,150.33,8,8,0,0,1,216.77,153Zm-19.39,14.88c-1.79.09-3.59.14-5.38.14A104.11,104.11,0,0,1,88,64c0-1.79,0-3.59.14-5.38A80,80,0,1,0,197.38,167.86Z"/></svg>';
     function cur(){const a=document.documentElement.getAttribute('data-theme');return a||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
-    function set(t){document.documentElement.setAttribute('data-theme',t);lbl.textContent=t==='dark'?'Dark':'Light';knob.innerHTML=t==='dark'?MOON:SUN;}
+    function set(t){document.documentElement.setAttribute('data-theme',t);knob.innerHTML=t==='dark'?MOON:SUN;}
     set('light');btn.onclick=()=>set(cur()==='dark'?'light':'dark');})();
 
-  renderNav();renderView('button');
+  renderNav();renderView('summary');
 </script>
