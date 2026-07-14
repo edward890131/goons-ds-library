@@ -1,5 +1,7 @@
 # Goons DS Library
 
+🔗 **線上版：https://goons-ds-library.vercel.app**（每次 push 自動更新）
+
 果思設計（Goons Design）的**設計系統元件陳列頁** — 一份自包含（self-contained）的視覺化網站，攤開每顆元件的**狀態 / 樣式 / 尺寸**矩陣，並提供「複雜度轉盤」與「匯出需求」頁，用來在進入 Figma 建檔前對元件範圍做**篩選與控管**。
 
 ## 檔案
@@ -27,4 +29,4 @@ python3 -m http.server 8791 --bind 127.0.0.1
 
 ---
 
-線上版本部署於 Vercel。
+線上版本部署於 Vercel：**https://goons-ds-library.vercel.app**（綁定本 repo，push 即自動重新部署）。
