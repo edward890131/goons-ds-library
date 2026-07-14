@@ -62,6 +62,10 @@
   /* ---------- topbar ---------- */
   .topbar{position:sticky;top:0;z-index:30;height:58px;display:flex;align-items:center;gap:14px;
     padding:0 18px;background:var(--panel);border-bottom:1px solid var(--line);}
+  .hamb{display:none;width:38px;height:38px;border:1px solid var(--line-strong);border-radius:9px;background:var(--panel);
+    color:var(--muted);cursor:pointer;align-items:center;justify-content:center;transition:.13s;flex:0 0 auto;}
+  .hamb:hover{color:var(--ink);border-color:var(--accent);}
+  .hamb svg{width:19px;height:19px;}
   .brand{font-size:14px;font-weight:640;display:flex;align-items:baseline;gap:9px;}
   .brand .muted2{color:var(--faint);font-weight:400;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.02em;}
   .spacer{flex:1}
@@ -308,8 +312,12 @@
 
   /* ===== file 檔案上傳 ===== */
   .filefield{display:inline-flex;align-items:center;gap:10px;padding:0 10px;height:40px;border-radius:8px;
-    border:1px dashed var(--i-sec-edge);background:var(--panel);min-width:260px;font-size:13.5px;color:var(--muted);transition:.13s;}
-  .filefield.has-file{border-style:solid;color:var(--ink);}
+    border:1px solid var(--i-sec-edge);background:var(--panel);min-width:260px;font-size:13.5px;color:var(--muted);transition:.13s;}
+  .filefield.has-file{color:var(--ink);}
+  /* file variant：外框／實色 對齊 input（外框＝白底實線、實色＝panel-2 填色）*/
+  .filefield.v-solid{background:var(--panel-2);border-color:transparent;color:var(--ink);}
+  .filefield.v-solid.st-hover{background:var(--panel-3);border-color:transparent;}
+  .live-stage .filefield.v-solid:not(.st-disabled):hover{background:var(--panel-3);border-color:transparent;}
   .filefield.st-hover{border-color:var(--accent);color:var(--ink);}
   .filefield.st-focus{border-color:var(--accent);}
   .filefield.st-disabled{opacity:.5;}
@@ -325,6 +333,32 @@
   /* file live 真實 hover（只作用在 Live 預覽，不影響狀態列）*/
   .live-stage .filefield:not(.st-disabled):hover{border-color:var(--accent);color:var(--ink);}
   .live-stage .filefield:not(.st-disabled) .filebtn:hover{background:var(--i-sec-fill-h);}
+
+  /* ===== dropdown 下拉 ===== */
+  .field.dd{cursor:pointer;}
+  .field.st-open{border-color:var(--accent);}
+  .field.v-filled.st-open{border-color:var(--accent);background:var(--panel-2);}
+  .ddcaret{display:inline-flex;color:var(--muted);flex:0 0 auto;transition:transform .15s;}
+  .ddcaret.up{transform:rotate(180deg);}
+  .ddwrap{position:relative;display:inline-block;min-width:260px;}
+  .ddmenu{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:20;background:var(--panel);border:1px solid var(--line-strong);
+    border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.16);padding:5px;max-height:240px;overflow-y:auto;}
+  .ddopt{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;font-size:13.5px;color:var(--ink);cursor:pointer;}
+  .ddopt:hover{background:var(--i-primary-tint);color:var(--accent);}
+  .ddopt.sel{color:var(--accent);font-weight:600;}
+  .ddsearch{width:100%;box-sizing:border-box;height:34px;padding:0 10px;margin-bottom:4px;border:1px solid var(--i-sec-edge);
+    border-radius:6px;background:var(--panel-2);color:var(--ink);font-size:13px;outline:none;}
+  .ddsearch:focus{border-color:var(--accent);}
+  /* 多選 dropdown：trigger 內 chip + 選項勾選框 */
+  .dd-body{flex:1;display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-width:0;}
+  .field.dd.multi{height:auto;min-height:40px;padding-top:5px;padding-bottom:5px;}
+  .ddchip{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 4px 0 9px;border-radius:6px;
+    background:var(--i-primary-tint);color:var(--accent);font-size:12px;font-weight:600;}
+  .ddchip .x{display:inline-flex;cursor:pointer;opacity:.7;} .ddchip .x:hover{opacity:1;} .ddchip svg{width:12px;height:12px;}
+  .ddcheck{width:16px;height:16px;border:1.5px solid var(--i-sec-edge);border-radius:4px;display:inline-flex;
+    align-items:center;justify-content:center;color:#fff;flex:0 0 auto;}
+  .ddopt.on .ddcheck{background:var(--accent);border-color:var(--accent);}
+  .ddcheck svg{width:12px;height:12px;}
 
   /* ===== checkbox / radio ===== */
   .cbx{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:6px;display:inline-flex;
@@ -406,11 +440,15 @@
 
   footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);color:var(--faint);font-size:12px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--font-mono);}
 
+  .scrim{display:none;}
+  /* 平板 / 手機：側邊欄改抽屜式覆蓋，漢堡控制收合 */
   @media (max-width:900px){
+    .hamb{display:inline-flex;}
     .layout{grid-template-columns:1fr;}
-    .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);
-      display:flex;flex-wrap:wrap;gap:4px;padding:12px;}
-    .sidebar .nav-group{margin-bottom:6px;width:100%;}
+    .sidebar{position:fixed;top:58px;left:0;bottom:0;height:auto;width:min(84vw,300px);z-index:40;
+      transform:translateX(-100%);transition:transform .22s ease;border-right:1px solid var(--line-strong);}
+    .shell.nav-open .sidebar{transform:translateX(0);}
+    .shell.nav-open .scrim{display:block;position:fixed;inset:58px 0 0 0;background:rgba(0,0,0,.42);z-index:35;}
     .main{padding:26px 18px 80px;}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
@@ -418,6 +456,9 @@
 
 <div class="shell" id="shell">
   <div class="topbar">
+    <button class="hamb" id="hambBtn" aria-label="切換元件選單">
+      <svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/></svg>
+    </button>
     <div class="brand">DS 元件陳列 <span class="muted2">L3 · goonsdesign</span></div>
     <div class="spacer"></div>
     <button class="theme-toggle" id="themeBtn" aria-label="切換深淺色">
@@ -428,6 +469,7 @@
 
   <div class="layout">
     <aside class="sidebar" id="sidebar"></aside>
+    <div class="scrim" id="scrim"></div>
     <main class="main"><div class="container" id="view"></div></main>
   </div>
 </div>
@@ -439,7 +481,7 @@
     {group:'Basic 基本',items:[
       {id:'button',name:'Button 按鈕',st:'ready'},
       {id:'input',name:'Input 輸入框',st:'ready'},
-      {id:'dropdown',name:'Dropdown 下拉'},
+      {id:'dropdown',name:'Dropdown 下拉',st:'ready'},
       {id:'selector',name:'Selector 選擇',st:'partial'},
       {id:'tag',name:'Tag 標籤',st:'partial'},
       {id:'step',name:'Step 步驟'},
@@ -523,6 +565,9 @@
     input:{label:'Input 輸入框',order:['variant','state'],
       axes:{variant:['outline','filled'],state:['default','hover','focus','filled-value','disabled','error']},
       zh:{variant:{outline:'外框',filled:'實填'},state:{default:'預設',hover:'滑過',focus:'聚焦','filled-value':'已填值',disabled:'停用',error:'錯誤'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
+    dropdown:{label:'Dropdown 下拉',order:['variant','type','state'],
+      axes:{variant:['outline','filled'],type:['single','multi'],state:['default','hover','focus','selected','open','disabled','error']},
+      zh:{variant:{outline:'外框',filled:'實填'},type:{single:'單選',multi:'多選'},state:{default:'預設',hover:'滑過',focus:'聚焦',selected:'已選',open:'展開',disabled:'停用',error:'錯誤'},axisName:{variant:'Variant 風格',type:'Type 型態',state:'State 狀態'}}},
     checkbox:{label:'Checkbox 核取方塊',order:['state','size'],
       axes:{state:['default','hover','checked','indeterminate','disabled','focus'],size:['s','m','l']},
       zh:{state:{default:'預設',hover:'滑過',checked:'已選',indeterminate:'半選',disabled:'停用',focus:'聚焦'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
@@ -743,9 +788,9 @@
     const axes=DIAL_SPECS.input.axes, zh=DIAL_SPECS.input.zh, active=CHOICE.input.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML=''; const vs=axes.variant.filter(v=>active.variant.has(v)),ss=axes.state.filter(s=>active.state.has(s));
-      vs.forEach(v=>p.appendChild(matrixPanel({badge:'variant',name:v==='outline'?'外框 outline':'實填 filled',rows:ss,cols:['f'],rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:()=>labHTML('欄位','field'),cell:s=>inputEl(v,s),mincol:250}))); }
+      p.appendChild(matrixPanel({badge:'field',name:'輸入欄位 field',rows:ss,cols:vs,rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:v=>labHTML(v==='outline'?'外框':'實填',v),cell:(s,v)=>inputEl(v,s),mincol:240})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'State × Variant 矩陣','列＝狀態、欄＝variant。focus 只換邊框色（無外陰影）、error 帶紅框。');p=panelsIn(sec);renderM();
+    const sec=section(body,'State × Variant 矩陣','列＝狀態、欄＝variant（外框／實填左右並排）。focus 只換邊框色（無外陰影）、error 帶紅框。');p=panelsIn(sec);renderM();
     const sb=section(body,'Content 內容軸（boolean）','內容差異用 boolean 開關、不進 variant 矩陣。');
     const rd=ce('div','row-demo');sb.appendChild(rd);
     const demos=[
@@ -785,7 +830,8 @@
     });
 
     /* ===== input 家族其餘子元件 ===== */
-    famBlock(body,{zh:'Search 搜尋框',en:'search',note:'帶前置放大鏡的輸入，多用於列表過濾；有值時可清除。',
+    famBlock(body,{zh:'Search 搜尋框',en:'search',note:'帶前置放大鏡的輸入，多用於列表過濾；有值時可清除。variant 同 input（外框／實填）。',
+      variants:[['outline','外框'],['filled','實填']],mincol:230,
       states:[['default','預設'],['hover','滑過'],['focus','聚焦'],['filled-value','已填值'],['disabled','停用']],
       el:searchEl,
       live:{initial:{variant:'outline'},segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
@@ -810,11 +856,12 @@
       live:{initial:{variant:'outline'},segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
         render:st=>{const t=document.createElement('textarea');t.className=`tarea v-${st.variant}`;t.placeholder='請輸入…';t.rows=3;t.style.minWidth='320px';return t;}}});
 
-    famBlock(body,{zh:'File 檔案上傳',en:'file-input',note:'選檔按鈕＋檔名；選到檔後可清除。狀態含未選／已選檔／錯誤。',
+    famBlock(body,{zh:'File 檔案上傳',en:'file-input',note:'選檔按鈕＋檔名；選到檔後可清除。<b>外框／實色的邊框與底色對齊 input</b>（外框＝白底實線、實色＝填色）；差別在 content 是按鈕＋檔名。狀態含未選／已選檔／錯誤。',
+      variants:[['outline','外框'],['solid','實色']],mincol:240,
       states:[['default','未選'],['hover','滑過'],['focus','聚焦'],['has-file','已選檔'],['disabled','停用'],['error','錯誤']],
       el:fileEl,
-      live:{initial:{disabled:false},bools:[{key:'disabled',label:'disabled'}],
-        render:st=>{const f=ce('div',`filefield${st.disabled?' st-disabled':''}`);const btn=ce('span','filebtn');btn.innerHTML=ICON_UPLOAD+'選擇檔案';
+      live:{initial:{variant:'outline',disabled:false},segs:[{key:'variant',label:'Variant',options:['outline','solid']}],bools:[{key:'disabled',label:'disabled'}],
+        render:st=>{const f=ce('div',`filefield v-${st.variant}${st.disabled?' st-disabled':''}`);const btn=ce('span','filebtn');btn.innerHTML=ICON_UPLOAD+'選擇檔案';
           const name=ce('span','fname');name.textContent='未選擇檔案';
           const clr=ce('span','fieldclear');clr.innerHTML=ICON_XCIRCLE;clr.style.display='none'; // 選檔後才出現的刪除鍵
           let picked=false;
@@ -825,17 +872,22 @@
 
   /* ---- 家族子區塊小標 ---- */
   function subhead(host,zh,en){const d=ce('div','famhead');d.innerHTML=`<span class="fz">${zh}</span><span class="fe">${en}</span>`;host.appendChild(d);}
-  /* ---- 家族子元件區塊：小標 + 說明 + 狀態列 + Live ---- */
+  /* ---- 家族子元件區塊：小標 + 說明 +（狀態列 或 state×variant 矩陣）+ Live ---- */
   function famBlock(host,cfg){
     subhead(host,cfg.zh,cfg.en);
     if(cfg.note){const p=ce('p');p.style.cssText='color:var(--muted);font-size:13px;margin:0 0 16px;';p.innerHTML=cfg.note;host.appendChild(p);}
-    if(cfg.states){const rd=ce('div','row-demo');rd.style.marginBottom='16px';
+    if(cfg.variants){ // state × variant 矩陣：variant 左右並排（cfg.el(variant,state)）
+      const panels=ce('div','panels');
+      panels.appendChild(matrixPanel({badge:'variant',name:cfg.matrixName||cfg.zh,rows:cfg.states,cols:cfg.variants,
+        rowLab:s=>labHTML(s[1],s[0]),colLab:v=>labHTML(v[1],v[0]),cell:(s,v)=>cfg.el(v[0],s[0]),mincol:cfg.mincol||220}));
+      host.appendChild(panels);
+    } else if(cfg.states){const rd=ce('div','row-demo');rd.style.marginBottom='16px';
       cfg.states.forEach(([st,zh])=>{const it=ce('div','demo-item');it.appendChild(cfg.el(st));const c=ce('div','cap');c.innerHTML=`<b>${zh}·${st}</b>`;it.appendChild(c);rd.appendChild(it);});
       host.appendChild(rd);}
     if(cfg.live)mountLive(host,cfg.live);
   }
   /* ---- input 家族子元件的靜態 element ---- */
-  function searchEl(state){const filled=['focus','filled-value'].includes(state);const f=ce('div',`field st-${state}`);
+  function searchEl(variant,state){const filled=['focus','filled-value'].includes(state);const f=ce('div',`field v-${variant} st-${state}`);
     f.insertAdjacentHTML('beforeend',ICON_SEARCH);
     f.insertAdjacentHTML('beforeend',filled?`<span class="val">搜尋關鍵字</span>`:`<span class="ph">搜尋…</span>`);
     if(state==='filled-value')f.insertAdjacentHTML('beforeend',`<span class="fieldclear">${ICON_XCIRCLE}</span>`);
@@ -847,7 +899,7 @@
     return f;}
   function tareaEl(state){const filled=['focus','filled-value','error'].includes(state);const t=ce('div',`tarea st-${state}`);
     t.innerHTML=filled?`<span class="val">使用者輸入的多行內容……</span>`:`<span class="ph">請輸入…</span>`;return t;}
-  function fileEl(state){const hasFile=state==='has-file';const f=ce('div',`filefield st-${state}${hasFile?' has-file':''}`);
+  function fileEl(variant,state){const hasFile=state==='has-file';const f=ce('div',`filefield v-${variant} st-${state}${hasFile?' has-file':''}`);
     f.innerHTML=`<span class="filebtn">${ICON_UPLOAD}選擇檔案</span><span class="fname">${hasFile?'report-2026.pdf':'未選擇檔案'}</span>`+(hasFile?`<span class="fieldclear">${ICON_XCIRCLE}</span>`:'');
     return f;}
 
@@ -917,17 +969,13 @@
     radioCore(body);
   }
 
-  /* ---- SELECTOR 家族（checkbox + radio + multi-select）---- */
+  /* ---- SELECTOR 家族（checkbox + radio）---- */
   function buildSelector(view){
     const body=viewScaffold(view,{eyebrow:'L3 Family · Selector',title:'Selector 選擇控制',
-      lede:'把 <b>checkbox／radio／multi-select</b> 收成一包「選擇控制」家族——共用 <code>state × size</code> 兩軸與勾選語意。以下逐個攤開各子元件的複雜度。',
-      specRows:[['family','checkbox · radio · multi-select'],['shared axes','<code>state × size</code>'],['token-policy','<code>semantic.*.input.* / action.*</code>'],['a11y','群組 role + aria-checked']]});
+      lede:'把 <b>checkbox／radio</b> 收成一包「選擇控制」家族——共用 <code>state × size</code> 兩軸與勾選語意。以下逐個攤開各子元件的複雜度。<br><span style="color:var(--faint)">註：multi-select 已改併入 Dropdown（作為多選 type），不再放在此家族。</span>',
+      specRows:[['family','checkbox · radio'],['shared axes','<code>state × size</code>'],['token-policy','<code>semantic.*.input.* / action.*</code>'],['a11y','群組 role + aria-checked']]});
     subhead(body,'Checkbox 核取方塊','multi-select');checkboxCore(body);
     subhead(body,'Radio 單選鈕','single-select');radioCore(body);
-    subhead(body,'Multi-select 多選下拉','combobox');
-    const ph=ce('div','placeholder');ph.style.marginTop='4px';
-    ph.innerHTML='<div class="em">🧩</div><h2>Multi-select</h2><p>多選下拉（帶搜尋、可移除 chip）尚未建。等 checkbox／radio 的複雜度定案後，用同一套模式補上。</p><div class="axhint">預定軸：state × size ＋ 內容軸（chip / 搜尋 / 全選）</div>';
-    body.appendChild(ph);
   }
 
   /* ---- TAG ---- */
@@ -986,8 +1034,82 @@
     });
   }
 
-  /* 家族 id → builder（button 為特例走 buttonView）。form/tag/tab 目前先接代表子元件，家族其餘之後補。 */
-  const BUILD={input:buildInput,selector:buildSelector,tag:buildTag,tab:buildTab};
+  /* ---- DROPDOWN 下拉 ---- */
+  function ddEl(variant,state,multi){const f=ce('div',`field dd v-${variant}${multi?' multi':''} st-${state}`);
+    const b=ce('span','dd-body');
+    if(state==='selected'){
+      if(multi)['台北市','台中市'].forEach(o=>{const chip=ce('span','ddchip');chip.innerHTML=`<span>${o}</span><span class="x">${ICON_CLOSE}</span>`;b.appendChild(chip);});
+      else{const val=ce('span','val');val.textContent='台北市';b.appendChild(val);}
+    } else {const ph=ce('span','ph');ph.textContent='請選擇…';b.appendChild(ph);}
+    const c=ce('span',`ddcaret${state==='open'?' up':''}`);c.innerHTML=ICON_CARET;
+    f.append(b,c);return f;}
+  /* 可互動下拉：opts={searchable, multi} —— 單選點了關閉、多選勾選 chip 不關 */
+  function ddField(variant,opts){opts=opts||{};
+    const OPTS=['台北市','台中市','高雄市','花蓮縣'];const selected=new Set();
+    const wrap=ce('div','ddwrap');
+    const trg=ce('div',`field dd v-${variant}${opts.multi?' multi':''}`);
+    const bodyEl=ce('span','dd-body');
+    const caret=ce('span','ddcaret');caret.innerHTML=ICON_CARET;
+    trg.append(bodyEl,caret);
+    const menu=ce('div','ddmenu');menu.style.display='none';
+    let searchInput;
+    if(opts.searchable){searchInput=document.createElement('input');searchInput.className='ddsearch';searchInput.placeholder='搜尋…';
+      searchInput.oninput=()=>{const q=searchInput.value;[...menu.querySelectorAll('.ddopt')].forEach(el=>{el.style.display=el.textContent.includes(q)?'flex':'none';});};
+      menu.appendChild(searchInput);}
+    const optEls={};
+    OPTS.forEach(o=>{const it=ce('div','ddopt');
+      if(opts.multi){const box=ce('span','ddcheck');const lab=document.createElement('span');lab.textContent=o;it.append(box,lab);}
+      else it.textContent=o;
+      it.onclick=()=>{ if(opts.multi){selected.has(o)?selected.delete(o):selected.add(o);syncMenu();renderTrg();}
+        else{selected.clear();selected.add(o);renderTrg();toggle(false);} };
+      optEls[o]=it;menu.appendChild(it);});
+    function renderTrg(){bodyEl.innerHTML='';
+      if(selected.size===0){const p=ce('span','ph');p.textContent='請選擇…';bodyEl.appendChild(p);return;}
+      if(opts.multi){[...selected].forEach(o=>{const chip=ce('span','ddchip');chip.innerHTML=`<span>${o}</span>`;const x=ce('span','x');x.innerHTML=ICON_CLOSE;
+        x.onclick=e=>{e.stopPropagation();selected.delete(o);syncMenu();renderTrg();};chip.appendChild(x);bodyEl.appendChild(chip);});}
+      else{const val=ce('span','val');val.textContent=[...selected][0];bodyEl.appendChild(val);}}
+    function syncMenu(){if(!opts.multi)return;OPTS.forEach(o=>{optEls[o].classList.toggle('on',selected.has(o));optEls[o].querySelector('.ddcheck').innerHTML=selected.has(o)?ICON_CHECK:'';});}
+    let open=false;
+    function toggle(v){open=v;menu.style.display=v?'block':'none';trg.classList.toggle('st-open',v);caret.classList.toggle('up',v);if(v&&searchInput)searchInput.focus();}
+    trg.onclick=()=>toggle(!open);
+    renderTrg();wrap.append(trg,menu);return wrap;}
+  function buildDropdown(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Dropdown',title:'Dropdown 下拉',
+      lede:'扁平列表選單（role=combobox），併入 multi-select。<b>兩個變體軸：<code>type 單選／多選</code>（跟 outline／filled 同層級）× <code>variant outline／filled</code></b>；狀態含 <code>selected</code>（已選：單選顯示值、多選顯示 chips）、<code>open</code>（展開）。label／必填／hint／searchable 走 boolean／feature flag。與 input 對齊：無 size 軸、focus/open 只描邊無外陰影。<br><span style="color:var(--faint)">註：spec 另有 size／success、及多選專屬 select-all／max-selected，此處先略、需要可補。</span>',
+      specRows:[['axes','<code>type × variant × state</code>'],['formula','<code>2 × 2 × 7 = 28</code>'],['token-policy','<code>semantic.*.input.*</code>'],['content / features','label / 必填 / hint / searchable']]});
+    const Z={default:['預設','default'],hover:['滑過','hover'],focus:['聚焦','focus'],selected:['已選','selected'],open:['展開','open'],disabled:['停用','disabled'],error:['錯誤','error']};
+    const axes=DIAL_SPECS.dropdown.axes, zh=DIAL_SPECS.dropdown.zh, active=CHOICE.dropdown.active; // 接中央 store
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const ts=axes.type.filter(t=>active.type.has(t)),vs=axes.variant.filter(v=>active.variant.has(v)),ss=axes.state.filter(s=>active.state.has(s));
+      ts.forEach(t=>p.appendChild(matrixPanel({badge:'type',name:t==='single'?'單選 single':'多選 multi',rows:ss,cols:vs,
+        rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:v=>labHTML(v==='outline'?'外框':'實填',v),cell:(s,v)=>ddEl(v,s,t==='multi'),mincol:230}))); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'State 矩陣（type × variant）','每個 type 一塊、欄＝variant、列＝狀態。selected 那列：單選顯示值、多選顯示 chips；open＝caret 朝上、accent 描邊。實際展開清單見下方 Live。');p=panelsIn(sec);renderM();
+
+    const sb=section(body,'Content 內容軸（boolean）','label／必填／hint 與 input 一致，用 boolean 控制、不進變體矩陣。');
+    const rd=ce('div','row-demo');sb.appendChild(rd);
+    const demos=[
+      ['with-label',()=>{const w=ce('div','fieldwrap');w.innerHTML='<span class="fl">縣市</span>';w.appendChild(ddEl('outline','default'));return w;}],
+      ['label 必填 (required)',()=>{const w=ce('div','fieldwrap');w.innerHTML='<span class="fl">縣市 <span class="req">*</span></span>';w.appendChild(ddEl('outline','default'));return w;}],
+      ['with-hint',()=>{const w=ce('div','fieldwrap');w.innerHTML='<span class="fl">縣市</span>';w.appendChild(ddEl('outline','default'));const h=ce('span','fh');h.textContent='可搜尋縣市';w.appendChild(h);return w;}],
+    ];
+    demos.forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
+
+    const sl=section(body,'實際互動 Live','切 <b>單選／多選</b>、variant、label／hint／searchable，下面下拉可真的點開、選項、關閉。多選勾選不關、選項成 chip。');
+    mountLive(sl,{
+      initial:{variant:'outline',type:'single',label:true,required:false,hint:false,searchable:false},
+      segs:[{key:'variant',label:'Variant',options:['outline','filled']},{key:'type',label:'Type',options:['single','multi'],labels:['單選','多選']}],
+      bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'searchable',label:'searchable'}],
+      render:st=>{const wrap=ce('div','fieldwrap');wrap.style.minWidth='300px';
+        if(st.label){const fl=ce('span','fl');fl.innerHTML='縣市'+(st.required?' <span class="req">*</span>':'');wrap.appendChild(fl);}
+        wrap.appendChild(ddField(st.variant,{searchable:st.searchable,multi:st.type==='multi'}));
+        if(st.hint){const h=ce('span','fh');h.textContent=st.type==='multi'?'可複選多個縣市':'單選一個縣市';wrap.appendChild(h);}
+        return wrap;}});
+  }
+
+  /* 家族 id → builder（button 為特例走 buttonView）。tag/tab 目前先接代表子元件，家族其餘之後補。 */
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -1038,6 +1160,7 @@
     else if(BUILD[id]){BUILD[id](view);}
     else{view.innerHTML=`<div class="placeholder"><div class="em">🧩</div><h2>${item.name}</h2><p>這顆元件還沒定案。先在已完成的元件上把「元件該多複雜」的模式定下來，我再用同一套方式套到這裡。</p><div class="axhint">預定軸：variant × state × size（＋各自的內容軸）</div></div>`;}
     document.querySelectorAll('.nav-item').forEach(el=>el.setAttribute('aria-current',el.dataset.id===id));
+    if(window.innerWidth<=900)document.getElementById('shell').classList.remove('nav-open'); // 窄螢幕選完自動收起
     window.scrollTo(0,0);
   }
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
@@ -1052,7 +1175,10 @@
         const st=STAT[it.st]||'待建';b.innerHTML=`<span>${it.name}</span><span class="tag st-${it.st||'todo'}">${st}</span>`;b.onclick=()=>renderView(it.id);list.appendChild(b);});
       grp.append(head,list);host.appendChild(grp);});}
 
-  /* ===== topbar 行為（側邊欄永遠顯示，無收合）===== */
+  /* ===== topbar 行為 =====（桌機側欄常駐；窄螢幕漢堡控制抽屜）*/
+  const shell=document.getElementById('shell');
+  document.getElementById('hambBtn').onclick=()=>shell.classList.toggle('nav-open');
+  document.getElementById('scrim').onclick=()=>shell.classList.remove('nav-open');
   document.addEventListener('click',e=>{const h=e.target.closest('.dcard-head');if(h)h.closest('.dcard').classList.toggle('collapsed');});
   (function(){const btn=document.getElementById('themeBtn'),lbl=document.getElementById('themeLabel'),knob=document.getElementById('themeKnob');
     const SUN='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/></svg>';
