@@ -514,42 +514,6 @@
   @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 
   /* ===== 回饋+載入批次（alert/tooltip/notification/skeleton/loader）2026-07-14 平行產出 ===== */
-/* ===== Alert 警示 (prefix al-) ===== */
-/* TODO: 待接 semantic.*.feedback token；success/warning 目前用固定 hex（框架尚未提供回饋色 token），error→danger token、info→accent。深淺色各給一組值確保可讀。 */
-.al-i-success{--al-c:#2E9E6B;}
-.al-i-warning{--al-c:#C77E00;}
-.al-i-error{--al-c:var(--i-danger);}
-.al-i-info{--al-c:var(--accent);}
-@media (prefers-color-scheme:dark){.al-i-success{--al-c:#4FC98C;}.al-i-warning{--al-c:#F0B429;}}
-:root[data-theme="dark"] .al-i-success{--al-c:#4FC98C;}
-:root[data-theme="dark"] .al-i-warning{--al-c:#F0B429;}
-:root[data-theme="light"] .al-i-success{--al-c:#2E9E6B;}
-:root[data-theme="light"] .al-i-warning{--al-c:#C77E00;}
-.al{position:relative;box-sizing:border-box;width:100%;display:flex;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 14px 18px;color:var(--ink);font-family:var(--font-sans);font-size:14px;line-height:1.5;overflow:hidden;}
-.al-bar{position:absolute;background:var(--al-c);pointer-events:none;}
-.al-l-banner>.al-bar,.al-l-compact>.al-bar{left:0;top:0;bottom:0;width:3px;}
-.al-l-stacked>.al-bar{left:0;right:0;top:0;height:3px;}
-.al-icon{flex:0 0 auto;width:20px;height:20px;color:var(--al-c);display:inline-flex;align-items:center;justify-content:center;}
-.al-icon svg{width:20px;height:20px;display:block;}
-.al-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
-.al-title{font-weight:600;color:var(--ink);font-size:14px;}
-.al-body{color:var(--muted);font-size:13px;}
-.al-cta{flex:0 0 auto;border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:13px;background:var(--i-primary);color:#fff;padding:6px 12px;border-radius:8px;white-space:nowrap;line-height:1.2;}
-.al-cta:hover{background:var(--i-primary-h);}
-.al-x{flex:0 0 auto;border:0;background:transparent;cursor:pointer;color:var(--faint);width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;padding:0;}
-.al-x svg{width:16px;height:16px;display:block;}
-.al-x:hover{color:var(--ink);background:var(--panel-3);}
-/* stacked 直式：圖示+內容一列、CTA 另起一列、accent line 走頂部 */
-.al-l-stacked{flex-direction:column;align-items:stretch;gap:10px;padding:16px 16px 14px;}
-.al-l-stacked .al-head{display:flex;gap:12px;align-items:flex-start;width:100%;}
-.al-l-stacked .al-cta{align-self:flex-start;}
-/* banner 橫幅：整列水平置中 */
-.al-l-banner{align-items:center;}
-/* compact 精簡：單行、body 與控制項同列、CTA 走文字連結 */
-.al-l-compact{align-items:center;padding:10px 14px 10px 16px;}
-.al-l-compact .al-main{flex-direction:row;align-items:center;gap:6px;}
-.al-l-compact .al-cta{background:transparent;color:var(--i-primary);padding:4px 6px;}
-.al-l-compact .al-cta:hover{background:var(--i-primary-tint);}
 /* ===== Tooltip 提示（前綴 tt-）===== */
 /* solid 提示泡泡：深底白字，用 --ink/--canvas 反相 → 深淺色自動可讀，不需 feedback hex。
    TODO: 待接 semantic.*.tooltip.surface / .text token 後改綁 token */
@@ -619,16 +583,16 @@
 .nt-v-solid .nt-action:hover{background:rgba(255,255,255,.14);}
 .nt-v-outline{background:var(--panel);border:1px solid var(--nt-c);}
 .nt-v-soft{background:var(--nt-soft);border:1px solid var(--nt-soft-edge);}
+/* dark：半透明黑（frosted），白字、icon 保留 intent 語意色 */
+.nt-v-dark{background:rgba(22,24,30,.82);border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.nt-v-dark .nt-title{color:#fff;}
+.nt-v-dark .nt-msg{color:rgba(255,255,255,.72);}
+.nt-v-dark .nt-ico{color:var(--nt-c);}
+.nt-v-dark .nt-close{color:rgba(255,255,255,.72);}
+.nt-v-dark .nt-close:hover{background:rgba(255,255,255,.16);color:#fff;}
+.nt-v-dark .nt-action{color:#fff;border-color:rgba(255,255,255,.34);}
+.nt-v-dark .nt-action:hover{background:rgba(255,255,255,.12);}
 
-/* auto-dismiss 倒數進度條（hover 暫停）*/
-.nt-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(125,125,125,.18);
-  overflow:hidden;border-radius:0 0 var(--radius) var(--radius);}
-.nt-bar>i{display:block;height:100%;background:var(--nt-c);transform-origin:left;
-  animation:nt-count 4s linear forwards;}
-.nt-v-solid .nt-bar{background:rgba(255,255,255,.25);}
-.nt-v-solid .nt-bar>i{background:rgba(255,255,255,.9);}
-.nt-toast:hover .nt-bar>i{animation-play-state:paused;}
-@keyframes nt-count{from{transform:scaleX(1);}to{transform:scaleX(0);}}
 
 /* Position 示意：小螢幕 + mini toast 停靠 */
 .nt-screen{position:relative;width:200px;height:130px;border:1px solid var(--line-strong);
@@ -641,6 +605,16 @@
 .nt-pos-tr{top:10px;right:10px;}
 .nt-pos-br{bottom:10px;right:10px;}
 .nt-pos-bc{bottom:10px;left:50%;transform:translateX(-50%);}
+/* Rect Toast 方形（置中：圓 icon badge 在上、文字在下，對齊 Figma toast/rect_*）*/
+.nt-rect{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  width:124px;height:124px;padding:16px;box-sizing:border-box;text-align:center;background:var(--panel);border-radius:8px;
+  box-shadow:0 8px 16px rgba(0,0,0,.18),0 16px 32px rgba(0,0,0,.06);}
+.nt-rect .nt-rect-badge{width:32px;height:32px;border-radius:50%;background:var(--nt-c);flex:0 0 auto;
+  display:inline-flex;align-items:center;justify-content:center;color:#fff;}
+.nt-rect .nt-rect-badge svg{width:18px;height:18px;display:block;}
+.nt-rect .nt-rect-txt{font-size:14px;line-height:1.5;font-weight:600;letter-spacing:.01em;color:var(--ink);word-break:break-word;}
+.nt-rect-stage{min-height:150px;display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--line-strong);border-radius:12px;background:var(--panel-2);}
 /* ===== Skeleton 骨架（前綴 sk-）===== */
 /* 骨架佔位色走中性 token：--panel-3 疊在 --panel 之上，深淺色自動切換 */
 .sk{position:relative;overflow:hidden;background:var(--panel-3);display:inline-block;vertical-align:middle;
@@ -786,11 +760,10 @@
       {id:'icon',name:'Icon 圖示'},
       {id:'price',name:'Price 價格'},
       {id:'image',name:'Image 圖片'},
-      {id:'alert',name:'Alert 警示',st:'partial'},
-      {id:'notification',name:'Notification 通知',st:'partial'},
-      {id:'tooltip',name:'Tooltip 提示',st:'partial'},
-      {id:'skeleton',name:'Skeleton 骨架',st:'partial'},
-      {id:'loader',name:'Loader 載入器',st:'partial'},
+      {id:'notification',name:'Notification 通知',st:'ready'},
+      {id:'tooltip',name:'Tooltip 提示',st:'ready'},
+      {id:'skeleton',name:'Skeleton 骨架',st:'ready'},
+      {id:'loader',name:'Loader 載入器',st:'ready'},
     ]},
     {group:'Complex 複雜',emoji:'🧩',items:[
       {id:'calendar',name:'Calendar 日曆／時間'},
@@ -857,6 +830,9 @@
     tab:{label:'Tab 分頁',order:['variant','state','size'],
       axes:{variant:['line','contained','pill'],state:['default','hover','active','disabled'],size:['m','s']},
       zh:{variant:{line:'底線',contained:'容器',pill:'藥丸'},state:{default:'預設',hover:'滑過',active:'選中',disabled:'停用'},size:{m:'標準 m',s:'小 s'},axisName:{variant:'Variant 風格',state:'State 狀態',size:'Size 尺寸'}}},
+    notification:{label:'Notification 通知',order:['variant','intent'],
+      axes:{variant:['solid','outline','soft','dark'],intent:['success','warning','error','info']},
+      zh:{axisName:{variant:'Variant 視覺風格',intent:'Intent 意圖'},variant:{solid:'實心',outline:'外框',soft:'柔色',dark:'半透明黑'},intent:{success:'成功',warning:'警告',error:'錯誤',info:'資訊'}}},
     tooltip:{label:'Tooltip 提示',order:['placement','size'],
       axes:{placement:['top','bottom','left','right'],size:['s','m']},
       zh:{axisName:{placement:'Placement 方向',size:'Size 尺寸'},placement:{top:'上方',bottom:'下方',left:'左側',right:'右側'},size:{s:'小 s',m:'標準 m'}}},
@@ -1468,93 +1444,6 @@
 
   /* 家族 id → builder（button 為特例走 buttonView）。tag/tab 目前先接代表子元件，家族其餘之後補。 */
   /* ===== 回饋+載入批次 buildXxx（平行 workflow 產出、序列整合）===== */
-  function buildAlert(view){
-  const body=viewScaffold(view,{eyebrow:'L3 Component · Alert',title:'Alert 警示 / Callout',
-    lede:'單一 <b>inline-card</b> variant：白底卡片 + intent 圖示 + 左／頂 accent line + brand CTA，<b>不整片染底</b>，語意只靠圖示與細線傳達。intent 四色（成功／警告／錯誤／資訊）× layout 三式（<b>banner 橫幅／stacked 直式／compact 精簡</b>）。dismissible／with-icon／with-title／with-action 為 feature flag。',
-    specRows:[['axes','<code>variant × intent × layout</code>（variant 單一 inline-card）'],['formula','<code>1 × 4 × 3 = 12</code>'],['token-policy','<code>semantic.*.feedback.*</code>（TODO 待接）'],['features','dismissible / with-icon / with-title / with-action']]});
-  /* 本頁自包含 icon（Phosphor 風 fill、viewBox 0 0 256 256）*/
-  const AL_ICON={
-    success:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg>',
-    warning:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z"/></svg>',
-    error:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.13,104.13,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
-    info:'<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-4,48a12,12,0,1,1-12,12A12,12,0,0,1,124,72Zm12,112a16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40a8,8,0,0,1,0,16Z"/></svg>'
-  };
-  const AL_CLOSE='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
-  const TXT={
-    success:{t:'儲存成功',b:'你的設定變更已成功儲存。'},
-    warning:{t:'即將到期',b:'訂閱將於 3 天後到期，請及時續約。'},
-    error:{t:'連線失敗',b:'無法連線至伺服器，請稍後再試一次。'},
-    info:{t:'系統公告',b:'系統將於今晚 02:00 進行例行維護。'}
-  };
-  /* 單一 inline-card 組裝器：依 layout 分支排版，feature flag 控制零件 */
-  function alertEl(o){o=o||{};
-    const intent=o.intent||'info',layout=o.layout||'banner';
-    const el=ce('div',`al al-i-${intent} al-l-${layout}`);
-    const bar=ce('div','al-bar');el.appendChild(bar); // 左／頂 accent line（顏色綁 --al-c）
-    const mkIcon=()=>{const ic=ce('span','al-icon');ic.innerHTML=AL_ICON[intent];return ic;};
-    const mkMain=()=>{const m=ce('div','al-main');
-      if(o.title&&layout!=='compact'){const t=ce('div','al-title');t.textContent=TXT[intent].t;m.appendChild(t);}
-      const b=ce('div','al-body');b.textContent=TXT[intent].b;m.appendChild(b);return m;};
-    const mkCta=()=>{const a=ce('button','al-cta');a.type='button';a.textContent=layout==='compact'?'重試':'查看詳情';return a;};
-    const mkX=()=>{const x=ce('button','al-x');x.type='button';x.innerHTML=AL_CLOSE;
-      if(o.live)x.onclick=()=>{el.style.transition='opacity .18s';el.style.opacity='0';setTimeout(()=>{el.style.opacity='1';},450);}; // 點掉後自動復原
-      return x;};
-    if(layout==='stacked'){ // 直式：圖示＋內容一列，CTA 另起一列
-      const head=ce('div','al-head');
-      if(o.icon)head.appendChild(mkIcon());
-      head.appendChild(mkMain());
-      if(o.dismiss)head.appendChild(mkX());
-      el.appendChild(head);
-      if(o.action)el.appendChild(mkCta());
-    } else { // banner／compact：單列水平
-      if(o.icon)el.appendChild(mkIcon());
-      el.appendChild(mkMain());
-      if(o.action)el.appendChild(mkCta());
-      if(o.dismiss)el.appendChild(mkX());
-    }
-    return el;
-  }
-  /* 複雜度轉盤軸（自包含，不接中央 store）*/
-  const axes={intent:['success','warning','error','info'],layout:['banner','stacked','compact']};
-  const zh={axisName:{intent:'Intent 意圖',layout:'Layout 版式'},
-    intent:{success:'成功',warning:'警告',error:'錯誤',info:'資訊'},
-    layout:{banner:'橫幅',stacked:'直式',compact:'精簡'}};
-  const active={intent:new Set(axes.intent),layout:new Set(axes.layout)};
-  const IZ={success:'成功',warning:'警告',error:'錯誤',info:'資訊'};
-  const LZ={banner:'橫幅',stacked:'直式',compact:'精簡'};
-  let p;
-  function renderM(){ if(!p)return; p.innerHTML='';
-    const is=axes.intent.filter(i=>active.intent.has(i)),ls=axes.layout.filter(l=>active.layout.has(l));
-    p.appendChild(matrixPanel({badge:'inline-card',name:'白底卡片 inline-card',desc:'白底 + intent 圖示 + accent line + brand CTA',
-      rows:is,cols:ls,
-      rowLab:i=>labHTML(IZ[i],i),colLab:l=>labHTML(LZ[l],l),
-      cell:(i,l)=>alertEl({intent:i,layout:l,icon:true,title:true,action:true,dismiss:true,live:true}),mincol:300})); }
-  mountDial(body,{axes,zh,active,onRender:renderM});
-  const sec=section(body,'Intent × Layout 矩陣','列＝intent 四色（只在圖示＋accent line 體現、不整片染底）、欄＝三種版式。每格含圖示＋標題＋說明＋CTA＋關閉 ×，可點 × 淡出再自動復原。');
-  p=panelsIn(sec);renderM();
-  /* feature flags（靜態示意列）*/
-  const sf=section(body,'Feature Flags 內容零件','以 banner 為底逐一示意各 flag 開關差異：圖示／兩段式標題／內嵌按鈕／可關閉。');
-  const rd=ce('div','row-demo');rd.style.marginBottom='16px';
-  const demos=[
-    ['with-icon 有圖示',alertEl({intent:'info',layout:'banner',icon:true,title:false,action:false,dismiss:false})],
-    ['no-icon 純文字',alertEl({intent:'info',layout:'banner',icon:false,title:false,action:false,dismiss:false})],
-    ['with-title 兩段式',alertEl({intent:'success',layout:'banner',icon:true,title:true,action:false,dismiss:false})],
-    ['with-action 內嵌按鈕',alertEl({intent:'warning',layout:'banner',icon:true,title:true,action:true,dismiss:false})],
-    ['dismissible 可關閉 ×',alertEl({intent:'error',layout:'banner',icon:true,title:true,action:false,dismiss:true,live:true})]
-  ];
-  demos.forEach(([cap,node])=>{const it=ce('div','demo-item');it.style.minWidth='340px';it.appendChild(node);const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
-  sf.appendChild(rd);
-  /* 實際互動 Live */
-  const sl=section(body,'實際互動 Live','切 intent／layout、勾內容零件，下面即時預覽；dismissible 的 × 可點掉再自動復原。');
-  mountLive(sl,{initial:{intent:'success',layout:'banner',icon:true,title:true,action:true,dismiss:true},
-    segs:[{key:'intent',label:'Intent',options:['success','warning','error','info'],labels:['成功','警告','錯誤','資訊']},
-          {key:'layout',label:'Layout',options:['banner','stacked','compact'],labels:['橫幅','直式','精簡']}],
-    bools:[{key:'icon',label:'with-icon'},{key:'title',label:'with-title'},{key:'action',label:'with-action'},{key:'dismiss',label:'dismissible ×'}],
-    boolLabel:'Content 零件',
-    render:st=>{const w=ce('div');w.style.minWidth='340px';w.appendChild(alertEl({intent:st.intent,layout:st.layout,icon:st.icon,title:st.title,action:st.action,dismiss:st.dismiss,live:true}));return w;}
-  });
-}
-
   /* ---- TOOLTIP 提示（builders 提升頂層，頁面與 summary Live 共用）---- */
   const TT_INFO='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg>';
   function ttEl(placement,size,arrow){
@@ -1606,90 +1495,105 @@
   }
 
 
-  function buildNotification(view){
-  /* ---- 本頁自包含 feedback icon 池（Phosphor 0 0 256 256）---- */
+  /* ---- NOTIFICATION 通知（builders 提升頂層，頁面與 summary Live 共用）---- */
   const NT_IC_SUCCESS='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
   const NT_IC_WARNING='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM120,104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm8,88a12,12,0,1,1,12-12A12,12,0,0,1,128,192Z"/></svg>';
   const NT_IC_ERROR='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.13,104.13,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
-  const NT_IC_INFO='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg>';
+  const NT_IC_INFO='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-4,48a12,12,0,1,1-12,12A12,12,0,0,1,124,72Zm12,112a16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40a8,8,0,0,1,0,16Z"/></svg>';
   const NT_ICON={success:NT_IC_SUCCESS,warning:NT_IC_WARNING,error:NT_IC_ERROR,info:NT_IC_INFO};
   const NT_TITLE={success:'儲存成功',warning:'即將到期',error:'上傳失敗',info:'有新版本'};
   const NT_MSG={success:'你的變更已同步到雲端。',warning:'方案將於 3 天後到期，記得續約。',error:'網路連線中斷，請稍後再試。',info:'重新整理即可套用最新功能。'};
-
-  const body=viewScaffold(view,{eyebrow:'L3 Component · Notification',title:'Notification 通知 / Toast',
-    lede:'非阻斷式的即時回饋（俗稱 toast／snackbar）。<b>variant × intent（3 × 4 = 12）</b>：solid／outline／soft 三種視覺風格 × success／warning／error／info 四種意圖。close ×、with-icon、with-action、auto-dismiss（滑過暫停）為 feature flag；position（右上／右下／底部置中）不改元件本體、只是掛載位置。',
-    specRows:[['axes','<code>variant × intent</code>'],['formula','<code>3 × 4 = 12</code>'],['token-policy','<code>semantic.*.feedback.*</code>（待接）'],['features','close ／ with-icon ／ with-action ／ auto-dismiss'],['position','toast-tr ／ toast-br ／ snackbar-bc']]});
-
-  const axes={variant:['solid','outline','soft'],intent:['success','warning','error','info']};
-  const zh={axisName:{variant:'Variant 視覺風格',intent:'Intent 意圖'},
-    variant:{solid:'實心',outline:'外框',soft:'柔色'},
-    intent:{success:'成功',warning:'警告',error:'錯誤',info:'資訊'}};
-  const active={variant:new Set(axes.variant),intent:new Set(axes.intent)};
-  const VN={solid:'實心 solid',outline:'外框 outline',soft:'柔色 soft'};
-  const IN={success:'成功',warning:'警告',error:'錯誤',info:'資訊'};
-
-  /* ---- × 消失後自動復原（示意用，可反覆看）---- */
-  function dismiss(t){t.style.transition='opacity .3s ease, transform .3s ease';t.style.opacity='0';t.style.transform='translateX(14px)';
-    setTimeout(()=>{t.style.opacity='1';t.style.transform='none';const i=t.querySelector('.nt-bar>i');if(i)restartBar(i);},900);}
-  function restartBar(i){i.style.animation='none';void i.offsetWidth;i.style.animation='';}
-
-  /* ---- toast 原子：opts={icon,action,close,timer} ---- */
+  /* 消失後自動復原（示意用，可反覆看）；after 用於 auto-dismiss 消失後重新計時 */
+  function ntDismiss(t,after){t.style.transition='opacity .3s ease, transform .3s ease';t.style.opacity='0';t.style.transform='translateX(14px)';
+    setTimeout(()=>{t.style.opacity='1';t.style.transform='none';if(after&&t.isConnected)after();},900);}
+  /* toast 原子：opts={icon,desc,action,close,timer} */
   function ntEl(variant,intent,opts){opts=opts||{};
     const t=ce('div',`nt-toast nt-v-${variant} nt-i-${intent}`);
     if(opts.icon!==false){const ic=ce('span','nt-ico');ic.innerHTML=NT_ICON[intent];t.appendChild(ic);}
     const bd=ce('div','nt-body');
     const ti=ce('div','nt-title');ti.textContent=NT_TITLE[intent];
-    const ms=ce('div','nt-msg');ms.textContent=NT_MSG[intent];
-    bd.append(ti,ms);
+    bd.appendChild(ti);
+    if(opts.desc!==false){const ms=ce('div','nt-msg');ms.textContent=NT_MSG[intent];bd.appendChild(ms);} // 說明文字可用 boolean 關閉，只留標題
     if(opts.action){const a=ce('button','nt-action');a.textContent='立即查看';bd.appendChild(a);}
     t.appendChild(bd);
     if(opts.close){const x=ce('button','nt-close');x.innerHTML=ICON_CLOSE;x.setAttribute('aria-label','關閉');
-      x.onclick=e=>{e.stopPropagation();dismiss(t);};t.appendChild(x);}
-    if(opts.timer){const bar=ce('div','nt-bar');const i=document.createElement('i');bar.appendChild(i);
-      i.addEventListener('animationend',()=>dismiss(t));t.appendChild(bar);}
+      x.onclick=e=>{e.stopPropagation();ntDismiss(t);};t.appendChild(x);}
+    if(opts.timer){const arm=()=>{t._ntTimer=setTimeout(()=>{if(t.isConnected)ntDismiss(t,arm);},3000);};arm();} // auto-dismiss：3 秒後直接消失（無進度條）
     return t;}
-
-  let p;
-  function renderM(){ if(!p)return; p.innerHTML='';
-    const vs=axes.variant.filter(v=>active.variant.has(v)),is=axes.intent.filter(i=>active.intent.has(i));
-    p.appendChild(matrixPanel({badge:'variant × intent',name:'Toast 通知卡',desc:'含 icon＋標題＋訊息＋×',rows:vs,cols:is,
-      rowLab:v=>labHTML(VN[v].split(' ')[0],v),colLab:i=>labHTML(IN[i],i),
-      cell:(v,i)=>ntEl(v,i,{icon:true,close:true}),mincol:240})); }
-  mountDial(body,{axes,zh,active,onRender:renderM});
-  const sec=section(body,'Variant × Intent 矩陣','列＝視覺風格（實心／外框／柔色）、欄＝意圖 4 色。每張卡含 icon＋標題＋訊息＋可點的 ×。');
-  p=panelsIn(sec);renderM();
-
-  /* ===== Position 掛載位置 ===== */
-  const ps=section(body,'Position 掛載位置','同一顆 toast、三種常見停靠位置。position 不改元件本體，只決定它出現在畫面哪個角。');
-  const posDemos=[
-    ['toast-top-right','右上角 · 系統級提示','nt-pos-tr','success'],
-    ['toast-bottom-right','右下角 · 常見預設','nt-pos-br','info'],
-    ['snackbar-bottom-center','底部置中 · Snackbar','nt-pos-bc','warning'],
-  ];
-  const prd=ce('div','row-demo');prd.style.marginBottom='16px';
-  posDemos.forEach(([en,zhc,pcls,intent])=>{
-    const it=ce('div','demo-item');
-    const scr=ce('div','nt-screen');
-    const mini=ce('div',`nt-mini ${pcls} nt-i-${intent}`);
-    mini.innerHTML='<span class="nt-dot"></span><span class="nt-mline"></span>';
-    scr.appendChild(mini);it.appendChild(scr);
-    const c=ce('div','cap');c.innerHTML=`<b>${zhc}</b><br><code>${en}</code>`;it.appendChild(c);
-    prd.appendChild(it);});
-  ps.appendChild(prd);
-
-  /* ===== 實際互動 Live ===== */
-  const sl=section(body,'實際互動 Live','切 variant／intent、勾 feature，下面即時預覽。close × 可點掉再自動復原；auto-dismiss 進度條倒數、滑鼠移上去暫停。');
-  mountLive(sl,{
-    initial:{variant:'soft',intent:'info',icon:true,action:false,close:true,timer:false},
+  /* rect toast 原子：置中方形（圓 icon badge 在上、文字在下）*/
+  function ntRectEl(intent){
+    const el=ce('div',`nt-rect nt-i-${intent}`);
+    const badge=ce('div','nt-rect-badge');badge.innerHTML=NT_ICON[intent];
+    const tx=ce('div','nt-rect-txt');tx.textContent=NT_TITLE[intent];
+    el.append(badge,tx);return el;}
+  LIVE.notification=(host)=>mountLive(host,{
+    initial:{variant:'soft',intent:'info',icon:true,desc:true,action:false,close:true,timer:false},
     segs:[
-      {key:'variant',label:'Variant',options:['solid','outline','soft'],labels:['實心','外框','柔色']},
+      {key:'variant',label:'Variant',options:['solid','outline','soft','dark'],labels:['實心','外框','柔色','半透明黑']},
       {key:'intent',label:'Intent',options:['success','warning','error','info'],labels:['成功','警告','錯誤','資訊']}],
-    bools:[{key:'icon',label:'with-icon'},{key:'action',label:'with-action'},{key:'close',label:'close ×'},{key:'timer',label:'auto-dismiss'}],
+    bools:[{key:'icon',label:'with-icon'},{key:'desc',label:'說明文字'},{key:'action',label:'with-action'},{key:'close',label:'close ×'},{key:'timer',label:'auto-dismiss'}],
     boolLabel:'Feature',
-    render:st=>ntEl(st.variant,st.intent,{icon:st.icon,action:st.action,close:st.close,timer:st.timer}),
-    note:'↑ auto-dismiss 開啟時底部進度條會倒數，倒完自動淡出再復原（示意循環）；滑鼠移到卡片上暫停倒數。'
+    render:st=>ntEl(st.variant,st.intent,{icon:st.icon,desc:st.desc,action:st.action,close:st.close,timer:st.timer}),
+    note:'↑ auto-dismiss 開啟後 3 秒自動淡出再復原（示意循環）；無下方進度條。'
   });
-}
+  function buildNotification(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Notification',title:'Notification 通知 / Toast',
+      lede:'非阻斷式的即時回饋（俗稱 toast／snackbar）。<b>variant × intent（4 × 4 = 16）</b>：solid／outline／soft／dark（半透明黑）四種視覺風格 × success／warning／error／info 四種意圖。with-icon、說明文字、with-action、close ×、auto-dismiss 為 feature flag；position（右上／右下／底部置中）不改元件本體、只是掛載位置。另附 Rect Toast 方形格式。',
+      specRows:[['axes','<code>variant × intent</code>'],['formula','<code>4 × 4 = 16</code>'],['token-policy','<code>semantic.*.feedback.*</code>（待接）'],['features','with-icon ／ 說明文字 ／ with-action ／ close ／ auto-dismiss'],['position','toast-tr ／ toast-br ／ snackbar-bc']]});
+    const axes=DIAL_SPECS.notification.axes, zh=DIAL_SPECS.notification.zh, active=CHOICE.notification.active; // 接中央 store
+    const VN={solid:'實心 solid',outline:'外框 outline',soft:'柔色 soft',dark:'半透明黑 dark'};
+    const IN={success:'成功',warning:'警告',error:'錯誤',info:'資訊'};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v)),is=axes.intent.filter(i=>active.intent.has(i));
+      p.appendChild(matrixPanel({badge:'variant × intent',name:'Toast 通知卡',desc:'含 icon＋標題＋訊息＋×',rows:vs,cols:is,
+        rowLab:v=>labHTML(VN[v].split(' ')[0],v),colLab:i=>labHTML(IN[i],i),
+        cell:(v,i)=>ntEl(v,i,{icon:true,close:true}),mincol:240})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Intent 矩陣','列＝視覺風格（實心／外框／柔色／半透明黑）、欄＝意圖 4 色。每張卡含 icon＋標題＋訊息＋可點的 ×。');
+    p=panelsIn(sec);renderM();
+    /* ===== Position 掛載位置 ===== */
+    const ps=section(body,'Position 掛載位置','同一顆 toast、三種常見停靠位置。position 不改元件本體，只決定它出現在畫面哪個角。');
+    const posDemos=[
+      ['toast-top-right','右上角 · 系統級提示','nt-pos-tr','success'],
+      ['toast-bottom-right','右下角 · 常見預設','nt-pos-br','info'],
+      ['snackbar-bottom-center','底部置中 · Snackbar','nt-pos-bc','warning'],
+    ];
+    const prd=ce('div','row-demo');prd.style.marginBottom='16px';
+    posDemos.forEach(([en,zhc,pcls,intent])=>{
+      const it=ce('div','demo-item');
+      const scr=ce('div','nt-screen');
+      const mini=ce('div',`nt-mini ${pcls} nt-i-${intent}`);
+      mini.innerHTML='<span class="nt-dot"></span><span class="nt-mline"></span>';
+      scr.appendChild(mini);it.appendChild(scr);
+      const c=ce('div','cap');c.innerHTML=`<b>${zhc}</b><br><code>${en}</code>`;it.appendChild(c);
+      prd.appendChild(it);});
+    ps.appendChild(prd);
+    /* ===== Rect Toast 方形（獨立格式）===== */
+    const rs=section(body,'Rect Toast 方形（獨立格式）','有別於上方橫列 banner，rect 是固定 124×124 方形：圓 icon 在上、文字在下（對齊 Figma toast/rect_*）。intent 配色沿用本頁 DS 色（非 Figma 橘）。勾「自動輪播」後每 3 秒切換一種 intent。');
+    const rrow=ce('div','row-demo');rrow.style.marginBottom='16px';
+    [['success','成功'],['warning','警告'],['error','錯誤'],['info','資訊']].forEach(([it,zhi])=>{
+      const item=ce('div','demo-item');item.appendChild(ntRectEl(it));
+      const c=ce('div','cap');c.innerHTML=`<b>${zhi}·${it}</b>`;item.appendChild(c);rrow.appendChild(item);});
+    rs.appendChild(rrow);
+    const ctl=ce('div','checks');ctl.style.margin='4px 0 14px';
+    const lab=ce('label','chk');const cb=document.createElement('input');cb.type='checkbox';
+    lab.append(cb,document.createTextNode('自動輪播（每 3 秒切換一種 intent）'));ctl.appendChild(lab);rs.appendChild(ctl);
+    const stage=ce('div','nt-rect-stage');rs.appendChild(stage);
+    const ORDER=['success','warning','error','info'];let carIdx=0,carTimer=null;
+    function showRect(intent){ stage.innerHTML='';
+      const t=ntRectEl(intent);t.style.transition='opacity .28s ease, transform .28s ease';
+      t.style.opacity='0';t.style.transform='scale(.92)';stage.appendChild(t);
+      requestAnimationFrame(()=>{t.style.opacity='1';t.style.transform='none';}); }
+    function tick(){ if(!stage.isConnected){clearInterval(carTimer);carTimer=null;return;}
+      showRect(ORDER[carIdx%ORDER.length]);carIdx++; }
+    cb.onchange=()=>{ if(cb.checked){carIdx=0;tick();carTimer=setInterval(tick,3000);}
+      else{clearInterval(carTimer);carTimer=null;stage.innerHTML='';} };
+    /* ===== 實際互動 Live ===== */
+    const sl=section(body,'實際互動 Live','切 variant／intent、勾 feature，下面即時預覽。close × 可點掉再自動復原；auto-dismiss 開啟後 3 秒直接消失再復原（示意循環）。');
+    LIVE.notification(sl);
+  }
+
 
   /* ---- SKELETON 骨架 ---- */
 /* 單一骨架 atom：shape=text|rectangle|circle；size=s|m|l；anim=shimmer|pulse|none */
@@ -1862,7 +1766,7 @@ function skelMedia(anim){
   }
 
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,alert:buildAlert,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader};
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -1876,7 +1780,7 @@ function skelMedia(anim){
   const SUMSEL=new Set(Object.keys(DIAL_SPECS)); // 手動選取要產出的元件（預設全選、跨切頁持久）
   const RECOMMEND=['button','input','dropdown','checkbox','radio','tag']; // AI 建議＝已定案的元件
   let aiOn=false,aiSnapshot=null; // AI 建議 toggle 狀態＋開啟前的選擇快照
-  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',tooltip:'tooltip',skeleton:'skeleton',loader:'loader'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
+  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',notification:'notification',tooltip:'tooltip',skeleton:'skeleton',loader:'loader'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){
     const rep=choiceReport();
