@@ -237,6 +237,30 @@
   .famhead .fz{font-size:16px;font-weight:680;color:var(--ink);letter-spacing:-.01em;}
   .famhead .fe{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
 
+  /* ---------- 側邊欄置頂：複雜度確認 ---------- */
+  .nav-pin{margin-bottom:10px;background:var(--i-primary-tint);color:var(--accent);font-weight:600;border:1px solid transparent;}
+  .nav-pin:hover{background:var(--i-primary-tint2);color:var(--accent);}
+  .nav-pin[aria-current="true"]{background:var(--accent);color:#fff;}
+
+  /* ---------- 複雜度確認總覽 ---------- */
+  .sumbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:22px 0 20px;}
+  .sumtotal{font-family:var(--font-mono);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .sumtotal b{color:var(--accent);font-size:18px;} .sumtotal .full{color:var(--faint);}
+  .copybtn{height:38px;padding:0 16px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;
+    font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;transition:.13s;}
+  .copybtn:hover{filter:brightness(1.06);}
+  .sumcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;}
+  .sc-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line);}
+  .sc-name{font-size:15px;font-weight:640;}
+  .sc-count{font-family:var(--font-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;} .sc-count b{color:var(--accent);} .sc-count .full{color:var(--faint);}
+  .sum-axis{display:flex;align-items:baseline;gap:12px;padding:6px 0;}
+  .sum-axis .sa-name{flex:0 0 110px;font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-top:3px;}
+  .sum-axis .sa-chips{flex:1;display:flex;flex-wrap:wrap;gap:6px;}
+  .sum-axis .sa-n{flex:0 0 auto;font-family:var(--font-mono);font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .sum-chip{display:inline-flex;font-family:var(--font-mono);font-size:11.5px;padding:3px 9px;border-radius:999px;border:1px solid var(--line-strong);}
+  .sum-chip.on{background:var(--i-primary-tint);color:var(--accent);border-color:transparent;}
+  .sum-chip.off{color:var(--faint);text-decoration:line-through;opacity:.6;}
+
   /* ===== extra semantic tokens ===== */
   :root{--ok:#2E9E6B;--ok-tint:rgba(46,158,107,.12);--warn:#C08A2E;}
   @media(prefers-color-scheme:dark){:root{--ok:#4FB88A;--ok-tint:rgba(79,184,138,.16);--warn:#D8A54A;}}
@@ -267,6 +291,40 @@
   .fieldwrap .fl{font-size:12.5px;color:var(--muted);font-weight:600;}
   .fieldwrap .fl .req{color:var(--i-danger);margin-left:1px;}
   .fieldwrap .fh{font-size:11.5px;color:var(--faint);} .fieldwrap .fh.err{color:var(--i-danger);}
+
+  /* ===== textarea 多行輸入 ===== */
+  .tarea{display:flex;align-items:flex-start;min-height:80px;padding:10px 12px;border-radius:8px;border:1px solid var(--i-sec-edge);
+    background:var(--panel);color:var(--ink);font-size:14px;min-width:260px;font-family:var(--font-sans);line-height:1.5;transition:border-color .13s,background .13s;}
+  .tarea .ph{color:var(--faint);} .tarea .val{color:var(--ink);}
+  .tarea.v-filled{background:var(--panel-2);border-color:transparent;}
+  .tarea.st-hover{border-color:var(--muted);} .tarea.v-filled.st-hover{background:var(--panel-3);border-color:transparent;}
+  .tarea.st-focus{border-color:var(--accent);}
+  .tarea.st-disabled{opacity:.5;} .tarea.st-error{border-color:var(--i-danger);}
+  textarea.tarea{outline:none;resize:vertical;width:100%;color:var(--ink);}
+  textarea.tarea::placeholder{color:var(--faint);}
+  textarea.tarea:hover:not(:focus){border-color:var(--muted);}
+  textarea.tarea.v-filled:hover:not(:focus){background:var(--panel-3);border-color:transparent;}
+  textarea.tarea:focus{border-color:var(--accent);}
+
+  /* ===== file 檔案上傳 ===== */
+  .filefield{display:inline-flex;align-items:center;gap:10px;padding:0 10px;height:40px;border-radius:8px;
+    border:1px dashed var(--i-sec-edge);background:var(--panel);min-width:260px;font-size:13.5px;color:var(--muted);transition:.13s;}
+  .filefield.has-file{border-style:solid;color:var(--ink);}
+  .filefield.st-hover{border-color:var(--accent);color:var(--ink);}
+  .filefield.st-focus{border-color:var(--accent);}
+  .filefield.st-disabled{opacity:.5;}
+  .filefield.st-error{border-color:var(--i-danger);}
+  .filefield .fname{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .filefield svg{width:16px;height:16px;flex:0 0 auto;color:var(--muted);}
+  .filebtn{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:6px;
+    background:var(--i-sec-fill);color:var(--i-sec-on);font-size:12.5px;font-weight:600;border:none;cursor:pointer;flex:0 0 auto;}
+  .filebtn svg{color:var(--i-sec-on);}
+  .filefield .fieldclear{display:inline-flex;cursor:pointer;flex:0 0 auto;}
+  .filefield .fieldclear svg{color:var(--faint);}
+  .filefield .fieldclear:hover svg{color:var(--muted);}
+  /* file live 真實 hover（只作用在 Live 預覽，不影響狀態列）*/
+  .live-stage .filefield:not(.st-disabled):hover{border-color:var(--accent);color:var(--ink);}
+  .live-stage .filefield:not(.st-disabled) .filebtn:hover{background:var(--i-sec-fill-h);}
 
   /* ===== checkbox / radio ===== */
   .cbx{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:6px;display:inline-flex;
@@ -380,7 +438,7 @@
   const NAV=[
     {group:'Basic 基本',items:[
       {id:'button',name:'Button 按鈕',st:'ready'},
-      {id:'input',name:'Input 輸入框',st:'partial'},
+      {id:'input',name:'Input 輸入框',st:'ready'},
       {id:'dropdown',name:'Dropdown 下拉'},
       {id:'selector',name:'Selector 選擇',st:'partial'},
       {id:'tag',name:'Tag 標籤',st:'partial'},
@@ -458,6 +516,29 @@
 
   const active={}; for(const k in AXES) active[k]=new Set(AXES[k]);
   const live={variant:'solid',intent:'primary',size:'m',lead:false,trail:false,disabled:false};
+
+  /* ===== 中央複雜度 store：各元件轉盤的選擇集中在此、跨切頁持久，供「複雜度確認」總覽彙整 ===== */
+  const DIAL_SPECS={
+    button:{label:'Button 按鈕',order:['variant','intent','state','size'],axes:AXES,zh:ZH},
+    input:{label:'Input 輸入框',order:['variant','state'],
+      axes:{variant:['outline','filled'],state:['default','hover','focus','filled-value','disabled','error']},
+      zh:{variant:{outline:'外框',filled:'實填'},state:{default:'預設',hover:'滑過',focus:'聚焦','filled-value':'已填值',disabled:'停用',error:'錯誤'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
+    checkbox:{label:'Checkbox 核取方塊',order:['state','size'],
+      axes:{state:['default','hover','checked','indeterminate','disabled','focus'],size:['s','m','l']},
+      zh:{state:{default:'預設',hover:'滑過',checked:'已選',indeterminate:'半選',disabled:'停用',focus:'聚焦'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
+    radio:{label:'Radio 單選鈕',order:['state','size'],
+      axes:{state:['default','hover','checked','disabled','focus'],size:['s','m','l']},
+      zh:{state:{default:'預設',hover:'滑過',checked:'已選',disabled:'停用',focus:'聚焦'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}}},
+    tag:{label:'Tag 標籤',order:['variant','intent','state'],
+      axes:{variant:['solid','outline','soft'],intent:['brand','neutral'],state:['default','hover','selected','disabled']},
+      zh:{variant:{solid:'實心',outline:'外框',soft:'柔色'},intent:{brand:'品牌',neutral:'中性'},state:{default:'預設',hover:'滑過',selected:'選取',disabled:'停用'},axisName:{variant:'Variant 風格',intent:'Intent 意圖',state:'State 狀態'}}},
+    tab:{label:'Tab 分頁',order:['variant','state'],
+      axes:{variant:['line','contained','pill'],state:['default','hover','active','disabled']},
+      zh:{variant:{line:'底線',contained:'容器',pill:'藥丸'},state:{default:'預設',hover:'滑過',active:'選中',disabled:'停用'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
+  };
+  const CHOICE={};
+  Object.keys(DIAL_SPECS).forEach(id=>{const a={};DIAL_SPECS[id].order.forEach(k=>a[k]=new Set(DIAL_SPECS[id].axes[k]));CHOICE[id]={active:a};});
+  CHOICE.button.active=active; // button 沿用既有 module active，讓轉盤與總覽同步
 
   function mkBtn(o){
     const {variant,intent,size='m',label=true,lead=false,trail=false,iconOnly=false,isLive=false}=o;
@@ -569,6 +650,7 @@
   const ICON_SEARCH='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/></svg>';
   const ICON_EYE='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></svg>';
   const ICON_EYE_SLASH='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M53.92,34.62A8,8,0,1,0,42.08,45.38L61.32,66.55C25,88.84,9.38,123.2,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208a127.11,127.11,0,0,0,52.07-10.83l22,24.21a8,8,0,1,0,11.84-10.76Zm47.33,75.84,41.67,45.85a32,32,0,0,1-41.67-45.85ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.16,133.16,0,0,1,25,128c4.69-8.79,19.66-33.39,47.35-49.38l18,19.75a48,48,0,0,0,63.66,70l14.73,16.2A112,112,0,0,1,128,192Zm6-95.43a8,8,0,0,1,3-15.72,48.16,48.16,0,0,1,38.77,42.64,8,8,0,0,1-7.22,8.71,6.39,6.39,0,0,1-.75,0,8,8,0,0,1-8-7.26A32.09,32.09,0,0,0,134,96.57Zm113.28,34.69c-.42.94-10.55,23.37-33.36,43.8a8,8,0,1,1-10.67-11.92A132.77,132.77,0,0,0,231.05,128a133.15,133.15,0,0,0-23.12-30.77C185.67,75.19,158.78,64,128,64a118.37,118.37,0,0,0-19.36,1.57A8,8,0,1,1,106,49.79,134,134,0,0,1,128,48c34.88,0,66.57,13.26,91.66,38.35,18.83,18.83,27.3,37.62,27.65,38.41A8,8,0,0,1,247.31,131.26Z"/></svg>';
+  const ICON_UPLOAD='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z"/></svg>';
   function ce(t,c){const e=document.createElement(t);if(c)e.className=c;return e;}
   function labHTML(zh,en){return `<span class="zh">${zh}</span><span class="en">${en}</span>`;}
   function viewScaffold(view,o){
@@ -621,7 +703,7 @@
   function mountLive(host,cfg){
     const state=Object.assign({},cfg.initial||{});
     const wrap=ce('div','livewrap');
-    const ctlRow=ce('div','ctl-row');wrap.appendChild(ctlRow);
+    const ctlRow=ce('div','ctl-row');
     const stage=ce('div','live-stage');
     function rerender(){stage.innerHTML='';stage.appendChild(cfg.render(state));}
     (cfg.segs||[]).forEach(s=>{
@@ -638,6 +720,7 @@
       cfg.bools.forEach(bo=>{const l=ce('label','chk');const i=document.createElement('input');i.type='checkbox';i.checked=!!state[bo.key];
         i.onchange=()=>{state[bo.key]=i.checked;rerender();};l.append(i,document.createTextNode(bo.label));checks.appendChild(l);});
       c.appendChild(checks);ctlRow.appendChild(c);}
+    if(ctlRow.children.length)wrap.appendChild(ctlRow);
     wrap.appendChild(stage);
     if(cfg.free){if(cfg.note){const n=ce('p','live-note');n.innerHTML=cfg.note;wrap.appendChild(n);}
       const f=ce('div','live-free');cfg.free().forEach(nd=>f.appendChild(nd));wrap.appendChild(f);}
@@ -654,13 +737,10 @@
   }
   function buildInput(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Input',title:'Input 輸入框',
-      lede:'純文字輸入（text／email／number…）。<b>保留 outline（線框）／filled（底色）兩個視覺 variant、無 size 軸</b>；label（含必填）／hint／leading icon／後綴 eye／清除 ×／錯誤文案等內容差異走 boolean。有值時右側出現清除 ×。狀態含 <code>focus／error</code>，focus 只描邊、無外陰影。',
+      lede:'Input 家族：<b>純文字 input、search、password、textarea、file</b>。以下先攤開基本 input（<b>outline／filled 兩 variant、無 size 軸</b>；label／必填／hint／icon／後綴 eye／清除 ×／錯誤文案走 boolean，有值時右側出現清除 ×，focus 只描邊、無外陰影），再往下逐個列出其餘子元件的狀態與互動。',
       specRows:[['axes','<code>variant × state</code>（無 size）'],['formula','<code>2 × 6</code>'],['token-policy','<code>semantic.*.input.*</code>'],['content boolean','label(+必填) / hint / leading icon / 後綴 eye / 清除 × / 錯誤文案']]});
-    const states=['default','hover','focus','filled-value','disabled','error'];
     const Z={default:['預設','default'],hover:['滑過','hover'],focus:['聚焦','focus'],'filled-value':['已填值','filled-value'],disabled:['停用','disabled'],error:['錯誤','error']};
-    const axes={variant:['outline','filled'],state:states};
-    const zh={variant:{outline:'外框',filled:'實填'},state:Object.fromEntries(Object.entries(Z).map(([k,v])=>[k,v[0]])),axisName:{variant:'Variant 風格',state:'State 狀態'}};
-    const active={variant:new Set(axes.variant),state:new Set(axes.state)};
+    const axes=DIAL_SPECS.input.axes, zh=DIAL_SPECS.input.zh, active=CHOICE.input.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML=''; const vs=axes.variant.filter(v=>active.variant.has(v)),ss=axes.state.filter(s=>active.state.has(s));
       vs.forEach(v=>p.appendChild(matrixPanel({badge:'variant',name:v==='outline'?'外框 outline':'實填 filled',rows:ss,cols:['f'],rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:()=>labHTML('欄位','field'),cell:s=>inputEl(v,s),mincol:250}))); }
@@ -703,20 +783,80 @@
       note:'↓ outline vs filled 快速對照（滑鼠移上去試 hover）',
       free:()=>{const mk=v=>{const f=ce('div',`field live-field v-${v}`);const i=document.createElement('input');i.className='bare';i.placeholder=v;i.style.minWidth='170px';f.appendChild(i);return f;};return [mk('outline'),mk('filled')];}
     });
+
+    /* ===== input 家族其餘子元件 ===== */
+    famBlock(body,{zh:'Search 搜尋框',en:'search',note:'帶前置放大鏡的輸入，多用於列表過濾；有值時可清除。',
+      states:[['default','預設'],['hover','滑過'],['focus','聚焦'],['filled-value','已填值'],['disabled','停用']],
+      el:searchEl,
+      live:{initial:{variant:'outline'},segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
+        render:st=>{const f=ce('div',`field live-field v-${st.variant}`);f.style.minWidth='300px';f.insertAdjacentHTML('beforeend',ICON_SEARCH);
+          const i=document.createElement('input');i.className='bare';i.placeholder='搜尋…';f.appendChild(i);
+          const clr=ce('span','fieldclear');clr.innerHTML=ICON_XCIRCLE;clr.style.display='none';clr.onmousedown=e=>e.preventDefault();clr.onclick=()=>{i.value='';i.focus();clr.style.display='none';};
+          i.addEventListener('input',()=>{clr.style.display=i.value?'inline-flex':'none';});f.appendChild(clr);return f;}}});
+
+    famBlock(body,{zh:'Password 密碼輸入',en:'password',note:'遮罩顯示；後綴 eye 切換明碼（eye ↔ eye-slash）、有值可清除。',
+      states:[['default','預設'],['hover','滑過'],['focus','聚焦'],['filled-value','已填值'],['disabled','停用'],['error','錯誤']],
+      el:pwdEl,
+      live:{initial:{},render:()=>{const f=ce('div','field live-field v-outline');f.style.minWidth='300px';
+        const i=document.createElement('input');i.className='bare';i.type='password';i.placeholder='請輸入密碼';f.appendChild(i);
+        const clr=ce('span','fieldclear');clr.innerHTML=ICON_XCIRCLE;clr.style.display='none';clr.onmousedown=e=>e.preventDefault();clr.onclick=()=>{i.value='';i.focus();clr.style.display='none';};
+        i.addEventListener('input',()=>{clr.style.display=i.value?'inline-flex':'none';});f.appendChild(clr);
+        const b=document.createElement('span');b.style.cssText='display:inline-flex;cursor:pointer;color:var(--muted);flex:0 0 auto;';b.innerHTML=ICON_EYE;
+        b.onclick=()=>{const show=i.type==='password';i.type=show?'text':'password';b.innerHTML=show?ICON_EYE_SLASH:ICON_EYE;};f.appendChild(b);return f;}}});
+
+    famBlock(body,{zh:'Textarea 多行輸入',en:'textarea',note:'多行文字、可垂直拉伸；狀態與 input 相同。',
+      states:[['default','預設'],['hover','滑過'],['focus','聚焦'],['filled-value','已填值'],['disabled','停用'],['error','錯誤']],
+      el:tareaEl,
+      live:{initial:{variant:'outline'},segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
+        render:st=>{const t=document.createElement('textarea');t.className=`tarea v-${st.variant}`;t.placeholder='請輸入…';t.rows=3;t.style.minWidth='320px';return t;}}});
+
+    famBlock(body,{zh:'File 檔案上傳',en:'file-input',note:'選檔按鈕＋檔名；選到檔後可清除。狀態含未選／已選檔／錯誤。',
+      states:[['default','未選'],['hover','滑過'],['focus','聚焦'],['has-file','已選檔'],['disabled','停用'],['error','錯誤']],
+      el:fileEl,
+      live:{initial:{disabled:false},bools:[{key:'disabled',label:'disabled'}],
+        render:st=>{const f=ce('div',`filefield${st.disabled?' st-disabled':''}`);const btn=ce('span','filebtn');btn.innerHTML=ICON_UPLOAD+'選擇檔案';
+          const name=ce('span','fname');name.textContent='未選擇檔案';
+          const clr=ce('span','fieldclear');clr.innerHTML=ICON_XCIRCLE;clr.style.display='none'; // 選檔後才出現的刪除鍵
+          let picked=false;
+          const setPicked=v=>{picked=v;name.textContent=picked?'report-2026.pdf':'未選擇檔案';f.classList.toggle('has-file',picked);clr.style.display=picked?'inline-flex':'none';};
+          if(!st.disabled){btn.onclick=()=>setPicked(!picked);clr.onclick=e=>{e.stopPropagation();setPicked(false);};}
+          f.append(btn,name,clr);return f;}}});
   }
 
   /* ---- 家族子區塊小標 ---- */
   function subhead(host,zh,en){const d=ce('div','famhead');d.innerHTML=`<span class="fz">${zh}</span><span class="fe">${en}</span>`;host.appendChild(d);}
+  /* ---- 家族子元件區塊：小標 + 說明 + 狀態列 + Live ---- */
+  function famBlock(host,cfg){
+    subhead(host,cfg.zh,cfg.en);
+    if(cfg.note){const p=ce('p');p.style.cssText='color:var(--muted);font-size:13px;margin:0 0 16px;';p.innerHTML=cfg.note;host.appendChild(p);}
+    if(cfg.states){const rd=ce('div','row-demo');rd.style.marginBottom='16px';
+      cfg.states.forEach(([st,zh])=>{const it=ce('div','demo-item');it.appendChild(cfg.el(st));const c=ce('div','cap');c.innerHTML=`<b>${zh}·${st}</b>`;it.appendChild(c);rd.appendChild(it);});
+      host.appendChild(rd);}
+    if(cfg.live)mountLive(host,cfg.live);
+  }
+  /* ---- input 家族子元件的靜態 element ---- */
+  function searchEl(state){const filled=['focus','filled-value'].includes(state);const f=ce('div',`field st-${state}`);
+    f.insertAdjacentHTML('beforeend',ICON_SEARCH);
+    f.insertAdjacentHTML('beforeend',filled?`<span class="val">搜尋關鍵字</span>`:`<span class="ph">搜尋…</span>`);
+    if(state==='filled-value')f.insertAdjacentHTML('beforeend',`<span class="fieldclear">${ICON_XCIRCLE}</span>`);
+    return f;}
+  function pwdEl(state){const filled=['focus','filled-value','error'].includes(state);const f=ce('div',`field st-${state}`);
+    f.insertAdjacentHTML('beforeend',filled?`<span class="val">••••••••</span>`:`<span class="ph">請輸入密碼</span>`);
+    if(state==='filled-value'||state==='error')f.insertAdjacentHTML('beforeend',`<span class="fieldclear">${ICON_XCIRCLE}</span>`);
+    f.insertAdjacentHTML('beforeend',`<span style="display:inline-flex;color:var(--muted);flex:0 0 auto;">${ICON_EYE}</span>`);
+    return f;}
+  function tareaEl(state){const filled=['focus','filled-value','error'].includes(state);const t=ce('div',`tarea st-${state}`);
+    t.innerHTML=filled?`<span class="val">使用者輸入的多行內容……</span>`:`<span class="ph">請輸入…</span>`;return t;}
+  function fileEl(state){const hasFile=state==='has-file';const f=ce('div',`filefield st-${state}${hasFile?' has-file':''}`);
+    f.innerHTML=`<span class="filebtn">${ICON_UPLOAD}選擇檔案</span><span class="fname">${hasFile?'report-2026.pdf':'未選擇檔案'}</span>`+(hasFile?`<span class="fieldclear">${ICON_XCIRCLE}</span>`:'');
+    return f;}
 
   /* ---- CHECKBOX ---- */
   function cbxEl(state,size){const c=ce('div',`cbx sz-${size} st-${state}`);
     if(state==='checked')c.innerHTML=ICON_CHECK; else if(state==='indeterminate')c.innerHTML=ICON_MINUS;return c;}
   function checkboxCore(body){
-    const states=['default','hover','checked','indeterminate','disabled','focus'];
     const Z={default:['預設','default'],hover:['滑過','hover'],checked:['已選','checked'],indeterminate:['半選','indeterminate'],disabled:['停用','disabled'],focus:['聚焦','focus']};
-    const axes={state:states,size:['s','m','l']};
-    const zh={state:Object.fromEntries(Object.entries(Z).map(([k,v])=>[k,v[0]])),size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}};
-    const active={state:new Set(axes.state),size:new Set(axes.size)};
+    const axes=DIAL_SPECS.checkbox.axes, zh=DIAL_SPECS.checkbox.zh, active=CHOICE.checkbox.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML=''; const ss=axes.state.filter(s=>active.state.has(s)),cs=axes.size.filter(c=>active.size.has(c));
       p.appendChild(matrixPanel({badge:'checkbox',name:'核取方塊',rows:ss,cols:cs,rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:c=>labHTML('尺寸 '+c,c),cell:(s,c)=>cbxEl(s,c),mincol:110})); }
@@ -747,11 +887,8 @@
   /* ---- RADIO ---- */
   function rdoEl(state,size){const r=ce('div',`rdo sz-${size} st-${state}`);r.innerHTML='<span class="dot"></span>';return r;}
   function radioCore(body){
-    const states=['default','hover','checked','disabled','focus'];
     const Z={default:['預設','default'],hover:['滑過','hover'],checked:['已選','checked'],disabled:['停用','disabled'],focus:['聚焦','focus']};
-    const axes={state:states,size:['s','m','l']};
-    const zh={state:Object.fromEntries(Object.entries(Z).map(([k,v])=>[k,v[0]])),size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{state:'State 狀態',size:'Size 尺寸'}};
-    const active={state:new Set(axes.state),size:new Set(axes.size)};
+    const axes=DIAL_SPECS.radio.axes, zh=DIAL_SPECS.radio.zh, active=CHOICE.radio.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML=''; const ss=axes.state.filter(s=>active.state.has(s)),cs=axes.size.filter(c=>active.size.has(c));
       p.appendChild(matrixPanel({badge:'radio',name:'單選鈕',rows:ss,cols:cs,rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:c=>labHTML('尺寸 '+c,c),cell:(s,c)=>rdoEl(s,c),mincol:110})); }
@@ -802,12 +939,9 @@
     const body=viewScaffold(view,{eyebrow:'L3 Component · Tag',title:'Tag 標籤 / Chip',
       lede:'標籤與 Chip 合併。<b>variant × intent 兩軸（3 × 2 = 6）</b>，intent 只留 brand／neutral（feedback 4 色由 alert 負責）。removable／selectable 等為 feature flag。',
       specRows:[['axes','<code>variant × intent × state</code>'],['formula','<code>3 × 2</code>（視覺全展）'],['token-policy','<code>semantic.*.tag.*</code>'],['features','removable / selectable / icon / avatar']]});
-    const states=['default','hover','selected','disabled'];
     const Z={default:['預設','default'],hover:['滑過','hover'],selected:['選取','selected'],disabled:['停用','disabled']};
     const VN={solid:'實心 solid',outline:'外框 outline',soft:'柔色 soft'};
-    const axes={variant:['solid','outline','soft'],intent:['brand','neutral'],state:states};
-    const zh={variant:{solid:'實心',outline:'外框',soft:'柔色'},intent:{brand:'品牌',neutral:'中性'},state:Object.fromEntries(Object.entries(Z).map(([k,v])=>[k,v[0]])),axisName:{variant:'Variant 風格',intent:'Intent 意圖',state:'State 狀態'}};
-    const active={variant:new Set(axes.variant),intent:new Set(axes.intent),state:new Set(axes.state)};
+    const axes=DIAL_SPECS.tag.axes, zh=DIAL_SPECS.tag.zh, active=CHOICE.tag.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML=''; const vs=axes.variant.filter(v=>active.variant.has(v)),is=axes.intent.filter(i=>active.intent.has(i)),ss=axes.state.filter(s=>active.state.has(s));
       vs.forEach(v=>p.appendChild(matrixPanel({badge:'variant',name:VN[v],rows:ss,cols:is,rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:c=>labHTML(c==='brand'?'品牌':'中性',c),cell:(s,c)=>tagEl(v,c,s),mincol:130}))); }
@@ -836,12 +970,9 @@
     const body=viewScaffold(view,{eyebrow:'L3 Component · Tab',title:'Tab 分頁',
       lede:'分頁容器；單一觸發鈕拆為 <code>tab-item</code> sub-component。<b>variant：line／contained／pill</b>，狀態 default／hover／active／disabled。',
       specRows:[['axes','<code>variant × state × size</code>'],['formula','tab-item：<code>3 × 4</code>'],['token-policy','<code>semantic.surface/text/border.*</code>'],['composition','tab → N × tab-item（INSTANCE_SWAP）']]});
-    const states=['default','hover','active','disabled'];
     const Z={default:['預設','default'],hover:['滑過','hover'],active:['選中','active'],disabled:['停用','disabled']};
     const VN={line:'底線 line',contained:'容器 contained',pill:'藥丸 pill'};
-    const axes={variant:['line','contained','pill'],state:states};
-    const zh={variant:{line:'底線',contained:'容器',pill:'藥丸'},state:Object.fromEntries(Object.entries(Z).map(([k,v])=>[k,v[0]])),axisName:{variant:'Variant 風格',state:'State 狀態'}};
-    const active={variant:new Set(axes.variant),state:new Set(axes.state)};
+    const axes=DIAL_SPECS.tab.axes, zh=DIAL_SPECS.tab.zh, active=CHOICE.tab.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML=''; const vs=axes.variant.filter(v=>active.variant.has(v)),ss=axes.state.filter(s=>active.state.has(s));
       vs.forEach(v=>p.appendChild(matrixPanel({badge:'variant',name:VN[v],rows:ss,cols:['x'],rowLab:s=>labHTML(Z[s][0],Z[s][1]),colLab:()=>labHTML('樣本','tab-item'),cell:s=>tabCell(v,s),mincol:150}))); }
@@ -858,18 +989,60 @@
   /* 家族 id → builder（button 為特例走 buttonView）。form/tag/tab 目前先接代表子元件，家族其餘之後補。 */
   const BUILD={input:buildInput,selector:buildSelector,tag:buildTag,tab:buildTab};
 
+  /* ===== 複雜度確認總覽 ===== */
+  function choiceReport(){
+    // 回傳 {id:{axis:[選中值],...,count,full}, _total, _full}
+    const out={};let total=0,full=0;
+    Object.keys(DIAL_SPECS).forEach(id=>{const spec=DIAL_SPECS[id],act=CHOICE[id].active;const rec={};let c=1,f=1;
+      spec.order.forEach(k=>{const sel=spec.axes[k].filter(v=>act[k].has(v));rec[k]=sel;c*=sel.length;f*=spec.axes[k].length;});
+      rec.count=c;rec.full=f;out[id]=rec;total+=c;full+=f;});
+    out._total=total;out._full=full;return out;
+  }
+  function renderSummary(view){
+    view.innerHTML=`<p class="eyebrow">Overview · 複雜度確認</p><h1>複雜度確認</h1>
+      <p class="lede">每個元件<b>最後選定的複雜度</b>——之後在設計稿裡就會建立這些 <b>variant × state</b> 組合。回各元件用「複雜度轉盤」勾選，這頁即時彙整。把下方結果複製給我或貼進 DS 建立流程，就知道會產出哪些元件。</p>
+      <div class="sumbar"><div class="sumtotal" id="sumTotal"></div><button class="copybtn" id="copyBtn">複製篩選結果 (JSON)</button></div>
+      <div id="sumCards"></div>
+      <div class="block"><h2>其餘元件</h2><p class="sub" id="sumRest"></p></div>`;
+    const rep=choiceReport();
+    document.getElementById('sumTotal').innerHTML=`共 <b>${rep._total}</b> 個變體將被建立 <span class="full">/ 全展 ${rep._full}</span>`;
+    const host=document.getElementById('sumCards');
+    Object.keys(DIAL_SPECS).forEach(id=>{const spec=DIAL_SPECS[id],rec=rep[id];
+      const card=ce('div','sumcard');
+      let axesHTML='';
+      spec.order.forEach(k=>{const all=spec.axes[k];const sel=new Set(rec[k]);
+        const chips=all.map(v=>`<span class="sum-chip ${sel.has(v)?'on':'off'}">${(spec.zh[k]&&spec.zh[k][v])||v}·${v}</span>`).join('');
+        axesHTML+=`<div class="sum-axis"><span class="sa-name">${spec.zh.axisName[k]}</span><span class="sa-chips">${chips}</span><span class="sa-n">${rec[k].length}/${all.length}</span></div>`;});
+      card.innerHTML=`<div class="sc-head"><span class="sc-name">${spec.label}</span><span class="sc-count">${spec.order.map(k=>rec[k].length).join(' × ')} = <b>${rec.count}</b> <span class="full">/ ${rec.full}</span></span></div>${axesHTML}`;
+      host.appendChild(card);});
+    // 其餘元件（非轉盤）
+    const dialIds=new Set(Object.keys(DIAL_SPECS).concat(['input']));
+    const built=['search','password','textarea','file（input 家族，以完整狀態建立）'];
+    const todo=NAV.flatMap(g=>g.items).filter(it=>!DIAL_SPECS[it.id]&&it.id!=='input'&&!it.st).length;
+    document.getElementById('sumRest').innerHTML=`input 家族的 <code>search / password / textarea / file</code> 以完整狀態建立（無轉盤）。其餘 <b>${todo}</b> 個項目為待建，之後定案後會一併納入此總覽。`;
+    document.getElementById('copyBtn').onclick=()=>{
+      const json={};Object.keys(DIAL_SPECS).forEach(id=>{json[id]={};DIAL_SPECS[id].order.forEach(k=>json[id][k]=rep[id][k]);json[id].count=rep[id].count;});
+      json._total=rep._total;
+      const txt=JSON.stringify(json,null,2);
+      navigator.clipboard.writeText(txt).then(()=>{const b=document.getElementById('copyBtn');b.textContent='已複製 ✓';setTimeout(()=>b.textContent='複製篩選結果 (JSON)',1600);});
+    };
+  }
+
   /* ===== 檢視切換 ===== */
   let current='button';
   function renderView(id){
     current=id;const view=document.getElementById('view');
     const item=NAV.flatMap(g=>g.items).find(x=>x.id===id);
-    if(id==='button'){view.innerHTML=buttonViewHTML();renderSpecStrip();renderAxes();renderMatrix();renderSizes();renderBooleans();renderCount();renderLive();}
+    if(id==='summary'){renderSummary(view);}
+    else if(id==='button'){view.innerHTML=buttonViewHTML();renderSpecStrip();renderAxes();renderMatrix();renderSizes();renderBooleans();renderCount();renderLive();}
     else if(BUILD[id]){BUILD[id](view);}
     else{view.innerHTML=`<div class="placeholder"><div class="em">🧩</div><h2>${item.name}</h2><p>這顆元件還沒定案。先在已完成的元件上把「元件該多複雜」的模式定下來，我再用同一套方式套到這裡。</p><div class="axhint">預定軸：variant × state × size（＋各自的內容軸）</div></div>`;}
     document.querySelectorAll('.nav-item').forEach(el=>el.setAttribute('aria-current',el.dataset.id===id));
     window.scrollTo(0,0);
   }
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
+    const pin=document.createElement('button');pin.className='nav-item nav-pin';pin.dataset.id='summary';pin.setAttribute('aria-current',current==='summary');
+    pin.innerHTML=`<span>📋 複雜度確認</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
     NAV.forEach((g,gi)=>{const grp=document.createElement('div');grp.className='nav-group'+(gi>0?' collapsed':'');
       const head=document.createElement('button');head.className='gh';
       head.innerHTML=`<span class="gh-caret">${ICON_CARET}</span><span class="gh-t">${g.group}</span><span class="gh-n">${g.items.length}</span>`;
