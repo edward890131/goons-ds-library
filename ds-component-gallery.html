@@ -919,7 +919,7 @@
 /* ==================== FOOTER 頁尾 ==================== */
   /* 整條頁尾容器：整頁寬版、頂部一條分隔線、走 token 深淺自適應 */
   .ftr-foot{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-    padding:36px 32px 22px;color:var(--muted);font-family:var(--font-sans);overflow:hidden;}
+    padding:36px 32px 22px;color:var(--muted);font-family:var(--font-sans);overflow:hidden;display:block;margin-top:0;}
   .ftr-foot + .ftr-foot{margin-top:22px;}
   .ftr-foot.ftr-v-simple{padding:26px 32px 20px;}
   .ftr-foot.ftr-v-minimal{padding:18px 26px;}
@@ -950,13 +950,6 @@
   .ftr-social{display:inline-flex;align-items:center;gap:4px;}
   .ftr-uparrow{display:inline-flex;}
   .ftr-uparrow svg{width:14px;height:14px;transform:rotate(180deg);}
-  /* 語言選擇 pill */
-  .ftr-lang{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;
-    border-radius:999px;border:1px solid var(--line);background:var(--panel-2);
-    font-size:12px;color:var(--muted);cursor:pointer;transition:.12s;}
-  .ftr-lang:hover{border-color:var(--muted);color:var(--ink);}
-  .ftr-lang .ftr-langglobe{display:inline-flex;width:15px;height:15px;color:var(--faint);}
-  .ftr-lang .ftr-langcaret{display:inline-flex;width:13px;height:13px;color:var(--faint);}
   /* simple 單列：logo 左、連結右（左右撐滿）*/
   .ftr-simplerow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px;width:100%;}
   .ftr-nav{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 22px;}
@@ -3185,7 +3178,6 @@ function skelMedia(anim){
   /* 連結欄群資料 */
   const FTR_COLS=[
     {title:'產品 Product',links:['元件庫','設計 Token','頁面模板','更新日誌']},
-    {title:'資源 Resources',links:['開發文件','API 參考','教學指南','社群論壇']},
     {title:'公司 Company',links:['關於我們','人才招募','設計部落格','聯絡我們']},
     {title:'法務 Legal',links:['服務條款','隱私政策','Cookie 設定']},
   ];
@@ -3208,8 +3200,6 @@ function skelMedia(anim){
   function ftrBrand(){
     const b=ce('div','ftr-brand');
     b.appendChild(ftrLogo());
-    const d=ce('p','ftr-desc');d.textContent='果思設計 — 專注資料與操作型產品的介面設計，把複雜系統變得直覺好用。';
-    b.appendChild(d);
     b.appendChild(ftrContact());
     return b;
   }
@@ -3240,9 +3230,9 @@ function skelMedia(anim){
   }
   /* 語言選擇 pill */
   function ftrLang(){
-    const p=document.createElement('button');p.className='ftr-lang';
-    p.innerHTML=`<span class="ftr-langglobe">${FTR_IC_GLOBE}</span><span>繁體中文</span><span class="ftr-langcaret">${ICON_CARET}</span>`;
-    return p;
+    const b=document.createElement('button');b.className='btn v-outline i-secondary sz-s live';
+    b.innerHTML=`${FTR_IC_GLOBE}<span>繁體中文</span>${ICON_CARET}`;
+    b.setAttribute('aria-label','切換語言');return b;
   }
   /* 內嵌連結列（simple / minimal）*/
   function ftrNav(cls,labels){
@@ -3300,11 +3290,11 @@ function skelMedia(anim){
 
   function buildFooter(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Footer',title:'Footer 頁尾',
-      lede:'網站／應用最底部的<b>整條寬版</b>導航與資訊區塊：<b>rich 多欄</b>含品牌簡介、地址／信箱／電話聯絡資訊、連結欄群（靠右對齊）與底部版權；<b>simple 單列</b>把 logo 與連結左右撐滿；<b>minimal 極簡</b>只留一行版權與少數連結。底列分隔線撐滿寬度、版權（左）與按鈕（右）左右對齊。因頁尾為整條寬版，這裡以「每個勾選的 variant 一段完整頁尾」呈現，不走矩陣。',
+      lede:'網站／應用最底部的<b>整條寬版</b>導航與資訊區塊：<b>rich 多欄</b>含品牌 logo、地址／信箱／電話聯絡資訊、連結欄群（靠右對齊）與底部版權；<b>simple 單列</b>把 logo 與連結左右撐滿；<b>minimal 極簡</b>只留一行版權與少數連結。底列分隔線撐滿寬度、版權（左）與按鈕（右）左右對齊。因頁尾為整條寬版，這裡以「每個勾選的 variant 一段完整頁尾」呈現，不走矩陣。',
       specRows:[['axes','<code>variant</code>'],['formula','<code>rich · simple · minimal</code>'],['atoms','Button · Icon Button · Search'],['features','social / language / back-to-top']]});
     const axes=DIAL_SPECS.footer.axes, zh=DIAL_SPECS.footer.zh, active=CHOICE.footer.active;
     const VSUB={
-      rich:'左品牌（logo＋簡介＋地址／信箱／電話）＋ 右側連結欄群（產品／資源／公司／法務，靠右對齊）；底列一條撐滿寬度的分隔線接版權（左）與社群／語言／回到頂部按鈕（右）。',
+      rich:'左品牌（logo＋地址／信箱／電話）＋ 右側連結欄群（產品／資源／公司／法務，靠右對齊）；底列一條撐滿寬度的分隔線接版權（左）與社群／語言／回到頂部按鈕（右）。',
       simple:'單一橫列：左 logo、右連結列（左右撐滿）；下方分隔線＋版權與按鈕列。',
       minimal:'一行搞定：© 版權 + 幾個必要連結（＋選配社群／語言／回到頂部）。'
     };
