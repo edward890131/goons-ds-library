@@ -803,6 +803,73 @@
   .pg-ellip{color:var(--faint);padding:0 2px;user-select:none;font-family:var(--font-sans);font-size:13px;}
   .pg-info{display:inline-flex;align-items:center;padding:0 12px;font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;}
   .pg-live-box{display:flex;justify-content:center;padding:10px 0;}
+
+/* ===== icon (ic-) ===== */
+/* ---- ICON 圖示（namespace ic-）---- */
+  .ic-box{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .ic-box svg{display:block;}
+  .ic-box.ic-s svg{width:16px;height:16px;}
+  .ic-box.ic-m svg{width:20px;height:20px;}
+  .ic-box.ic-l svg{width:24px;height:24px;}
+  .ic-box.ic-xl svg{width:32px;height:32px;}
+  .ic-t-default{color:var(--ink);}
+  .ic-t-primary{color:var(--i-primary);}
+  .ic-t-secondary{color:var(--muted);}
+  .ic-t-danger{color:var(--i-danger);}
+  .ic-lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px;}
+  .ic-cell{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);transition:border-color .12s;}
+  .ic-cell:hover{border-color:var(--accent);}
+  .ic-name{font-family:var(--font-mono);font-size:10.5px;color:var(--faint);letter-spacing:.03em;text-align:center;word-break:break-all;line-height:1.3;}
+  .ic-cell:hover .ic-name{color:var(--muted);}
+  .ic-inline{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-sans);font-size:14px;color:var(--ink);line-height:1.4;}
+
+/* ===== price (pr-) ===== */
+.pr-price{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--font-sans);color:var(--ink);font-weight:700;line-height:1.1;white-space:nowrap;}
+.pr-price .pr-cur{font-weight:600;color:var(--muted);font-size:.68em;}
+.pr-sz-sm{font-size:15px;}
+.pr-sz-md{font-size:20px;}
+.pr-sz-lg{font-size:28px;}
+.pr-v-discount{gap:8px;}
+.pr-v-discount .pr-orig,.pr-v-free .pr-orig{color:var(--muted);font-weight:500;font-size:.62em;text-decoration:line-through;}
+.pr-v-discount .pr-now{display:inline-flex;align-items:baseline;gap:4px;color:var(--i-danger);}
+.pr-v-discount .pr-now .pr-cur{color:var(--i-danger);opacity:.8;}
+.pr-badge{align-self:center;display:inline-flex;align-items:center;background:var(--i-danger);color:var(--danger-on);font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:6px;}
+.pr-v-free .pr-free{color:var(--i-primary);font-weight:700;}
+.pr-live-box{display:flex;align-items:center;justify-content:center;padding:28px 20px;min-height:80px;}
+.pr-scene{display:flex;flex-wrap:wrap;gap:18px;}
+.pr-card{width:200px;display:flex;flex-direction:column;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;}
+.pr-card .pr-thumb{height:96px;border-radius:10px;background:var(--panel-3);}
+.pr-card .pr-name{font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--ink);}
+.pr-card .pr-save{font-family:var(--font-mono);font-size:11px;color:var(--i-danger);}
+
+/* ===== image (im-) ===== */
+/* ===== Image 圖片 ===== */
+.im-box{position:relative;overflow:hidden;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;background:var(--panel-2);border:1px solid var(--line);}
+/* 形狀 variant：矩形（小圓角）／圓角（中圓角）／圓形（正圓） */
+.im-rectangular{border-radius:4px;}
+.im-rounded{border-radius:12px;}
+.im-circular{border-radius:50%;}
+/* 尺寸 size → 正方邊長 */
+.im-sz-s{width:64px;height:64px;}
+.im-sz-m{width:96px;height:96px;}
+.im-sz-l{width:140px;height:140px;}
+.im-sz-xl{width:200px;height:200px;}
+/* default：真圖填滿盒子 */
+.im-img{width:100%;height:100%;object-fit:cover;display:block;}
+/* loading：骨架佔位 + shimmer 掃過（沿用 skeleton 的光澤手法；淺色高透白、深色低透白）*/
+.im-loading{--im-sheen:rgba(255,255,255,.55);}
+@media (prefers-color-scheme:dark){.im-loading{--im-sheen:rgba(255,255,255,.09);}}
+:root[data-theme="dark"] .im-loading{--im-sheen:rgba(255,255,255,.09);}
+:root[data-theme="light"] .im-loading{--im-sheen:rgba(255,255,255,.55);}
+.im-loading::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent 0%,var(--im-sheen) 50%,transparent 100%);animation:im-shimmer 1.5s ease-in-out infinite;}
+@keyframes im-shimmer{100%{transform:translateX(100%);}}
+/* error：破圖 fallback，置中破圖 icon + 「載入失敗」小字 */
+.im-error{flex-direction:column;gap:6px;color:var(--faint);}
+.im-broken{width:28px;height:28px;color:var(--faint);}
+.im-broken svg{width:100%;height:100%;display:block;}
+.im-errtxt{font-family:var(--font-sans);font-size:11px;line-height:1;color:var(--faint);}
+/* 尊重「減少動態」偏好：停 shimmer */
+@media (prefers-reduced-motion:reduce){.im-loading::after{animation:none;display:none;}}
 </style>
 
 <div class="shell" id="shell">
@@ -841,9 +908,9 @@
       {id:'breadcrumb',name:'Breadcrumb 麵包屑',st:'ready'},
       {id:'pagination',name:'Pagination 分頁器',st:'ready'},
       {id:'tag',name:'Tag 標籤',st:'ready'},
-      {id:'icon',name:'Icon 圖示'},
-      {id:'price',name:'Price 價格'},
-      {id:'image',name:'Image 圖片'},
+      {id:'icon',name:'Icon 圖示',st:'ready'},
+      {id:'price',name:'Price 價格',st:'ready'},
+      {id:'image',name:'Image 圖片',st:'ready'},
       {id:'notification',name:'Notification 通知',st:'ready'},
       {id:'tooltip',name:'Tooltip 提示',st:'ready'},
       {id:'skeleton',name:'Skeleton 骨架',st:'ready'},
@@ -938,6 +1005,13 @@
     pagination:{label:'Pagination 分頁器',order:['variant','state','size'],
       axes:{variant:['numbered','prev-next'],state:['default','hover','active','disabled'],size:['s','m','l']},
       zh:{axisName:{variant:'Variant 風格',state:'State 狀態',size:'Size 尺寸'},variant:{numbered:'數字頁碼','prev-next':'前後翻頁'},state:{default:'預設',hover:'滑過',active:'當前頁',disabled:'停用'},size:{s:'小 s',m:'標準 m',l:'大 l'}}},
+    icon:{label:'Icon 圖示',order:['size','tone'],
+      axes:{size:['s','m','l','xl'],tone:['default','primary','secondary','danger']},
+      zh:{axisName:{size:'Size 尺寸',tone:'Tone 色調'},size:{s:'16 s',m:'20 m',l:'24 l',xl:'32 xl'},tone:{default:'預設',primary:'主要',secondary:'次要',danger:'危險'}}},
+    price:{label:'Price 價格',order:['variant','size'],axes:{variant:['normal','discount','sale','free'],size:['sm','md','lg']},zh:{axisName:{variant:'Variant 型態',size:'Size 尺寸'},variant:{normal:'一般',discount:'折扣',sale:'特價',free:'免費'},size:{sm:'小 sm',md:'標準 md',lg:'大 lg'}}},
+    image:{label:'Image 圖片',order:['variant','state','size'],
+      axes:{variant:['rectangular','rounded','circular'],state:['default','loading','error'],size:['s','m','l','xl']},
+      zh:{axisName:{variant:'Shape 形狀',state:'State 狀態',size:'Size 尺寸'},variant:{rectangular:'矩形',rounded:'圓角',circular:'圓形'},state:{default:'正常',loading:'載入中',error:'錯誤'},size:{s:'小 s',m:'中 m',l:'大 l',xl:'特大 xl'}}},
   };
   const CHOICE={};
   Object.keys(DIAL_SPECS).forEach(id=>{const a={};DIAL_SPECS[id].order.forEach(k=>a[k]=new Set(DIAL_SPECS[id].axes[k]));CHOICE[id]={active:a};});
@@ -2194,7 +2268,249 @@ function skelMedia(anim){
     LIVE.pagination(sl);
   }
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination};
+
+  /* ==================== icon ==================== */
+/* ---- ICON 圖示（Phosphor set；builders 提升頂層，頁面與 Live 共用）---- */
+  const IC_HEART='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32Zm-50,142.8C109.74,164.6,32,118.94,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,118.91,146.26,164.6,128,174.8Z"/></svg>';
+  const IC_STAR='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M239.2,97.29a16,16,0,0,0-13.81-11L166,81.17,142.72,25.81h0a15.95,15.95,0,0,0-29.44,0L90.07,81.17,30.61,86.32a16,16,0,0,0-9.11,28.06L66.61,153.8,53.09,212.34a16,16,0,0,0,23.84,17.34l51-31,51.11,31a16,16,0,0,0,23.84-17.34l-13.51-58.6,45.1-39.36A16,16,0,0,0,239.2,97.29Zm-15.22,5-45.1,39.36a16,16,0,0,0-5.08,15.71L187.35,216v0l-51.07-31a15.9,15.9,0,0,0-16.54,0l-51,31h0L82.2,157.4a16,16,0,0,0-5.08-15.71L32,102.35a.37.37,0,0,1,0-.09l59.44-5.14a16,16,0,0,0,13.35-9.75L128,32.08l23.2,55.29a16,16,0,0,0,13.35,9.75L224,102.26S224,102.32,224,102.33Z"/></svg>';
+  const IC_BELL='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"/></svg>';
+  const IC_TRASH='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>';
+  const IC_USER='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>';
+  const IC_PLUS='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>';
+
+  /* icBox：Phosphor svg 容器；size→固定 px（16/20/24/32），tone→currentColor，svg fill 繼承 */
+  function icBox(name,size,tone){
+    const b=ce('span','ic-box ic-'+size+' ic-t-'+(tone||'default'));
+    b.innerHTML=name||ICON_GEAR;
+    return b;
+  }
+  /* 本 DS 採用的 Phosphor icon 子集（既有 ICON_* + 自訂補充，共 20 顆）；延遲求值避免 ICON_SPARK（定義較後）在頂層 TDZ */
+  function icLibrary(){return [
+    ['gear',ICON_GEAR],['house',ICON_HOUSE],['list',ICON_LIST],['search',ICON_SEARCH],
+    ['pencil',ICON_PENCIL],['arrow-right',ICON_ARROW],['check',ICON_CHECK],['minus',ICON_MINUS],
+    ['caret-down',ICON_CARET],['x',ICON_CLOSE],['x-circle',ICON_XCIRCLE],['eye',ICON_EYE],
+    ['eye-slash',ICON_EYE_SLASH],['upload',ICON_UPLOAD],['sparkle',ICON_SPARK],
+    ['heart',IC_HEART],['star',IC_STAR],['bell',IC_BELL],['trash',IC_TRASH],['user',IC_USER]];}
+  /* Live 可切換的示意 icon 集 */
+  const IC_LIVE_SET={gear:ICON_GEAR,heart:IC_HEART,star:IC_STAR,bell:IC_BELL,house:ICON_HOUSE};
+
+  LIVE.icon=(host)=>mountLive(host,{
+    initial:{size:'l',tone:'primary',glyph:'gear'},
+    segs:[
+      {key:'size',label:'Size',options:['s','m','l','xl'],labels:['16','20','24','32']},
+      {key:'tone',label:'Tone',options:['default','primary','secondary','danger'],labels:['預設','主要','次要','危險']},
+      {key:'glyph',label:'Icon',options:['gear','heart','star','bell','house'],labels:['齒輪','愛心','星','鈴','家']}],
+    render:st=>icBox(IC_LIVE_SET[st.glyph],st.size,st.tone),
+    note:'Phosphor 單一 weight；色彩走 <code>currentColor</code>，可綁 <code>semantic.icon.*</code> token。'
+  });
+
+  function buildIcon(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Icon',title:'Icon 圖示',
+      lede:'ds-framework 的 L0 把 icon variant 定成 <b>line／solid／duocolor／duotone</b>（對齊 Untitled UI 4 style），但本 DS 實際採用 <b>Phosphor</b>（單一 weight、fill-based、viewBox 0 0 256 256），因此<b>不做 4-style 軸</b>，改以 Phosphor 的現實陳列。本 DS icon set＝<b>Phosphor</b>，色彩走 <code>currentColor</code>／<code>semantic.icon.*</code>。尺寸沿用 L0 的 <b>s／m／l／xl＝16／20／24／32 px</b>；<b>tone 為陳列頁擴充軸</b>（對應 <code>semantic.icon.*</code> token）、非 L0 原生。',
+      specRows:[['axes','<code>size × tone</code>'],['formula','<code>4 × 4 = 16</code>（tone 為擴充軸）'],['sizes','<code>s／m／l／xl = 16／20／24／32 px</code>'],['icon-set','<code>Phosphor</code>（單一 weight）'],['token-policy','<code>semantic.icon.* ／ semantic.text.*</code>'],['L0-note','variant line/solid/duocolor/duotone → 實作以 Phosphor 取代']]});
+    const axes=DIAL_SPECS.icon.axes, zh=DIAL_SPECS.icon.zh, active=CHOICE.icon.active; // 接中央 store
+    const SZ={s:['16','s'],m:['20','m'],l:['24','l'],xl:['32','xl']};
+    const TN={default:['預設','default'],primary:['主要','primary'],secondary:['次要','secondary'],danger:['危險','danger']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const ss=axes.size.filter(v=>active.size.has(v));
+      const ts=axes.tone.filter(v=>active.tone.has(v));
+      p.appendChild(matrixPanel({badge:'set · phosphor',name:'Size × Tone（示意 icon 固定為 gear）',
+        rows:ss,cols:ts,
+        rowLab:s=>labHTML(SZ[s][0]+' px',SZ[s][1]),
+        colLab:t=>labHTML(TN[t][0],TN[t][1]),
+        cell:(s,t)=>icBox(ICON_GEAR,s,t),mincol:120})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Size × Tone 矩陣','列＝四級尺寸 16／20／24／32 px、欄＝四種色調（對應 semantic.icon.*）；示意 icon 固定為 gear。');
+    p=panelsIn(sec);renderM();
+
+    /* Icon Library：陳列本 DS 可用的 Phosphor icon 子集 */
+    const lib=section(body,'Icon Library','本 DS 目前採用的 Phosphor icon 子集（單一 weight、viewBox 0 0 256 256、fill=currentColor）。實際專案由 Phosphor 全庫按需匯入。');
+    const grid=ce('div','ic-lib');
+    icLibrary().forEach(it=>{const cell=ce('div','ic-cell');cell.appendChild(icBox(it[1],'l','default'));const cap=ce('div','ic-name');cap.textContent=it[0];cell.appendChild(cap);grid.appendChild(cell);});
+    lib.appendChild(grid);
+
+    /* Usage：decorative vs semantic、行內對齊、icon-in-button */
+    const us=section(body,'Usage 用法','decorative（純裝飾，aria-hidden）vs semantic（傳達語意，aria-label）、icon 於文字行內對齊、icon-in-button 三種常見用法。');
+    const rd=ce('div','row-demo');
+    const items=[];
+    // 1. decorative
+    const dItem=ce('div','demo-item');
+    const dBox=icBox(ICON_SPARK,'l','primary');dBox.setAttribute('aria-hidden','true');
+    dItem.appendChild(dBox);
+    const dCap=ce('div','cap');dCap.innerHTML='<b>decorative</b> · aria-hidden="true"';dItem.appendChild(dCap);items.push(dItem);
+    // 2. semantic
+    const sItem=ce('div','demo-item');
+    const sBox=icBox(ICON_GEAR,'l','default');sBox.setAttribute('role','img');sBox.setAttribute('aria-label','設定');
+    sItem.appendChild(sBox);
+    const sCap=ce('div','cap');sCap.innerHTML='<b>semantic</b> · role="img" aria-label="設定"';sItem.appendChild(sCap);items.push(sItem);
+    // 3. inline in text
+    const iItem=ce('div','demo-item');
+    const line=ce('span','ic-inline');
+    line.appendChild(document.createTextNode('搜尋'));
+    line.appendChild(icBox(ICON_SEARCH,'s','secondary'));
+    line.appendChild(document.createTextNode('結果'));
+    iItem.appendChild(line);
+    const iCap=ce('div','cap');iCap.innerHTML='<b>inline</b> · 隨文字大小對齊（size s）';iItem.appendChild(iCap);items.push(iItem);
+    // 4. icon-in-button（引用 .btn 樣式）
+    const bItem=ce('div','demo-item');
+    const btn=ce('button','btn i-primary sz-m v-solid st-default');
+    btn.innerHTML=IC_PLUS+'<span>新增項目</span>';
+    bItem.appendChild(btn);
+    const bCap=ce('div','cap');bCap.innerHTML='<b>in-button</b> · leading icon + label';bItem.appendChild(bCap);items.push(bItem);
+    // 5. icon-only button
+    const oItem=ce('div','demo-item');
+    const obtn=ce('button','btn i-secondary sz-m v-solid icon-only');
+    obtn.innerHTML=IC_TRASH;obtn.setAttribute('aria-label','刪除');
+    oItem.appendChild(obtn);
+    const oCap=ce('div','cap');oCap.innerHTML='<b>icon-only</b> · 必附 aria-label';oItem.appendChild(oCap);items.push(oItem);
+    items.forEach(it=>rd.appendChild(it));
+    us.appendChild(rd);
+
+    /* Live */
+    const sl=section(body,'實際互動 Live','切尺寸／色調／icon，即時看 render 結果。');
+    LIVE.icon(sl);
+  }
+
+  /* ==================== price ==================== */
+/* ---- PRICE 價格（builders 提升頂層，頁面與 summary Live 共用）---- */
+  function prEl(variant,size){
+    const el=ce('span',`pr-price pr-sz-${size} pr-v-${variant}`);
+    if(variant==='normal'){
+      el.innerHTML='<span class="pr-cur">NT$</span><span class="pr-amt">1,280</span>';
+    }else if(variant==='discount'){
+      el.setAttribute('aria-label','原價 NT$ 1,680，優惠價 NT$ 1,280');
+      el.innerHTML='<s class="pr-orig" aria-hidden="true">NT$ 1,680</s><span class="pr-now"><span class="pr-cur">NT$</span><span class="pr-amt">1,280</span></span>';
+    }else if(variant==='sale'){
+      el.innerHTML='<span class="pr-cur">NT$</span><span class="pr-amt">990</span><span class="pr-badge">SALE</span>';
+    }else if(variant==='free'){
+      el.setAttribute('aria-label','免費');
+      el.innerHTML='<s class="pr-orig" aria-hidden="true">NT$ 480</s><span class="pr-free">免費</span>';
+    }
+    return el;
+  }
+  LIVE.price=(host)=>mountLive(host,{
+    initial:{variant:'discount',size:'md'},
+    segs:[{key:'variant',label:'Variant',options:['normal','discount','sale','free'],labels:['一般','折扣','特價','免費']},
+          {key:'size',label:'Size',options:['sm','md','lg']}],
+    render:st=>{const box=ce('div','pr-live-box');box.appendChild(prEl(st.variant,st.size));return box;},
+    note:'discount 用 &lt;s&gt; 包原價（螢幕報讀「原價 X、優惠價 Y」）；free 容器加 <code>aria-label=免費</code>。',
+    free:()=>['normal','discount','sale','free'].map(v=>prEl(v,'md'))
+  });
+  function buildPrice(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Price',title:'Price 價格',
+      lede:'商品／服務金額顯示。共 <b>4 型態</b>（<b>normal 一般</b>、<b>discount 折扣</b>、<b>sale 特價</b>、<b>free 免費</b>）× <b>3 尺寸</b>（<b>4 × 3 = 12</b>）。discount 用 <code>&lt;s&gt;</code> 包原價、free 容器綁 <code>aria-label</code>，讓螢幕報讀語意清楚。',
+      specRows:[['axes','<code>variant × size</code>'],['formula','<code>4 × 3 = 12</code>'],['token-policy','<code>semantic.text.* / semantic.feedback.*</code>'],['a11y','<code>&lt;s&gt; 原價 · aria-label</code>']]});
+    const VZ={normal:['一般','normal'],discount:['折扣','discount'],sale:['特價','sale'],free:['免費','free']};
+    const SZN={sm:['小','sm'],md:['標準','md'],lg:['大','lg']};
+    const axes=DIAL_SPECS.price.axes, zh=DIAL_SPECS.price.zh, active=CHOICE.price.active; // 接中央 store
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.size.filter(s=>active.size.has(s));
+      p.appendChild(matrixPanel({badge:'variant × size',name:'Variant × Size（4 型態 × 3 尺寸）',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VZ[v][0],VZ[v][1]),
+        colLab:s=>labHTML(SZN[s][0]+'尺寸',SZN[s][1]),
+        cell:(v,s)=>prEl(v,s),mincol:170})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Size 矩陣','列＝四種價格型態、欄＝三級尺寸；折扣顯示原價刪除線＋紅色優惠價，特價帶 SALE pill。');
+    p=panelsIn(sec);renderM();
+    const cs=section(body,'商品情境示意','把價格放進商品卡片式排版（純示意，未新建 card 元件），對照原價／優惠價／省多少的語意呈現。');
+    const grid=ce('div','pr-scene');
+    const cards=[
+      {name:'無線藍牙耳機',variant:'discount',save:'省 NT$ 400'},
+      {name:'機械鍵盤 87 鍵',variant:'sale',save:''},
+      {name:'USB-C 充電線',variant:'normal',save:''},
+      {name:'試用版下載',variant:'free',save:''}
+    ];
+    cards.forEach(c=>{
+      const card=ce('div','pr-card');
+      const th=ce('div','pr-thumb');
+      const nm=ce('div','pr-name');nm.textContent=c.name;
+      card.append(th,nm,prEl(c.variant,'md'));
+      if(c.save){const sv=ce('div','pr-save');sv.textContent=c.save;card.appendChild(sv);}
+      grid.appendChild(card);
+    });
+    cs.appendChild(grid);
+    const sl=section(body,'實際互動 Live','切 variant／size，即時預覽價格顯示；下方 quick row 並排四型態方便對照。');
+    LIVE.price(sl);
+  }
+
+  /* ==================== image ==================== */
+/* ---- IMAGE 圖片（imEl 提升頂層，頁面與 summary Live 共用）---- */
+  const IM_BROKEN='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg>';
+  const IM_POOL=['photo-1506744038136-46273834b3fb','photo-1441974231531-c6227db76b6e','photo-1472099645785-5658abf4ff4e','photo-1500648767791-00dcc994a43e','photo-1519125323398-675f0ddb6308','photo-1526779259212-939e64788e3c','photo-1517841905240-472988babdf9','photo-1438761681033-6461ffad8d80','photo-1544005313-94ddf0286df2']; // 已驗證 200 的 Unsplash 風景池
+  const IM_PORTRAIT='photo-1494790108377-be9c29b29330'; // circular 頭像優先用人像
+  const IM_SIZE={s:64,m:96,l:140,xl:200}; // size → 正方邊長（px）
+  /* 組出固定方形的 Unsplash URL；一律帶 &h 強制正方，配 object-fit:cover 填滿 */
+  function imUrl(id,w){return `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop&h=${w}`;}
+  /* Image atom：variant=rectangular|rounded|circular；state=default|loading|error；size=s|m|l|xl
+     opts={src:Unsplash 圖片 ID, alt:替代文字}。circular 為正方，rectangular/rounded 亦統一用正方最簡單 */
+  function imEl(variant,state,size,opts){opts=opts||{};
+    size=size||'m';
+    const box=ce('div',`im-box im-${variant} im-sz-${size} im-st-${state}`);
+    if(state==='loading'){
+      box.classList.add('im-loading'); // 骨架佔位：--panel-2 底 + shimmer 掃過，不放真圖
+    } else if(state==='error'){
+      box.classList.add('im-error'); // 破圖 fallback：置中破圖 icon + 「載入失敗」小字
+      const ic=ce('div','im-broken');ic.innerHTML=IM_BROKEN;
+      const tx=ce('div','im-errtxt');tx.textContent='載入失敗';
+      box.append(ic,tx);
+    } else {
+      const img=document.createElement('img');img.className='im-img';
+      img.src=imUrl(opts.src||IM_POOL[0],400); // W 用 400，實際顯示尺寸由 CSS 控制
+      img.alt=(opts.alt!=null)?opts.alt:''; // a11y：必填 alt；裝飾性傳 '' 即可
+      img.loading='lazy';
+      box.appendChild(img);
+    }
+    return box;
+  }
+  LIVE.image=(host)=>mountLive(host,{
+    initial:{variant:'rounded',state:'default',size:'m'},
+    segs:[
+      {key:'variant',label:'Shape',options:['rectangular','rounded','circular'],labels:['矩形','圓角','圓形']},
+      {key:'state',label:'State',options:['default','loading','error'],labels:['正常','載入中','錯誤']},
+      {key:'size',label:'Size',options:['s','m','l','xl']}
+    ],
+    render:st=>{
+      const src=(st.variant==='circular')?IM_PORTRAIT:IM_POOL[2]; // circular 自動改用人像圖
+      return imEl(st.variant,st.state,st.size,{src,alt:'示意圖片'});
+    },
+    note:'切形狀時 circular 自動改用人像圖；state 切到 loading 看 shimmer 骨架、error 看破圖 fallback。'
+  });
+  function buildImage(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Image',title:'Image 圖片',
+      lede:'承載照片／插圖的圖片容器，素材統一取自 Unsplash。<b>variant × state × size（3 × 3 × 4 = 36）</b>：三種形狀（矩形／圓角／圓形）× 三種狀態（正常／載入中／錯誤）× 四級尺寸（s／m／l／xl）。載入中顯示 shimmer 骨架、載入失敗顯示破圖 fallback。<b>alt 為必填</b>，純裝飾性圖片則傳 <code>alt=""</code>。',
+      specRows:[['axes','<code>variant × state × size</code>'],['formula','<code>3 × 3 × 4 = 36</code>'],['token-policy','<code>surface.image / border.image / radius</code>'],['a11y','必填 alt；裝飾性 alt=""']]});
+    const axes=DIAL_SPECS.image.axes, zh=DIAL_SPECS.image.zh, active=CHOICE.image.active; // 接中央 store
+    const VN={rectangular:['矩形','rectangular'],rounded:['圓角','rounded'],circular:['圓形','circular']};
+    const SN={default:['正常','default'],loading:['載入中','loading'],error:['錯誤','error']};
+    const SRC={rectangular:IM_POOL[0],rounded:IM_POOL[1],circular:IM_PORTRAIT}; // 每個形狀給不同示意圖
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.state.filter(s=>active.state.has(s));
+      p.appendChild(matrixPanel({badge:'shape × state',name:'Shape × State 對照',desc:'列＝形狀、欄＝狀態（尺寸固定 m）',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(SN[s][0],SN[s][1]),
+        cell:(v,s)=>imEl(v,s,'m',{src:SRC[v],alt:'示意圖'}),mincol:140}));
+    }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Shape × State 矩陣','三種形狀 × 三種狀態，尺寸固定 m。default 顯示真圖、loading 顯示 shimmer 骨架、error 顯示破圖 fallback。');
+    p=panelsIn(sec);renderM();
+    const zs=section(body,'Size 尺寸軸','default 狀態、rounded 形狀，對照 s／m／l／xl 四級正方邊長。');
+    const rd=ce('div','row-demo');rd.style.marginBottom='16px';
+    [['s',64],['m',96],['l',140],['xl',200]].forEach(function(row){var sz=row[0],px=row[1];
+      const it=ce('div','demo-item');it.appendChild(imEl('rounded','default',sz,{src:IM_POOL[3],alt:'示意圖'}));
+      const c=ce('div','cap');c.innerHTML=`<b>size ${sz}</b><br>${px}×${px}`;it.appendChild(c);rd.appendChild(it);});
+    zs.appendChild(rd);
+    const sl=section(body,'實際互動 Live','切形狀／狀態／尺寸即時預覽；circular 自動改用人像圖，切到 loading／error 看佔位與 fallback。');
+    LIVE.image(sl);
+  }
+
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -2208,7 +2524,7 @@ function skelMedia(anim){
   const SUMSEL=new Set(Object.keys(DIAL_SPECS)); // 手動選取要產出的元件（預設全選、跨切頁持久）
   const RECOMMEND=['button','input','dropdown','checkbox','radio','tag']; // AI 建議＝已定案的元件
   let aiOn=false,aiSnapshot=null; // AI 建議 toggle 狀態＋開啟前的選擇快照
-  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',notification:'notification',tooltip:'tooltip',skeleton:'skeleton',loader:'loader',menu:'menu','action-menu':'action-menu',breadcrumb:'breadcrumb',pagination:'pagination'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
+  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',notification:'notification',tooltip:'tooltip',skeleton:'skeleton',loader:'loader',menu:'menu','action-menu':'action-menu',breadcrumb:'breadcrumb',pagination:'pagination',icon:'icon',price:'price',image:'image'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){
     const rep=choiceReport();
