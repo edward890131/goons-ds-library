@@ -957,6 +957,18 @@
   .ftr-minirow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;width:100%;}
   .ftr-minirow .ftr-copy{margin-right:4px;}
   .ftr-mininav{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 18px;}
+  /* 行動版：限寬手機框，內容單欄堆疊（container-based，不靠 viewport media query）*/
+  .ftr-phone{max-width:390px;width:100%;}
+  .ftr-foot.ftr-mobile{padding:24px 20px 18px;}
+  .ftr-mobile .ftr-main{flex-direction:column;gap:26px;}
+  .ftr-mobile .ftr-brand{max-width:none;}
+  .ftr-mobile .ftr-cols{flex-direction:column;gap:22px;justify-content:flex-start;flex:none;width:100%;}
+  .ftr-mobile .ftr-simplerow{flex-direction:column;align-items:flex-start;gap:18px;}
+  .ftr-mobile .ftr-nav{justify-content:flex-start;gap:10px 18px;}
+  .ftr-mobile .ftr-bottom{flex-direction:column;align-items:flex-start;gap:14px;margin:22px -20px 0;padding:18px 20px 0;}
+  .ftr-mobile .ftr-botspacer{display:none;}
+  .ftr-mobile .ftr-actions{width:100%;flex-wrap:wrap;gap:8px;}
+  .ftr-mobile .ftr-minirow{flex-direction:column;align-items:flex-start;gap:14px;}
 
   @media(max-width:720px){
     .ftr-main{gap:28px;}
@@ -1488,7 +1500,7 @@
       axes:{variant:['rectangular','rounded','circular'],state:['default','loading','error'],size:['s','m','l','xl'],ratio:['4:3','16:9','2:1','1:1']},
       zh:{axisName:{variant:'Shape 形狀',state:'State 狀態',size:'Size 尺寸',ratio:'Ratio 比例'},variant:{rectangular:'矩形',rounded:'圓角',circular:'圓形'},state:{default:'正常',loading:'載入中',error:'錯誤'},size:{s:'小 s',m:'中 m',l:'大 l',xl:'特大 xl'},ratio:{'4:3':'4:3','16:9':'16:9','2:1':'2:1','1:1':'1:1'}}},
     header:{label:'Header 頁首',order:['device'],axes:{device:['desktop','mobile']},zh:{device:{desktop:'電腦版',mobile:'行動版'},axisName:{device:'Device 裝置'}}},
-    footer:{label:'Footer 頁尾',order:['variant'],axes:{variant:['rich','simple','minimal']},zh:{variant:{rich:'多欄',simple:'單列',minimal:'極簡'},axisName:{variant:'Variant 型態'}}},
+    footer:{label:'Footer 頁尾',order:['variant','device'],axes:{variant:['rich','simple','minimal'],device:['desktop','mobile']},zh:{variant:{rich:'多欄',simple:'單列',minimal:'極簡'},device:{desktop:'電腦版',mobile:'行動版'},axisName:{variant:'Variant 型態',device:'Device 裝置'}}},
     'section-head':{label:'Section Head 區段標題',order:['align','size'],axes:{align:['left','center'],size:['m','l']},zh:{align:{left:'靠左',center:'置中'},size:{m:'標準 m',l:'大 l'},axisName:{align:'Align 對齊',size:'Size 尺寸'}}},
     list:{label:'List 列表',order:['variant','state'],axes:{variant:['simple','detailed','avatar'],state:['default','hover','selected','disabled']},zh:{variant:{simple:'單行',detailed:'雙行',avatar:'頭像'},state:{default:'預設',hover:'滑過',selected:'已選',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
     collapse:{label:'Collapse 摺疊',order:['variant','state'],axes:{variant:['bordered','filled','plain'],state:['collapsed','expanded','hover','disabled']},zh:{variant:{bordered:'外框',filled:'填色',plain:'極簡'},state:{collapsed:'收合',expanded:'展開',hover:'滑過',disabled:'停用'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
@@ -3258,7 +3270,8 @@ function skelMedia(anim){
   /* 整條頁尾 */
   function ftrFooter(variant,o){
     o=o||{};
-    const foot=ce('footer','ftr-foot ftr-v-'+variant);
+    const mobile=o.device==='mobile';
+    const foot=ce('footer','ftr-foot ftr-v-'+variant+(mobile?' ftr-mobile':''));
     if(variant==='rich'){
       const main=ce('div','ftr-main');
       main.appendChild(ftrBrand());
@@ -3285,13 +3298,14 @@ function skelMedia(anim){
       if(acts.children.length){row.appendChild(ce('div','ftr-botspacer'));row.appendChild(acts);}
       foot.appendChild(row);
     }
+    if(mobile){const frame=ce('div','ftr-phone');frame.appendChild(foot);return frame;}
     return foot;
   }
 
   function buildFooter(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Footer',title:'Footer 頁尾',
-      lede:'網站／應用最底部的<b>整條寬版</b>導航與資訊區塊：<b>rich 多欄</b>含品牌 logo、地址／信箱／電話聯絡資訊、連結欄群（靠右對齊）與底部版權；<b>simple 單列</b>把 logo 與連結左右撐滿；<b>minimal 極簡</b>只留一行版權與少數連結。底列分隔線撐滿寬度、版權（左）與按鈕（右）左右對齊。因頁尾為整條寬版，這裡以「每個勾選的 variant 一段完整頁尾」呈現，不走矩陣。',
-      specRows:[['axes','<code>variant</code>'],['formula','<code>rich · simple · minimal</code>'],['atoms','Button · Icon Button · Search'],['features','social / language / back-to-top']]});
+      lede:'網站／應用最底部的<b>整條寬版</b>導航與資訊區塊：<b>rich 多欄</b>含品牌 logo、地址／信箱／電話聯絡資訊、連結欄群（靠右對齊）與底部版權；<b>simple 單列</b>把 logo 與連結左右撐滿；<b>minimal 極簡</b>只留一行版權與少數連結。底列分隔線撐滿寬度、版權（左）與按鈕（右）左右對齊。因頁尾為整條寬版，另含 <b>device（電腦版／行動版）</b> 軸——行動版收進限寬手機框、內容改單欄堆疊。這裡以「每個勾選的 variant × device 一段完整頁尾」呈現，不走矩陣。',
+      specRows:[['axes','<code>variant × device</code>'],['formula','<code>(rich · simple · minimal) × (電腦 · 行動)</code>'],['atoms','Button · Icon Button · Search'],['features','social / language / back-to-top']]});
     const axes=DIAL_SPECS.footer.axes, zh=DIAL_SPECS.footer.zh, active=CHOICE.footer.active;
     const VSUB={
       rich:'左品牌（logo＋地址／信箱／電話）＋ 右側連結欄群（產品／資源／公司／法務，靠右對齊）；底列一條撐滿寬度的分隔線接版權（左）與社群／語言／回到頂部按鈕（右）。',
@@ -3301,21 +3315,24 @@ function skelMedia(anim){
     let holder;
     function renderM(){ if(!holder)return; holder.innerHTML='';
       const vs=axes.variant.filter(v=>active.variant.has(v));
-      vs.forEach(v=>{
-        const sec=section(holder,zh.variant[v]+'　·　'+v,VSUB[v]);
-        sec.appendChild(ftrFooter(v,{social:true,language:true,backTop:true}));
-      });
+      const ds=axes.device.filter(d=>active.device.has(d));
+      vs.forEach(v=>ds.forEach(d=>{
+        const label=zh.variant[v]+'　·　'+v+(d==='mobile'?'　·　行動版 mobile':'　·　電腦版 desktop');
+        const sec=section(holder,label,VSUB[v]);
+        sec.appendChild(ftrFooter(v,{social:true,language:true,backTop:true,device:d}));
+      }));
     }
     mountDial(body,{axes,zh,active,onRender:renderM});
     holder=ce('div','ftr-holder');body.appendChild(holder);renderM();
 
-    const sl=section(body,'實際互動 Live','切 variant（多欄／單列／極簡），勾選社群 icon、語言 pill 與回到頂部按鈕，下面即時預覽整條頁尾。');
+    const sl=section(body,'實際互動 Live','切 variant（多欄／單列／極簡）與 device（電腦版／行動版），勾選社群 icon、語言與回到頂部按鈕，下面即時預覽整條頁尾。');
     mountLive(sl,{
-      initial:{variant:'rich',social:true,language:true,backTop:true},
-      segs:[{key:'variant',label:'Variant',options:['rich','simple','minimal'],labels:['多欄 rich','單列 simple','極簡 minimal']}],
+      initial:{variant:'rich',device:'desktop',social:true,language:true,backTop:true},
+      segs:[{key:'variant',label:'Variant',options:['rich','simple','minimal'],labels:['多欄 rich','單列 simple','極簡 minimal']},
+            {key:'device',label:'Device',options:['desktop','mobile'],labels:['電腦版','行動版']}],
       bools:[{key:'social',label:'social 社群'},{key:'language',label:'language 語言'},{key:'backTop',label:'back-to-top 回到頂部'}],
       boolLabel:'Content',
-      render:st=>ftrFooter(st.variant,{social:st.social,language:st.language,backTop:st.backTop}),
+      render:st=>ftrFooter(st.variant,{social:st.social,language:st.language,backTop:st.backTop,device:st.device}),
       note:'<b>社群 icon 與回到頂部皆為 library Button 元件實例</b>；社群 icon 已收進 Icon Library「品牌社群」分類。內部無自製按鈕。'
     });
   }
