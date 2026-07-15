@@ -369,3 +369,11 @@ Yuu 檢查 Button 發現兩缺口：
 - **Live 沒有 icon-only 選項**：Button 元件本來就支援 icon-only（`mkBtn` 有 `iconOnly`、下方「Content 內容軸」靜態區也展示 `show-label=false (icon-only)`），只是**實際互動 Live 的 Content 勾選漏了**。已補：button 頁 renderLive 的 checks 加 `['iconOnly','icon only']`、stage mkBtn 傳 `iconOnly`、`live` 物件加 `iconOnly:false`；registry `LIVE.button` 的 bools/render 同步加（summary 展開頁也吃到）。
 - **缺 soft 淺色變體**：Button 只有 solid/outline/text，沒有 avatar 那種「淡底填色＋彩色字」的 soft 樣式。已新增 **`v-soft`**：CSS `.v-soft{background:var(--tint);color:var(--fg);border-color:transparent}` + hover/pressed/live 用 `--tint2`；`AXES.variant`＝`['solid','soft','outline','text']`（矩陣/變數篩選器/summary 自動長出 soft 欄，button 全展 3→**4 variant**，FULL 108→**144**、公式 `4×3×4×3`）；`ZH.variant` 加 `soft:'柔色'`、`VDESC` 加 soft 說明；LIVE.button 與 renderLive 的 free 對照列加 soft、note 更新。
 - **驗證**：`node --check` 過、Playwright 0 console error；矩陣 4 variant panel（實心/柔色/外框/文字）、Live Content 含 icon only（勾選後 stage 按鈕帶 `icon-only`）、soft primary 實測 bg=`rgba(51,88,212,.1)`/color=`rgb(51,88,212)`、公式顯示 144。
+
+## 2026-07-15　統一：header avatar 改走 Button v-soft 原子
+
+延續 soft 變體，把 header 頭像從自製淺色圓形元素改成**複用 Button `v-soft` 原子**：
+- `hdrAvatar` 從 `<div class="hdr-avatar">` 改成 `<button class="btn v-soft i-primary sz-s icon-only live hdr-avatar">楊</button>`。
+- CSS 移除自製的 `.hdr-avatar{background/color/...}` 與 `:hover` ring，只留 `.hdr-avatar.btn{border-radius:50%}` 把 32px 方鈕覆蓋成圓形；底色/文字色/尺寸/hover 全部繼承 Button v-soft（`--tint`/`--fg`，hover→`--tint2`）。
+- 掃描確認：其餘 tint 背景（menu active、list selected、tab/toggle on、action-menu focus 等）都是**元件內部狀態色**、非獨立 soft 按鈕，維持原樣不動；複合元件內沒有其他自製 soft 鈕。
+- 驗證：`node --check` 過、Playwright 0 console error；avatar tag=BUTTON、class 含 `btn v-soft`、圓形 radius 50%、bg=`rgba(51,88,212,.1)`、hover→`rgba(51,88,212,.2)`、文字「楊」，外觀與改前一致但多了真實 hover。

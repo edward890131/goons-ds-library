@@ -903,11 +903,8 @@
   .hdr-bell{position:relative;display:inline-flex;}
   .hdr-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;
     background:var(--i-danger);border:2px solid var(--panel);box-sizing:content-box;pointer-events:none;}
-  .hdr-avatar{width:32px;height:32px;border-radius:50%;flex:0 0 auto;cursor:pointer;
-    display:inline-flex;align-items:center;justify-content:center;
-    background:var(--i-primary-tint);color:var(--i-primary);
-    font-family:var(--font-sans);font-weight:600;font-size:13px;transition:box-shadow .13s;}
-  .hdr-avatar:hover{box-shadow:inset 0 0 0 2px var(--i-primary);}
+  /* 頭像＝複用 Button v-soft 原子（soft icon-only 圓鈕），僅覆蓋成圓形 */
+  .hdr-avatar.btn{border-radius:50%;flex:0 0 auto;}
   /* 陳列：上下堆疊的整條 bar（不再用擠壓的 2D 矩陣）*/
   .hdr-stack{display:flex;flex-direction:column;gap:22px;}
   .hdr-row{display:flex;flex-direction:column;gap:8px;}
@@ -3087,7 +3084,7 @@ function skelMedia(anim){
     b.setAttribute('aria-label','通知');b.innerHTML=HDR_IC_BELL;wrap.appendChild(b);
     if(badge)wrap.appendChild(ce('span','hdr-badge'));return wrap;}
   /* 圓形頭像 */
-  function hdrAvatar(){const av=ce('div','hdr-avatar');av.textContent='楊';av.setAttribute('aria-label','帳號');av.setAttribute('tabindex','0');return av;}
+  function hdrAvatar(){const b=document.createElement('button');b.className='btn v-soft i-primary sz-s icon-only live hdr-avatar';b.textContent='楊';b.setAttribute('aria-label','帳號');return b;}
   /* 右側 actions：鈴鐺 → 頭像 → 登入（登入鈕在頭像右側）*/
   function hdrActions(o){o=o||{};
     const a=ce('div','hdr-actions');
