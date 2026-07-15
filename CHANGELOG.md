@@ -482,3 +482,7 @@ List Item／List 由主流程直接改；Collapse／Modal／Drawer 開 3 個 fab
 - Live 導覽改 **9 項長清單**，內容溢出可捲（scrollable 236px）。
 
 **驗證**：整合後 `node --check` SYNTAX OK、Playwright 0 console error；逐一屬性＋幾何查驗（collapse 收合高=header、hover 規則在；drawer 矩陣四邊內縮 10px、Live 9 項可捲；modal 兩段 scoped、icon 顏色語意、bottom sheet 貼底全寬圓角；list-item NA 2 格、無左色條、文字按鈕、amount；list 子列灰底、無 filled、選項卡無 expand）＋ drawer 矩陣／modal Live 截圖確認。
+
+## 2026-07-15　Modal popup 按鈕排列改四選一
+
+依 Yuu：popup footer 按鈕排列從「並排／垂直」二選一，擴為 **並排／垂直／單顆主按鈕／單顆次按鈕** 四選一（`mdlPopFoot` 的 `lay.arrange`：row／stack／primary／secondary；單顆走 `.stack` 全寬）。矩陣 popup 欄向、Live「按鈕排列」seg、mdlCard 參數（`stack`→`arrange`）同步。文字按鈕仍為獨立 boolean。驗證：`node --check` OK、Playwright 逐一切換確認 並排=次+主、垂直=主/次堆疊、單顆主=solid、單顆次=outline。

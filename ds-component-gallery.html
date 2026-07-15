@@ -4139,21 +4139,23 @@ function skelMedia(anim){
     ],
   };
 
-  /* popup footer：排列與裝置脫鉤，改由旗標自由組合——
-     lay.stack=false 並排（次→主 等寬）；lay.stack=true 垂直堆疊（主 solid 全寬 → 次 outline 全寬）；
+  /* popup footer：排列與裝置脫鉤，改由旗標自由組合——lay.arrange 四選一：
+     'row' 並排（次→主 等寬）／'stack' 垂直堆疊（主 solid 全寬 → 次 outline 全寬）／
+     'primary' 單顆主按鈕（solid 全寬）／'secondary' 單顆次按鈕（outline 全寬）；
      lay.text=true 再加一顆 text 按鈕（如「稍後提醒我」）。live 時掛 .live 開啟真互動 */
   function mdlPopFoot(c,lay,live,compact){
     lay=lay||{};
+    const arrange=lay.arrange||'row';
+    const single=(arrange==='primary'||arrange==='secondary');
     const sz=compact?'sz-s':'sz-m';                       // 矩陣縮小示意用 s、Live 用 m
     const lv=live?' live':'';
-    const foot=ce('div','mdl-pop-foot'+(lay.stack?' stack':''));
-    const sec=ce('button','btn v-outline i-primary '+sz+lv);      // 次按鈕：primary outline（重用 Button 原子）
-    sec.innerHTML='<span>'+c.secondary+'</span>';
-    sec.setAttribute('data-mdl-cancel','1');              // Live 用來綁「取消」關閉
-    const pri=ce('button','btn v-solid '+c.primary.cls+' '+sz+lv); // 主按鈕：solid（intent 依 variant）
-    pri.innerHTML='<span>'+c.primary.label+'</span>';
-    if(lay.stack)foot.append(pri,sec);                    // 垂直堆疊：主在上、次在下，各自全寬
-    else foot.append(sec,pri);                            // 並排：次→主 等寬
+    const foot=ce('div','mdl-pop-foot'+((arrange==='stack'||single)?' stack':'')); // stack/單顆皆走全寬直排
+    const mkSec=()=>{const b=ce('button','btn v-outline i-primary '+sz+lv);b.innerHTML='<span>'+c.secondary+'</span>';b.setAttribute('data-mdl-cancel','1');return b;}; // 次按鈕：primary outline
+    const mkPri=()=>{const b=ce('button','btn v-solid '+c.primary.cls+' '+sz+lv);b.innerHTML='<span>'+c.primary.label+'</span>';return b;}; // 主按鈕：solid（intent 依 variant）
+    if(arrange==='primary')foot.appendChild(mkPri());            // 單顆主按鈕
+    else if(arrange==='secondary')foot.appendChild(mkSec());     // 單顆次按鈕
+    else if(arrange==='stack')foot.append(mkPri(),mkSec());      // 垂直堆疊：主在上、次在下
+    else foot.append(mkSec(),mkPri());                           // 並排：次→主 等寬
     if(lay.text){                                         // 文字按鈕（第三動作）：永遠獨占一列全寬
       const txt=ce('button','btn v-text i-primary '+sz+lv);
       txt.innerHTML='<span>'+c.text+'</span>';
@@ -4182,7 +4184,7 @@ function skelMedia(anim){
   }
 
   /* 對話框卡片主體。kind=popup|modal；
-     o = {variant, icon, stack, textBtn, closeIcon, description, note, remember, subtitle, long, clip, footer, compact, live} */
+     o = {variant, icon, arrange, textBtn, closeIcon, description, note, remember, subtitle, long, clip, footer, compact, live} */
   function mdlCard(kind,o){
     o=o||{};
     const compact=o.compact?' mdl-compact':'';
@@ -4205,7 +4207,7 @@ function skelMedia(anim){
         body.appendChild(row);
       }
       card.appendChild(body);
-      if(o.footer!==false)card.appendChild(mdlPopFoot(c,{stack:o.stack,text:o.textBtn},o.live,o.compact));
+      if(o.footer!==false)card.appendChild(mdlPopFoot(c,{arrange:o.arrange,text:o.textBtn},o.live,o.compact));
       return card;
     }
     /* ---- modal 寬版視窗：header（標題＋副標題＋×）＋可捲動 content ＋右對齊 footer ---- */
@@ -4279,11 +4281,12 @@ function skelMedia(anim){
       const pv=['normal','illustration'].filter(v=>active.variant.has(v));
       const mv=['regular','larger'].filter(v=>active.variant.has(v));
       if(ks.includes('popup')&&pv.length){
-        p.appendChild(matrixPanel({badge:'kind · popup',name:'Popup 小彈窗（列＝variant、欄＝按鈕排列：並排／垂直堆疊＋文字按鈕，排列為獨立旗標、不綁裝置）',
-          rows:pv,cols:['row','stack'],
+        const ARRZH={row:'並排',stack:'垂直堆疊',primary:'單顆主按鈕',secondary:'單顆次按鈕'};
+        p.appendChild(matrixPanel({badge:'kind · popup',name:'Popup 小彈窗（列＝variant、欄＝按鈕排列：並排／垂直／單顆主／單顆次，排列為獨立旗標、不綁裝置）',
+          rows:pv,cols:['row','stack','primary','secondary'],
           rowLab:v=>labHTML(PV[v][0],PV[v][1]),
-          colLab:a=>labHTML(a==='row'?'並排按鈕':'垂直堆疊＋文字按鈕',a),
-          cell:(v,a)=>mdlCard('popup',{variant:v,icon:v==='illustration',note:v==='illustration',remember:v==='illustration',stack:a==='stack',textBtn:a==='stack',compact:true}),mincol:250}));
+          colLab:a=>labHTML(ARRZH[a],a),
+          cell:(v,a)=>mdlCard('popup',{variant:v,icon:v==='illustration',note:v==='illustration',remember:v==='illustration',arrange:a,compact:true}),mincol:230}));
       }
       if(ks.includes('modal')&&mv.length){
         p.appendChild(matrixPanel({badge:'kind · modal',name:'Modal 大視窗（列＝variant、欄＝內容長度：適中／溢出出現卷軸）',
@@ -4295,7 +4298,7 @@ function skelMedia(anim){
       if(!p.children.length){const e=ce('p','sub');e.textContent='目前勾選的 kind 沒有對應的 variant 保留下來，請在篩選器至少各留一個。';p.appendChild(e);}
     }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Kind × Variant 矩陣','variant 依 kind 各取兩種：popup→一般／警示、modal→標準／大版，實際共 4 種組合（篩選器的 2×4 為軸值上限）。popup 欄向展示兩種按鈕排列（並排／垂直堆疊＋文字按鈕；排列為獨立旗標、不綁裝置），警示列的 icon 與主按鈕轉紅、一般列也可帶主色 icon（見 Live）；modal 欄向展示內容適中與溢出（出現卷軸）。');
+    const sec=section(body,'Kind × Variant 矩陣','variant 依 kind 各取兩種：popup→一般／警示、modal→標準／大版，實際共 4 種組合（篩選器的 2×4 為軸值上限）。popup 欄向展示四種按鈕排列（並排／垂直／單顆主／單顆次；排列為獨立旗標、不綁裝置），警示列的 icon 與主按鈕轉紅、一般列也可帶主色 icon（見 Live）；modal 欄向展示內容適中與溢出（出現卷軸）。');
     p=panelsIn(sec);renderM();
 
     const ls=section(body,'浮層結構','對話框是一個疊在頁面之上的層級：底層頁面內容被 backdrop 遮罩壓暗，卡片置中浮於最上層，點擊遮罩空白處可關閉。');
@@ -4334,7 +4337,7 @@ function skelMedia(anim){
       initial:{variant:'normal',arrange:'row',icon:false,description:true,note:false,remember:true,textBtn:false},
       segs:[
         {key:'variant',label:'Variant',options:['normal','illustration'],labels:['一般','警示']},
-        {key:'arrange',label:'按鈕排列',options:['row','stack'],labels:['並排按鈕','垂直堆疊']},
+        {key:'arrange',label:'按鈕排列',options:['row','stack','primary','secondary'],labels:['並排','垂直','單顆主','單顆次']},
       ],
       bools:[
         {key:'icon',label:'icon 圖示（顏色依 variant）'},
@@ -4344,7 +4347,7 @@ function skelMedia(anim){
         {key:'textBtn',label:'文字按鈕（第三動作）'},
       ],
       boolLabel:'Content',
-      render:st=>mdlLiveStage('popup',{variant:st.variant,icon:st.icon,description:st.description,note:st.note,remember:st.remember,stack:st.arrange==='stack',textBtn:st.textBtn}),
+      render:st=>mdlLiveStage('popup',{variant:st.variant,icon:st.icon,description:st.description,note:st.note,remember:st.remember,arrange:st.arrange,textBtn:st.textBtn}),
       note:'排列與裝置脫鉤，可自由組合：<b>並排</b>＝次＋主等寬、<b>垂直堆疊</b>＝主（solid 全寬）→次（outline 全寬），再勾<b>文字按鈕</b>疊出第三動作（如「稍後提醒我」）。<b>icon</b> 是可選旗標、一般版也能開；顏色依 variant 語意——一般＝主色、警示＝紅（警示與一般的差異只在顏色與主按鈕 intent）。↓ 快速對照：同一顆 icon 在兩種語意下的顏色。',
       free:()=>[mdlCard('popup',{variant:'normal',icon:true,compact:true}),mdlCard('popup',{variant:'illustration',icon:true,note:true,remember:true,compact:true})]
     });
