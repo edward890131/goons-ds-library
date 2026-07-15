@@ -304,6 +304,11 @@ Yuu 發現 price 的 SALE 是價格 agent 自製的 `.pr-badge`（沒用 DS Tag 
 - **Tag**：CSS 加 `.tg.i-danger`（鏡射 i-brand、綁 `--i-danger` token）；`DIAL_SPECS.tag` intent 軸 `brand/neutral → +danger`（矩陣/轉盤/summary 自動長出 danger，18 顆紅 tag；tag 全展 3×2×2→**3×2×3=18**）；`buildTag` 的 colLab 從硬寫 `brand?品牌:中性` 改用 `zh.intent[]` map（否則 danger 誤標中性）；LIVE.tag intent seg 加 danger；lede/formula 更新。
 - **Price**：`prEl` 的 sale 從 `<span class="pr-badge">` 改成 DS Tag `<span class="tg v-solid c-round i-danger st-default"><span>SALE</span></span>`；移除 `.pr-badge` CSS、加 `.pr-price .tg{align-self:center}`（在 baseline flex 內置中）。實測 SALE 背景＝`--i-danger`、與 Tag 元件同源。
 
+## 2026-07-15　「複雜度轉盤」改名變數篩選器 + Complex 群組重排
+
+- **改名**：各元件頁的可收合「**複雜度轉盤**」→「**變數篩選器**」（6 處：mountDial 標題、button 頁硬寫標題、summary lede 引用、3 處註解）。**匯出總覽頁「複雜度確認」不動**（不同東西）。
+- **Complex 群組重排**：原 15 顆順序無規律，改依**心智模型 5 群**（維持扁平側邊欄、相鄰即群、與 Basic 一致，NAV 內加群註解）：① 版面結構 header／footer／section-head ② 內容容器 card／list／collapse ③ 內容卡片 product-card／category-tile／article-card／announcement ④ 覆蓋／浮動 modal／drawer／floating-line ⑤ 流程／時間 step／calendar。敘事：頁面骨架 → 裝內容的容器 → 特定內容卡 → 浮在上層的覆蓋層 → 流程與時間。summary 卡片依 NAV 順序、自動跟進。
+
 ## 已知踩坑（避免重犯）
 - summary 卡片要「接進匯出需求頁」＝該元件必須進 `DIAL_SPECS`（給軸/計數）＋ 有頂層 `LIVE[id]`（給展開的實際操作）。自包含頁若 Live builder nested 在 buildFn 內，summary 首次載入時 `LIVE[id]` 還沒定義 → 必須把 builder 提升頂層再註冊。
 - 平行建「同一個 self-contained 單檔」的多個頁面：不要讓多 agent 同時寫檔（會衝突）。正解＝平行「設計+產碼」（各回傳 namespace 過的 `buildXxx`+CSS 字串）、主控端序列整合。CSS class 一律加元件前綴防撞。

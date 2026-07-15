@@ -139,7 +139,7 @@
   .count b{color:var(--accent);font-size:15px;} .count .full{color:var(--faint);}
   .axes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px 16px;}
   .axis .name{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;}
-  /* 複雜度轉盤：勾選清單（每個軸值一列，前面 checkbox）*/
+  /* 變數篩選器：勾選清單（每個軸值一列，前面 checkbox）*/
   .chk-list{display:flex;flex-direction:column;gap:1px;}
   .chk-list .chk-row{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:7px;cursor:pointer;
     font-family:var(--font-mono);font-size:12.5px;color:var(--muted);user-select:none;transition:background .12s,color .12s;}
@@ -482,7 +482,7 @@
   .row-demo .v-contained .tabi:hover:not(.st-active){background:var(--panel-2);color:var(--ink);}
   .row-demo .v-pill .tabi:hover:not(.st-active){color:var(--ink);}
 
-  /* ===== 複雜度轉盤 collapsible card ===== */
+  /* ===== 變數篩選器 collapsible card ===== */
   .dcard{margin:0 0 26px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
   .dcard-head{width:100%;display:flex;align-items:center;gap:12px;padding:15px 20px;background:var(--panel-2);
     border:none;border-bottom:1px solid var(--line);cursor:pointer;font-family:var(--font-sans);text-align:left;color:var(--ink);transition:.13s;}
@@ -923,21 +923,26 @@
       {id:'loader',name:'Loader 載入器',st:'ready'},
     ]},
     {group:'Complex 複雜',emoji:'🧩',items:[
-      {id:'calendar',name:'Calendar 日曆／時間'},
-      {id:'collapse',name:'Collapse 摺疊'},
-      {id:'list',name:'List 列表'},
-      {id:'card',name:'Card 卡片'},
-      {id:'modal',name:'Modal 對話框'},
-      {id:'drawer',name:'Drawer 抽屜'},
+      /* 版面結構 */
       {id:'header',name:'Header 頁首'},
       {id:'footer',name:'Footer 頁尾'},
-      {id:'floating-line',name:'Floating Line 浮動列'},
+      {id:'section-head',name:'Section Head 區段標題'},
+      /* 內容容器 */
+      {id:'card',name:'Card 卡片'},
+      {id:'list',name:'List 列表'},
+      {id:'collapse',name:'Collapse 摺疊'},
+      /* 內容卡片 */
       {id:'product-card',name:'Product Card 商品卡'},
       {id:'category-tile',name:'Category Tile 分類磚'},
       {id:'article-card',name:'Article Card 文章卡'},
-      {id:'step',name:'Step 步驟'},
       {id:'announcement-item',name:'Announcement 公告項'},
-      {id:'section-head',name:'Section Head 區段標題'},
+      /* 覆蓋／浮動 */
+      {id:'modal',name:'Modal 對話框'},
+      {id:'drawer',name:'Drawer 抽屜'},
+      {id:'floating-line',name:'Floating Line 浮動列'},
+      /* 流程／時間 */
+      {id:'step',name:'Step 步驟'},
+      {id:'calendar',name:'Calendar 日曆／時間'},
     ]},
     {group:'Table & Chart 表格圖表',emoji:'📊',items:[
       {id:'table',name:'Table 表格'},
@@ -1043,7 +1048,7 @@
     <p class="lede">L3 spec 定義的完整複雜度攤開在此。<b>指著任何一格跟我說要不要保留</b>，或用下方轉盤把矩陣「調」到你要的複雜度。示意色為 placeholder token，之後接真正的 <code>semantic.action.*</code>。</p>
     <div class="spec" id="specStrip"></div>
     <div class="dcard">
-      <button class="dcard-head"><span class="dh-title">複雜度轉盤</span><span class="dh-count" id="countOut"></span><span class="dh-chevron">${ICON_CARET}</span></button>
+      <button class="dcard-head"><span class="dh-title">變數篩選器</span><span class="dh-count" id="countOut"></span><span class="dh-chevron">${ICON_CARET}</span></button>
       <div class="dcard-body"><p class="hint">勾掉不需要的軸值，矩陣與總變體數即時縮減。每軸至少保留一個。</p><div class="axes" id="axesCtl"></div></div>
     </div>
     <section class="block"><h2>State × Intent 矩陣</h2>
@@ -1157,13 +1162,13 @@
     scroll.appendChild(grid);panel.appendChild(scroll);return panel;
   }
 
-  /* ---- 共用：可收合複雜度轉盤 ---- */
+  /* ---- 共用：可收合變數篩選器 ---- */
   function mountDial(host,cfg){
     const {axes,zh,active,onRender}=cfg;
     const card=ce('div','dcard');
     const head=ce('button','dcard-head');
     const countSpan=ce('span','dh-count');
-    const title=ce('span','dh-title');title.textContent='複雜度轉盤';
+    const title=ce('span','dh-title');title.textContent='變數篩選器';
     const chev=ce('span','dh-chevron');chev.innerHTML=ICON_CARET;
     head.append(title,countSpan,chev);
     const bodyEl=ce('div','dcard-body');
@@ -2579,7 +2584,7 @@ function skelMedia(anim){
     const rep=choiceReport();
     view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Overview · 匯出需求</p><h1>匯出需求</h1></div>
         <button class="copybtn" id="copyBtn">複製並匯出JSON</button></div>
-      <p class="lede">每個元件<b>最後選定的複雜度</b>——展開牌卡可看該元件在自己頁面上的<b>實際操作</b>，牌卡前的勾選框決定<b>要不要產出</b>這顆元件。回各元件用「複雜度轉盤」調整組合，這頁即時彙整。</p>
+      <p class="lede">每個元件<b>最後選定的複雜度</b>——展開牌卡可看該元件在自己頁面上的<b>實際操作</b>，牌卡前的勾選框決定<b>要不要產出</b>這顆元件。回各元件用「變數篩選器」調整組合，這頁即時彙整。</p>
       <div class="sum-actions">
         <button class="aitoggle" id="aiBtn">${ICON_SPARK}<span>AI 建議產出</span><span class="sw"></span></button>
         <div class="spacer"></div>
