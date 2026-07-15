@@ -765,11 +765,10 @@
   .am-divider{height:1px;background:var(--line);margin:5px 8px;}
   .am-live-wrap{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;} /* Live 面板改順流排在 trigger 下方，框會跟著長高、不溢出 */
   .am-live-wrap .am-panel{position:static;}
-  .am-trigger{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;background:var(--i-sec-fill);border:1px solid var(--i-sec-edge);color:var(--i-sec-fg);font-family:var(--font-sans);font-size:14px;cursor:pointer;}
-  .am-trigger:hover{background:var(--i-sec-fill-h);}
-  .am-trigger .am-tcaret{display:inline-flex;width:14px;height:14px;color:var(--muted);transition:transform .15s ease;}
-  .am-trigger .am-tcaret svg{width:14px;height:14px;}
-  .am-trigger.is-open .am-tcaret{transform:rotate(180deg);}
+  /* trigger 直接沿用 Button 元件的 .btn 樣式（v-solid i-secondary sz-m live），僅補 caret 旋轉 */
+  .am-trig .am-tcaret{display:inline-flex;align-items:center;transition:transform .15s ease;}
+  .am-trig .am-tcaret svg{width:1em;height:1em;}
+  .am-trig.is-open .am-tcaret{transform:rotate(180deg);}
 
 /* ===== breadcrumb (bc-) ===== */
 /* ---- BREADCRUMB 麵包屑 ---- */
@@ -1977,7 +1976,7 @@ function skelMedia(anim){
     boolLabel:'State',
     render:st=>{
       const wrap=ce('div','am-live-wrap');
-      const trig=ce('button','am-trigger'+(st.open?' is-open':''));
+      const trig=ce('button','btn v-solid i-secondary sz-m live am-trig'+(st.open?' is-open':''));
       trig.innerHTML=`<span>動作</span><span class="am-tcaret">${ICON_CARET}</span>`;
       wrap.appendChild(trig);
       let panel=null;
