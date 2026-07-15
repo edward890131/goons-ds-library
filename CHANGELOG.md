@@ -343,3 +343,15 @@ Yuu 發現 price 的 SALE 是價格 agent 自製的 `.pr-badge`（沒用 DS Tag 
 - **驗證**：整合後 `node --check` 過；Playwright 逐頁 `renderView` 9 頁全渲染、**0 console error**；匯出總覽頁 27 卡（18 舊＋9 新）正常；modal Live overlay 實測 `position:absolute` 限縮 stage、側邊欄仍可見。
 - **NAV 狀態**：9 顆全設 `st:'ready'`。**Complex 群 9/9 建置完成**。
 - **整合手法沿用**：9 agent 各寫 7 個分離純文字檔（css/icons.js/build.js/dialspec/dialpage/buildmap/live）避開 JSON escape；主控端用 `integrate.js` 依 8 個錨點序列插入（CSS 進 `</style>` 前、buildFn 進 `const BUILD=` 前、dialspec 進 DIAL_SPECS、dialpage/buildmap/NAV ready flag）。事前掃描跨檔命名衝突＋未定義 token（皆 0）。
+
+## 2026-07-15　Header 整修：原子重用 + 分類邏輯重構
+
+依 Yuu 6 點回饋改寫 Header：
+- **陳列改「上下堆疊」**：原 layout×density 2D 矩陣把整條頁首 bar 擠進窄欄 → 改成 `.hdr-stack` 垂直堆疊，每條 bar 全寬、上方帶 caption，不再擠壓。
+- **logo 換 Goons 官方字標**：`hdrLogo` 從「accent 方塊＋文字 Goons」改成**複用檔內 topbar 既有的 Goons wordmark svg**（`apply_header.js` 自動從 `.brand-logo` 抽出、去 class、注入 `HDR_LOGO` 常數，避免手抄長 path）。
+- **登入鈕移到 avatar 右側**：`hdrActions` 順序 登入→鈴鐺→頭像　改成　**鈴鐺→頭像→登入**（登入最右）。
+- **搜尋與導覽並存（分類邏輯重構）**：原 `layout` 軸 logo-nav／logo-search／centered **互斥** → 拿掉。改成 **導覽（nav）與搜尋（search）都是可並存的內容開關**，bar 版位＝`logo · nav · spacer · search · actions`，兩者可同時出現。
+- **行動版/電腦版升格為軸**：新增 `device` 軸（desktop／mobile），取代原本獨立的「行動版收合」section；篩選器與 Live 都可切換。行動版導覽收進漢堡鈕。DIAL_SPECS.header 改 `device × density`（2×2=4）。
+- **原子建構原則**：header 內部零件全部改用 library 既有元件——**導覽＝Menu 元件 `mnBar('horizontal')`**（在 header 內用 `.hdr-nav-slot .mn-bar{border:0;background:transparent;padding:0}` de-chrome）、搜尋＝Search／Input `.field v-outline`、漢堡/鈴鐺＝Button icon-only、登入＝`.btn v-solid i-primary`。specStrip 加 `atoms` 欄標註 Button·Icon Button·Menu·Search。
+- **驗證**：`node --check` 過；Playwright renderView header **0 console error**、4 條上下堆疊 bar、nav 用 `.mn-item`（Menu 元件）、logo svg、nav+search 並存、actions 順序 bell→avatar→login、mobile 有漢堡，全數確認。
+- **新增 feedback memory**：`feedback_ds_atomic_reuse` — 複合元件內部一律取用 library 原子、禁 inline 重畫（Yuu 要求「確保不再犯」）。
