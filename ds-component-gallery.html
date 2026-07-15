@@ -1064,6 +1064,11 @@
   .lst-divider{height:1px;background:var(--line);margin:0 14px;}
   /* 整組列表示範版位 */
   .lst-group-demo{display:flex;flex-direction:column;gap:20px;max-width:520px;}
+  /* Live 兩類分段（雙欄／巢狀、選項卡各一段，控制項不共用） */
+  .lst-live-block{margin-bottom:22px;}
+  .lst-live-block:last-child{margin-bottom:0;}
+  .lst-live-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--muted);margin:0 0 10px;}
+  .lst-live-cap b{font-weight:600;}
   /* ---- 雙欄列 two-column：右欄數值（小標題） ---- */
   .lst-value{font-size:13px;color:var(--muted);white-space:nowrap;}
   .lst-2col-demo{display:flex;flex-wrap:wrap;gap:20px;}
@@ -1490,6 +1495,7 @@
       {id:'section-head',name:'Section Head 區段標題',st:'ready'},
       /* 內容容器 */
       {id:'list',name:'List 列表',st:'ready'},
+      {id:'list-item',name:'List Item 資訊列',st:'ready'},
       {id:'collapse',name:'Collapse 摺疊',st:'ready'},
       /* 覆蓋／浮動 */
       {id:'modal',name:'Modal 對話框',st:'ready'},
@@ -1588,7 +1594,8 @@
     header:{label:'Header 頁首',order:['device'],axes:{device:['desktop','mobile']},zh:{device:{desktop:'電腦版',mobile:'行動版'},axisName:{device:'Device 裝置'}}},
     footer:{label:'Footer 頁尾',order:['variant','device'],axes:{variant:['rich','simple','minimal'],device:['desktop','mobile']},zh:{variant:{rich:'多欄',simple:'單列',minimal:'極簡'},device:{desktop:'電腦版',mobile:'行動版'},axisName:{variant:'Variant 型態',device:'Device 裝置'}}},
     'section-head':{label:'Section Head 區段標題',order:['align','size'],axes:{align:['left','center'],size:['m','l']},zh:{align:{left:'靠左',center:'置中'},size:{m:'標準 m',l:'大 l'},axisName:{align:'Align 對齊',size:'Size 尺寸'}}},
-    list:{label:'List 列表',order:['variant','state'],axes:{variant:['basic','two-column','selection'],state:['default','hover','selected','error','disabled']},zh:{variant:{basic:'基本列','two-column':'雙欄',selection:'選項卡'},state:{default:'預設',hover:'滑過',selected:'已選',error:'錯誤',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
+    list:{label:'List 列表',order:['variant','state'],axes:{variant:['nested','selection'],state:['default','hover','selected','error','disabled']},zh:{variant:{nested:'雙欄／巢狀',selection:'選項卡'},state:{default:'預設',hover:'滑過',selected:'已選',error:'錯誤',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
+    'list-item':{label:'List Item 資訊列',order:['leading','state'],axes:{leading:['checkbox','icon','none'],state:['default','hover','selected','disabled']},zh:{leading:{checkbox:'勾選框',icon:'圖示',none:'無'},state:{default:'預設',hover:'滑過',selected:'已選',disabled:'停用'},axisName:{leading:'Leading 前置',state:'State 狀態'}}},
     collapse:{label:'Collapse 摺疊',order:['variant','state'],axes:{variant:['bordered','filled','plain'],state:['collapsed','expanded','hover','disabled']},zh:{variant:{bordered:'外框',filled:'填色',plain:'極簡'},state:{collapsed:'收合',expanded:'展開',hover:'滑過',disabled:'停用'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
     modal:{label:'Modal 對話框',order:['kind','variant'],axes:{kind:['popup','modal'],variant:['normal','illustration','regular','larger']},zh:{axisName:{kind:'Kind 大小',variant:'Variant 型態'},kind:{popup:'小彈窗 popup',modal:'大視窗 modal'},variant:{normal:'一般 popup',illustration:'警示圖 popup',regular:'標準 modal',larger:'大版 modal'}}},
     drawer:{label:'Drawer 抽屜',order:['side','size'],axes:{side:['left','right'],size:['s','m','l']},zh:{side:{left:'左側',right:'右側'},size:{s:'窄 s',m:'標準 m',l:'寬 l'},axisName:{side:'Side 方向',size:'Size 尺寸'}}},
@@ -3618,6 +3625,7 @@ function skelMedia(anim){
     if(o.meta){const m=ce('span','lst-meta');m.textContent=o.meta;tr.appendChild(m);has=true;}
     if(o.action){const b=ce('button','btn v-text i-secondary sz-s icon-only');b.setAttribute('aria-label','更多動作');b.innerHTML=ICON_GEAR;tr.appendChild(b);has=true;} // 重用 Button 原子
     if(o.caret){const c=ce('span','lst-caret');c.innerHTML=LST_IC_CHEVRON;tr.appendChild(c);has=true;}
+    if(o.selCheck){tr.appendChild(lstCbx(true,state));has=true;} // 已選指示：右側補已勾選 checkbox（非 checkbox-leading 時）
     if(has)it.appendChild(tr);
     return it;
   }
@@ -3724,13 +3732,28 @@ function skelMedia(anim){
     return f;
   }
 
-  /* 依 variant × state 給矩陣單格內容；error 為選項卡專屬 → 其餘顯示不適用 */
+  /* 依 variant × state 給矩陣單格內容；error 為選項卡專屬 → 其餘顯示不適用
+     雙欄／巢狀：母列（checkbox＋標題＋右側小標題）＋ 一條內縮子列示意上下兩層；已選 → 母列勾選框打勾 */
   function lstMatrixCell(variant,state){
     if(state==='error'&&variant!=='selection'){const na=ce('div','lst-na');na.textContent='—（selection 專屬）';return na;}
     if(variant==='selection')return lstSelCard('checkbox',state,{});
     const wrap=ce('div','lst-solo');
-    if(variant==='basic')wrap.appendChild(lstRowBasic(state,{leadIcon:IC_GLOBE,title:'標題',tag:'標籤'}));
-    else wrap.appendChild(lstRowTwoCol(state,{title:'標題',value:'小標題'}));
+    const nest=ce('div','lst-nest');
+    nest.appendChild(lstRowBasic(state,{checkbox:true,checked:(state==='selected'),title:'標題',meta:'小標題'}));
+    const sub=ce('div','lst-subwrap');sub.style.display='block';
+    sub.appendChild(lstRowBasic('default',{title:'子項',meta:'小標題',caret:true}));
+    nest.appendChild(sub);
+    wrap.appendChild(nest);
+    return wrap;
+  }
+
+  /* List Item 專用矩陣格：leading（勾選框／圖示／無）× state；已選一律出現已勾選 checkbox */
+  function lstiCell(leading,state){
+    const o={title:'資訊列標題',tag:'標籤',caret:true};
+    if(leading==='checkbox'){o.checkbox=true;o.checked=(state==='selected');}
+    else if(leading==='icon'){o.leadIcon=IC_GLOBE;}
+    if(state==='selected'&&leading!=='checkbox')o.selCheck=true; // 非 checkbox-leading 的已選 → 右側補已勾選框
+    const wrap=ce('div','lst-solo');wrap.appendChild(lstRowBasic(state,o));
     return wrap;
   }
 
@@ -3745,52 +3768,111 @@ function skelMedia(anim){
     return g;
   }
 
+  /* ==================== List Item 資訊列（左右欄位可自由配置的單列） ==================== */
+  function buildListItem(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · List Item',title:'List Item 資訊列',
+      lede:'列表的<b>基本單元</b>：左 <b>leading</b>（無／圖示／勾選框）＋ 中 <b>body</b>（title，可加副描述）＋ 右 <b>trailing</b>（tag／info／meta／動作鈕／caret／checkbox，<b>可複選</b>）。每個欄位都能獨立開關組合，是 List、Menu、選項卡等容器共用的原子列。狀態走 default／hover／selected／disabled；<b>已選</b>會出現已勾選的 checkbox 作為選取指示。',
+      specRows:[['axes','<code>leading × state</code>'],['formula','<code>3 × 4 = 12</code>'],['token-policy','<code>semantic.*.list.*</code>'],['slots','leading / title / desc / trailing 組合']]});
+    const axes=DIAL_SPECS['list-item'].axes, zh=DIAL_SPECS['list-item'].zh, active=CHOICE['list-item'].active; // 接中央 store
+    const LN={checkbox:['勾選框','checkbox'],icon:['圖示','icon'],none:['無','none']};
+    const STN={default:['預設','default'],hover:['滑過','hover'],selected:['已選','selected'],disabled:['停用','disabled']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const ls=axes.leading.filter(v=>active.leading.has(v));
+      const ss=axes.state.filter(v=>active.state.has(v));
+      p.appendChild(matrixPanel({badge:'list · item',name:'Leading × State（前置欄位 × 狀態；已選出現已勾選 checkbox）',
+        rows:ls,cols:ss,
+        rowLab:v=>labHTML(LN[v][0],LN[v][1]),
+        colLab:s=>labHTML(STN[s][0],STN[s][1]),
+        cell:(l,s)=>lstiCell(l,s),mincol:260})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Leading × State 矩陣','列＝左側前置（勾選框／圖示／無）、欄＝狀態。hover 底色轉深、selected 帶淡藍底＋左側 accent 色條並出現已勾選 checkbox、disabled 整體淡化。');
+    p=panelsIn(sec);renderM();
+
+    // ---- Slot 組合：左右欄位自由組合 ----
+    const bs=section(body,'Slot 組合 · 左右欄位','左 leading（無／圖示／勾選框）＋ 中 title（可加副描述）＋ 右 trailing 標準化：tag（重用 Tag）／info icon／meta 文字／動作鈕（重用 Button）／caret，依資訊密度自由組合。');
+    const bwrap=ce('div','lst-group-demo');
+    bwrap.appendChild(lstGroup([
+      lstRowBasic('default',{title:'純標題'}),
+      lstRowBasic('default',{title:'標題',desc:'相關的敘述說明'}),
+      lstRowBasic('default',{title:'圖示＋標籤',leadIcon:IC_GLOBE,tag:'標籤'}),
+      lstRowBasic('default',{title:'勾選框＋尾端資訊',checkbox:true,meta:'小標題'}),
+      lstRowBasic('default',{title:'資訊圖示＋箭頭',info:true,caret:true}),
+      lstRowBasic('default',{title:'動作鈕',action:true}),
+    ],{divider:true}));
+    bs.appendChild(bwrap);
+
+    // ---- 實際互動 Live：每個 slot 一個開關，全部對應樣式 ----
+    const sl=section(body,'實際互動 Live','切 Leading（無／圖示／勾選框）與 State（預設／滑過／已選／停用），勾選右側 trailing 各 slot；每個開關都對應一個可見樣式。勾選框 leading 可點切換勾選。');
+    mountLive(sl,{
+      initial:{leading:'checkbox',state:'default',desc:false,tag:true,info:false,meta:false,action:false,caret:true},
+      segs:[
+        {key:'leading',label:'Leading 前置',options:['none','icon','checkbox'],labels:['無','圖示','勾選框']},
+        {key:'state',label:'State 狀態',options:['default','hover','selected','disabled'],labels:['預設','滑過','已選','停用']},
+      ],
+      bools:[
+        {key:'desc',label:'desc 副描述'},
+        {key:'tag',label:'tag 標籤'},
+        {key:'info',label:'info 資訊圖示'},
+        {key:'meta',label:'meta 尾端文字'},
+        {key:'action',label:'action 動作鈕'},
+        {key:'caret',label:'caret 箭頭'},
+      ],
+      boolLabel:'Trailing 組合',
+      render:st=>{
+        const o={title:'資訊列標題',
+          desc:st.desc?'相關的敘述說明':null,
+          leadIcon:st.leading==='icon'?IC_GLOBE:null,
+          checkbox:st.leading==='checkbox',
+          checked:(st.leading==='checkbox'&&st.state==='selected'),
+          tag:st.tag?'標籤':null,info:st.info,meta:st.meta?'小標題':null,
+          action:st.action,caret:st.caret};
+        if(st.state==='selected'&&st.leading!=='checkbox')o.selCheck=true; // 已選補右側勾選框
+        const row=lstRowBasic(st.state,o);
+        if(st.leading==='checkbox'&&st.state!=='disabled'){ // 勾選框 leading 可點切換
+          row.style.cursor='pointer';
+          row.addEventListener('click',()=>{const cb=row.querySelector('.cbx');if(!cb)return;const on=cb.classList.toggle('st-checked');cb.innerHTML=on?ICON_CHECK:'';});
+        }
+        const box=ce('div','lst-solo');box.appendChild(row);return box;
+      },
+      note:'每個開關都對應一個 slot：<b>Leading</b>（無／圖示／勾選框）、<b>Trailing</b> 可複選（tag／info／meta／動作鈕／caret）、<b>State</b> 切 hover／已選／停用。<b>已選</b>狀態一律出現已勾選的 checkbox 當選取指示。'
+    });
+  }
+
   function buildList(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · List',title:'List 列表',
-      lede:'資料列＋選項卡的<b>完整列體系</b>，三大類 variant：<b>basic 基本列</b>（左 leading icon／checkbox 可省＋中 title＋右 trailing 組合）、<b>two-column 雙欄</b>（左標題、右數值小標題＋caret，分無框與填色卡片兩種底）、<b>selection 選項卡</b>（整列一張有框卡：icon＋主標題＋敘述說明＋右側 checkbox／radio）。trailing 標準化為 <b>tag／info／meta／caret／checkbox／radio</b> 可組合；basic／two-column 走四狀態，selection 多一個 <b>error</b>（紅框＋錯誤訊息）。另含<b>巢狀可展開列</b>與<b>明細總計列</b>兩種進階組合。',
-      specRows:[['axes','<code>variant × state</code>'],['formula','<code>3 × 4 ＋ selection error = 13</code>'],['token-policy','<code>semantic.*.list.*</code>'],['features','trailing 組合 / 巢狀展開 / 明細總計 / 選項卡展開下拉']]});
+      lede:'資料列容器的<b>組合體系</b>，兩大類 variant：<b>雙欄／巢狀 nested</b>（上下兩層——母列＋內縮子列，點母列展開／收合，可套填色卡片底）、<b>選項卡 selection</b>（整列一張有框卡：icon＋主標題＋敘述說明＋右側 checkbox／radio）。單列本身的左右欄位組合請見<b>List Item 資訊列</b>。另含<b>明細／總計列</b>進階組合。nested 走四狀態，selection 多一個 <b>error</b>（紅框＋錯誤訊息）；<b>已選</b>狀態的母列會出現已勾選 checkbox。',
+      specRows:[['axes','<code>variant × state</code>'],['formula','<code>nested 4 ＋ selection 5 = 9</code>'],['token-policy','<code>semantic.*.list.*</code>'],['features','上下巢狀 / 選項卡 / 明細總計']]});
     const axes=DIAL_SPECS.list.axes, zh=DIAL_SPECS.list.zh, active=CHOICE.list.active; // 接中央 store
-    const VN={basic:['基本列','basic'],'two-column':['雙欄','two-column'],selection:['選項卡','selection']};
+    const VN={nested:['雙欄／巢狀','nested'],selection:['選項卡','selection']};
     const STN={default:['預設','default'],hover:['滑過','hover'],selected:['已選','selected'],error:['錯誤','error'],disabled:['停用','disabled']};
     let p;
     function renderM(){ if(!p)return; p.innerHTML='';
       const vs=axes.variant.filter(v=>active.variant.has(v));
       const ss=axes.state.filter(v=>active.state.has(v));
-      p.appendChild(matrixPanel({badge:'list · item',name:'Variant × State（三大類 × 狀態；error 為選項卡專屬）',
+      p.appendChild(matrixPanel({badge:'list · group',name:'Variant × State（雙欄／巢狀、選項卡 × 狀態；error 為選項卡專屬）',
         rows:vs,cols:ss,
         rowLab:v=>labHTML(VN[v][0],VN[v][1]),
         colLab:s=>labHTML(STN[s][0],STN[s][1]),
         cell:(v,s)=>lstMatrixCell(v,s),mincol:260})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Variant × State 矩陣','列＝三大類（基本列／雙欄／選項卡）、欄＝狀態。selected：基本列帶左側 accent 色條與淡藍底、選項卡轉藍底藍框；error 僅選項卡有（紅框＋卡下錯誤訊息）；disabled 整體淡化。');
+    const sec=section(body,'Variant × State 矩陣','列＝雙欄／巢狀與選項卡、欄＝狀態。雙欄／巢狀 selected：母列出現已勾選 checkbox＋淡藍底；選項卡 selected 轉藍底藍框；error 僅選項卡有（紅框＋卡下錯誤訊息）；disabled 整體淡化。');
     p=panelsIn(sec);renderM();
 
-    // ---- 基本列：trailing 標準化 ----
-    const bs=section(body,'基本列 Basic · trailing 組合','左 leading icon 可省、中間 title、右側 trailing 標準化：tag（重用 Tag）／info icon／meta 文字／caret，依資訊密度自由組合。');
-    const bwrap=ce('div','lst-group-demo');
-    bwrap.appendChild(lstGroup([
-      lstRowBasic('default',{title:'標題'}),
-      lstRowBasic('default',{title:'標題',info:true}),
-      lstRowBasic('default',{title:'標題',tag:'標籤'}),
-      lstRowBasic('default',{title:'標題',meta:'小標題'}),
-      lstRowBasic('default',{title:'標題',leadIcon:IC_GLOBE,tag:'標籤',caret:true}),
+    // ---- 雙欄／巢狀 ----
+    const ts=section(body,'雙欄／巢狀 Nested','上下兩層結構：母列（checkbox＋標題＋右側小標題）＋ 內縮子列（標題＋小標題＋caret）；點母列展開／收合，點勾選框只切換勾選、不觸發展開。可套「填色卡片」底。');
+    const twrap=ce('div','lst-group-demo');
+    twrap.appendChild(lstGroup([
+      lstNested({title:'王小明',meta:'3 項',open:true,checked:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'},{title:'子項三',meta:'小標題'}]}),
+      lstNested({title:'陳美華',meta:'2 項',children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
     ],{divider:true}));
-    bs.appendChild(bwrap);
-
-    // ---- 雙欄列 ----
-    const ts=section(body,'雙欄列 Two-column','左標題、右數值（小標題）＋caret；「無框」白卡與「填色卡片」兩種底，適合設定頁與摘要導覽。');
-    const twrap=ce('div','lst-2col-demo');
-    const twoColRows=()=>[
-      lstRowTwoCol('default',{title:'標題',value:'小標題'}),
-      lstRowTwoCol('default',{title:'標題',value:'小標題'}),
-      lstRowTwoCol('default',{title:'標題',value:'小標題'}),
-    ];
-    twrap.appendChild(lstGroup(twoColRows(),{divider:true}));
-    twrap.appendChild(lstGroup(twoColRows(),{filled:true}));
+    twrap.appendChild(lstGroup([
+      lstNested({title:'填色版母列',meta:'2 項',open:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
+    ],{filled:true}));
     ts.appendChild(twrap);
 
     // ---- 明細/摘要列 ----
-    const ms=section(body,'明細/摘要列 Summary','右對齊的明細 label（可加粗／帶說明）、caret 導覽列、「＋按鈕」新增列，底部以 Price 原子（.pr-price）收「NT$ 總計」。');
+    const ms=section(body,'明細／總計列 Summary','右對齊的明細 label（可加粗／帶說明）、caret 導覽列、「＋按鈕」新增列，底部以 Price 原子（.pr-price）收「NT$ 總計」。');
     const mwrap=ce('div','lst-group-demo');
     mwrap.appendChild(lstGroup([
       lstSumRow({label:'小標題'}),
@@ -3801,15 +3883,6 @@ function skelMedia(anim){
       lstSumRow({total:'200,000'}),
     ],{divider:true}));
     ms.appendChild(mwrap);
-
-    // ---- 巢狀可展開列 ----
-    const ns=section(body,'巢狀可展開列 Nested','母列＝checkbox＋標題＋右側小標題；點列展開／收合內縮子列（標題＋小標題＋caret），點勾選框只切換勾選、不觸發展開。');
-    const nwrap=ce('div','lst-group-demo');
-    nwrap.appendChild(lstGroup([
-      lstNested({title:'標題',meta:'小標題',open:true,children:[{title:'標題',meta:'小標題'},{title:'標題',meta:'小標題'},{title:'標題',meta:'小標題'}]}),
-      lstNested({title:'標題',meta:'小標題',children:[{title:'標題',meta:'小標題'},{title:'標題',meta:'小標題'}]}),
-    ],{divider:true}));
-    ns.appendChild(nwrap);
 
     // ---- 選項卡 ----
     const scs=section(body,'選項卡 Selection Card','整列一張有框卡：icon＋主標題＋敘述說明＋右側 checkbox（.cbx）或 radio（.rdo）。五狀態：default／hover／selected（藍底藍框）／error（紅框＋錯誤訊息）／disabled；另有展開帶 inline 下拉（.field）的進階版。');
@@ -3826,86 +3899,56 @@ function skelMedia(anim){
     exp.appendChild(lstSelCard('radio','selected',{expand:true}));
     scs.appendChild(exp);
 
-    // ---- 實際互動 Live ----
-    const sl=section(body,'實際互動 Live','切三大類 variant：基本列可勾 divider／leadingIcon／trailingMeta／selectable（點列同步勾選框）；雙欄可切 filled 填色底；選項卡可切 checkbox／radio，點卡即選取（radio 單選、checkbox 多選）。');
-    mountLive(sl,{
-      initial:{variant:'basic',control:'checkbox',divider:true,leadingIcon:false,trailingMeta:true,selectable:false,filled:false},
-      segs:[
-        {key:'variant',label:'Variant',options:['basic','two-column','selection'],labels:['基本列','雙欄','選項卡']},
-        {key:'control',label:'Control（選項卡）',options:['checkbox','radio'],labels:['checkbox','radio']},
-      ],
-      bools:[
-        {key:'divider',label:'divider 分隔線'},
-        {key:'leadingIcon',label:'leadingIcon 前置圖示'},
-        {key:'trailingMeta',label:'trailingMeta 尾端資訊'},
-        {key:'selectable',label:'selectable 可選取（基本列）'},
-        {key:'filled',label:'filled 填色底（雙欄）'},
-      ],
+    // ---- 實際互動 Live：兩類各自 scoped，控制項只顯示對該類有效者（無空轉開關）----
+    const sl=section(body,'實際互動 Live','雙欄／巢狀與選項卡各自的互動 playground；控制項只出現對該類有效的選項，每個開關都對應一個可見樣式。');
+    // 雙欄／巢狀
+    const l1=ce('div','lst-live-block');const c1=ce('div','lst-live-cap');c1.innerHTML='<b>雙欄／巢狀 Nested</b>';l1.appendChild(c1);sl.appendChild(l1);
+    mountLive(l1,{
+      initial:{divider:true,filled:false,open:true},
+      segs:[],
+      bools:[{key:'divider',label:'divider 分隔線'},{key:'filled',label:'filled 填色底'},{key:'open',label:'預設展開子列'}],
+      boolLabel:'Content',
+      render:st=>lstGroup([
+        lstNested({title:'王小明',meta:'2 項',open:st.open,checked:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
+        lstNested({title:'陳美華',meta:'2 項',open:st.open,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
+      ],{divider:st.divider,filled:st.filled}),
+      note:'點母列展開／收合子列，點左側勾選框只切換勾選。每個開關都對應樣式：<b>divider</b> 加分隔線、<b>filled</b> 換填色底、<b>預設展開子列</b> 切子列初始狀態。'
+    });
+    // 選項卡
+    const l2=ce('div','lst-live-block');const c2=ce('div','lst-live-cap');c2.innerHTML='<b>選項卡 Selection</b>';l2.appendChild(c2);sl.appendChild(l2);
+    mountLive(l2,{
+      initial:{control:'checkbox',expand:false},
+      segs:[{key:'control',label:'Control',options:['checkbox','radio'],labels:['checkbox 多選','radio 單選']}],
+      bools:[{key:'expand',label:'expand 展開下拉'}],
       boolLabel:'Content',
       render:st=>{
-        // ---- 選項卡：點卡選取，radio 單選、checkbox 多選 ----
-        if(st.variant==='selection'){
-          const box=ce('div','lst-sel-live');
-          const data=[
-            {title:'標準方案',desc:'適合個人使用的基本功能'},
-            {title:'進階方案',desc:'完整協作與自動化功能'},
-            {title:'企業方案',desc:'客製化部署與專屬支援'},
-          ];
-          const cards=data.map((d,i)=>lstSelCard(st.control,i===0?'selected':'default',{title:d.title,desc:d.desc}));
-          cards.forEach(w=>{
-            const card=w.querySelector('.lst-sel');
-            card.addEventListener('click',()=>{
-              const on=card.classList.contains('is-selected');
-              if(st.control==='radio'){ // 單選：先清掉其他卡
-                cards.forEach(o2=>{
-                  const c2=o2.querySelector('.lst-sel');c2.classList.remove('is-selected');
-                  const r2=c2.querySelector('.rdo');if(r2){r2.classList.remove('st-checked');r2.classList.add('st-default');}
-                });
-                card.classList.add('is-selected');
-                const r=card.querySelector('.rdo');if(r){r.classList.remove('st-default');r.classList.add('st-checked');}
-              }else{ // 多選：逐卡 toggle，同步 .cbx
-                card.classList.toggle('is-selected',!on);
-                const cb=card.querySelector('.cbx');
-                if(cb){cb.classList.toggle('st-checked',!on);cb.innerHTML=!on?ICON_CHECK:'';}
-              }
-            });
-            box.appendChild(w);
-          });
-          return box;
-        }
-        // ---- 雙欄列 ----
-        if(st.variant==='two-column'){
-          return lstGroup([
-            lstRowTwoCol('default',{title:'帳單地址',value:'台北市信義區'}),
-            lstRowTwoCol('default',{title:'付款方式',value:'信用卡 **** 1234'}),
-            lstRowTwoCol('default',{title:'發票類型',value:'電子發票'}),
-          ],{divider:st.divider,filled:st.filled});
-        }
-        // ---- 基本列 ----
+        const box=ce('div','lst-sel-live');
         const data=[
-          {title:'王小明',meta:'2 分鐘前'},
-          {title:'陳美華',meta:'12 分鐘前'},
-          {title:'林志豪',meta:'1 小時前'},
+          {title:'標準方案',desc:'適合個人使用的基本功能'},
+          {title:'進階方案',desc:'完整協作與自動化功能'},
+          {title:'企業方案',desc:'客製化部署與專屬支援'},
         ];
-        const g=lstGroup(data.map((d,i)=>lstRowBasic('default',{
-          title:d.title,
-          checkbox:st.selectable,
-          leadIcon:st.leadingIcon?LST_LEAD_ICONS[i%LST_LEAD_ICONS.length]:null,
-          meta:st.trailingMeta?d.meta:null,
-          caret:!st.trailingMeta,
-        })),{divider:st.divider});
-        // 點列切換選取（selectable 時連動勾選框）
-        [...g.querySelectorAll('.lst-item')].forEach(it=>{
-          it.addEventListener('click',e=>{
-            if(e.target.closest('.btn'))return; // 動作鈕不觸發選取
-            const on=it.classList.toggle('is-selected');
-            const cb=it.querySelector('.cbx');
-            if(cb){cb.classList.toggle('st-checked',on);cb.innerHTML=on?ICON_CHECK:'';}
+        const cards=data.map((d,i)=>lstSelCard(st.control,i===0?'selected':'default',{title:d.title,desc:d.desc,expand:(st.expand&&i===0)}));
+        cards.forEach(w=>{
+          const card=w.querySelector('.lst-sel');
+          card.addEventListener('click',e=>{
+            if(e.target.closest('.field'))return; // 展開下拉不觸發選取
+            const on=card.classList.contains('is-selected');
+            if(st.control==='radio'){ // 單選：先清其他卡
+              cards.forEach(o2=>{const c2=o2.querySelector('.lst-sel');c2.classList.remove('is-selected');const r2=c2.querySelector('.rdo');if(r2){r2.classList.remove('st-checked');r2.classList.add('st-default');}});
+              card.classList.add('is-selected');
+              const r=card.querySelector('.rdo');if(r){r.classList.remove('st-default');r.classList.add('st-checked');}
+            }else{ // 多選：逐卡 toggle，同步 .cbx
+              card.classList.toggle('is-selected',!on);
+              const cb=card.querySelector('.cbx');
+              if(cb){cb.classList.toggle('st-checked',!on);cb.innerHTML=!on?ICON_CHECK:'';}
+            }
           });
+          box.appendChild(w);
         });
-        return g;
+        return box;
       },
-      note:'基本列每列可點選（<b>selectable</b> 時同步左側 .cbx 勾選框），無尾端資訊時自動補 caret；雙欄勾 <b>filled</b> 換填色卡片底；選項卡點整卡選取——<b>radio</b> 為單選互斥、<b>checkbox</b> 為多選 toggle。',
+      note:'點整卡選取——<b>radio</b> 為單選互斥、<b>checkbox</b> 為多選 toggle；勾 <b>expand</b> 讓第一張卡展開 inline 下拉（重用 .field）。'
     });
   }
 
@@ -4698,7 +4741,7 @@ function skelMedia(anim){
     });
   }
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep};
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -4717,6 +4760,7 @@ function skelMedia(anim){
     footer:'footer',
     'section-head':'section-head',
     list:'list',
+    'list-item':'list-item',
     collapse:'collapse',
     modal:'modal',
     drawer:'drawer',
