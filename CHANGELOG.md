@@ -629,3 +629,19 @@ Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、
 - **size 軸 m/s**：card／product-card／category-tile／article-card 四張卡 DIAL_SPECS 加 `size:['m','s']`（order＋zh＋axisName）；各加 `-sz-s` CSS（字級/間距/尺寸縮小）；工廠函式吃 `size`、矩陣依轉盤 size 呈現、Live 加 Size seg 可切 m/s。
 
 **驗證**：node --check OK、Playwright 0 console error；三卡 hover img scale 1.05（去 transition 讀到 matrix(1.05)）；四卡 Live 有 m/s seg、切 s 加 `-sz-s`、標題字級縮小。
+
+---
+
+## 2026-07-16　Table & Chart 群 5 顆全建置（fable 平行 agent → 序列整合）＝ DS 全數完成
+
+最後一組 Table & Chart（📊）5 顆一次做完，5 個 fable agent 平行產出、主控序列整合。charts 全 inline SVG 手刻、無外部 lib；namespace 各自獨立、避開既有 `sch-`（用 `gnt-`）。
+
+- **table 資料表格**（`tbl-`）：variant bordered/striped/plain × density comfortable/compact（3×2）。重用 `.cbx`（全選含 indeterminate 半選／列選）、`.tg`（狀態欄 完成/進行中/逾期）、`.btn`（排序鈕＋分頁）；金額右對齊 tabular-nums、表尾總計、可點表頭排序、點列選取。新增 `TBL_IC_SORT`。
+- **chart 圖表**（`cht-`）：variant stat/line/bar/donut × size m/s（4×2）。stat 重用 `prMetricEl`；line=面積填充＋端點、bar=雙系列、donut=`stroke-dasharray` 四段環＋中央%＋圖例；系列色綁 --accent/--ok/--warn/--i-danger。s=sparkline 簡配。無新增 icon。
+- **tree-view 樹狀**（`trv-`）：variant lines/plain/checkbox × state default/hover/selected（3×3）。重用 `ICON_CARET`（箭頭旋轉）、`.cbx`、`IC_FOLDER`/`IC_FILE`；檔案總管樹、L 形連接線、縮排、真實展開/選取。無新增 icon。
+- **schedule-chart 排程圖**（`gnt-`，‼️ 非 sch-）：variant gantt/week/timeline × size m/s（3×2）。重用 `.tg`、`IC_CLOCK`；甘特橫條＋進度填色＋今日線＋週末底、週排程 grid、垂直時間軸狀態圓點。無新增 icon。
+- **calendar 日曆時間**（`cal-`）：variant month/range/time × size m/s（3×2）。重用 `.btn`、`IC_CLOCK`；月曆 6×7＋日狀態（今日/選取/非本月/停用/事件點）、區間連續帶、時間清單；純數學算日期（不碰 Date，寫死 2026-07）。新增 `CAL_IC_CARET_L/R`。
+
+**整合手法**：各 agent 寫 `<id>.css`+`<id>.js`（不碰主檔），主控 integrate2.js 依錨點插入＋中央註冊（DIAL_SPECS/BUILD/DIAL_PAGE/NAV st）。零 icon/class/fn 命名衝突、schedule-chart 0 處 sch-、calendar 0 處 Date。
+
+**驗證**：node --check OK、Playwright 0 console error。5 頁矩陣格數對（6/8/9/6/6）＋ Live ＋ SVG 圖表 render（line 面積/bar 雙系列/donut 四段環/月曆/甘特/時間軸皆正確）；匯出頁 34/715 → **39/786**。**四大組（Basic 17／Complex 12／Card 4／Table&Chart 5）全數 ready，整套 DS 陳列完成。**

@@ -1843,6 +1843,434 @@
 .art-sz-s .art-body{padding:11px 12px 12px;gap:6px;}
 .art-sz-s .art-title{font-size:14px;}
 .art-sz-s .art-excerpt{font-size:11.5px;}
+
+  /* ===== Table&Chart group: table ===== */
+/* ===================== Table 資料表格（tbl-） =====================
+   variant：tbl-v-bordered 格線 / tbl-v-striped 斑馬紋 / tbl-v-plain 簡潔
+   density：tbl-dn-comfortable 寬鬆 / tbl-dn-compact 緊湊
+   斑馬紋實際生效用 .tbl-zebra（v-striped 或 Live stripe 開關都會加上）
+   矩陣用靜態 .is-hover / .is-selected；Live／showcase 在 .tbl-wrap 加 .live 走真實 :hover
+   全部顏色綁 token，明暗色自動跟切 */
+
+/* ---- 外框容器 ---- */
+.tbl-wrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;max-width:100%;font-family:var(--font-sans);}
+.tbl-wrap.tbl-v-plain{border-color:transparent;}                     /* 簡潔款：拿掉外框 */
+
+/* ---- 表格本體 ---- */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;color:var(--ink);}
+.tbl-wrap.tbl-dn-compact .tbl{font-size:12.5px;}
+
+/* ---- 表頭 ---- */
+.tbl-th{text-align:left;font-size:12px;font-weight:600;color:var(--muted);background:var(--panel-2);
+  border-bottom:1px solid var(--line-strong);white-space:nowrap;}
+.tbl-wrap.tbl-dn-compact .tbl-th{font-size:11.5px;}
+.tbl-wrap.tbl-v-plain .tbl-th{background:transparent;}               /* 簡潔款：表頭不鋪底，只留底線 */
+
+/* ---- 資料格 ---- */
+.tbl-td{border-bottom:1px solid var(--line);vertical-align:middle;}
+.tbl-wrap.tbl-v-plain .tbl-td{border-bottom:0;}                      /* 簡潔款：無列線 */
+
+/* ---- density 兩級 padding ---- */
+.tbl-wrap.tbl-dn-comfortable .tbl-th{padding:10px 14px;}
+.tbl-wrap.tbl-dn-comfortable .tbl-td{padding:12px 14px;}
+.tbl-wrap.tbl-dn-compact .tbl-th{padding:6px 10px;}
+.tbl-wrap.tbl-dn-compact .tbl-td{padding:7px 10px;}
+.tbl-wrap.tbl-dn-compact .tg{height:20px;font-size:10.5px;}          /* 緊湊時狀態標籤同步縮小（scoped 覆寫） */
+
+/* ---- variant：bordered 直向格線 ---- */
+.tbl-wrap.tbl-v-bordered .tbl-th+.tbl-th,
+.tbl-wrap.tbl-v-bordered .tbl-td+.tbl-td{border-left:1px solid var(--line);}
+
+/* ---- variant：striped／stripe 開關 → 斑馬紋（偶數列鋪淺灰；讓給選取態） ---- */
+.tbl-wrap.tbl-zebra .tbl tbody tr:nth-child(even):not(.is-selected)>td{background:var(--panel-2);}
+
+/* ---- 列 hover：矩陣靜態 .is-hover ＋ Live/showcase 真實 :hover（.live）---- */
+.tbl-wrap .tbl tbody tr.is-hover:not(.is-selected)>td,
+.tbl-wrap.live .tbl tbody tr:hover:not(.is-selected)>td{background:var(--panel-2);}
+/* 斑馬紋表 hover 要壓過偶數列底色 → 用更深一階 */
+.tbl-wrap.tbl-zebra .tbl tbody tr.is-hover:not(.is-selected)>td,
+.tbl-wrap.tbl-zebra.live .tbl tbody tr:hover:not(.is-selected)>td{background:var(--panel-3);}
+
+/* ---- 列 selected：淡藍底＋姓名轉主色（勾選框由 JS 同步 .st-checked） ---- */
+.tbl-wrap .tbl tbody tr.is-selected>td{background:var(--i-primary-tint);}
+.tbl-wrap .tbl tbody tr.is-selected .tbl-name{color:var(--accent);font-weight:600;}
+
+/* ---- 欄位型別 ---- */
+.tbl-num{text-align:right;font-variant-numeric:tabular-nums;}        /* 金額：右對齊＋等寬數字 */
+.tbl-mut{color:var(--muted);}                                        /* 日期等次要文字 */
+.tbl-col-cbx{width:36px;text-align:center;}                          /* 勾選欄（重用 .cbx 原子） */
+.tbl-col-cbx .cbx{vertical-align:middle;cursor:pointer;}
+
+/* ---- 表頭排序鈕（重用 .btn v-text 原子，去殼貼齊表頭字） ---- */
+.tbl-th .tbl-sortbtn{padding:0;height:auto;min-height:0;background:none;border:none;
+  font:inherit;font-weight:600;color:inherit;gap:4px;}
+.tbl-th .tbl-sortbtn:hover{background:none;color:var(--ink);}
+.tbl-sortbtn svg{width:12px;height:12px;flex:0 0 auto;}
+.tbl-sortic{display:inline-flex;color:var(--faint);}                 /* 未排序：中性雙箭頭（TBL_IC_SORT，淡色） */
+.tbl-sortbtn.is-active{color:var(--accent);}                         /* 排序中：整鈕轉主色 */
+.tbl-sortbtn.is-active .tbl-sortic{color:var(--accent);}
+.tbl-sortic.tbl-asc svg{transform:rotate(180deg);}                   /* 升冪：ICON_CARET 轉 180 度朝上 */
+.tbl-th.tbl-num .tbl-sortbtn{justify-content:flex-end;width:100%;}   /* 金額欄表頭同步右對齊 */
+
+/* ---- 表尾總計列 ---- */
+.tbl-ft{background:var(--panel-2);border-top:1px solid var(--line-strong);border-bottom:0;font-weight:600;}
+.tbl-ft.tbl-ft-lab{color:var(--muted);font-size:12px;}
+.tbl-wrap.tbl-v-plain .tbl-ft{background:transparent;}
+
+/* ---- 分頁列（重用 .btn 原子；showcase 示意） ---- */
+.tbl-pgbar{display:flex;align-items:center;justify-content:flex-end;gap:4px;
+  padding:8px 12px;border-top:1px solid var(--line);background:var(--panel);}
+.tbl-wrap.tbl-v-plain .tbl-pgbar{background:transparent;}
+.tbl-pginfo{font-size:12px;color:var(--muted);margin-right:auto;font-variant-numeric:tabular-nums;}
+.tbl-pgbar .btn{min-width:28px;justify-content:center;}
+.tbl-pgprev svg{transform:rotate(90deg);}                            /* ICON_CARET 轉 90 度＝上一頁 */
+.tbl-pgnext svg{transform:rotate(-90deg);}                           /* ICON_CARET 轉 -90 度＝下一頁 */
+
+/* ---- 陳列容器 ---- */
+.tbl-demo{max-width:760px;}
+  /* ===== Table&Chart group: chart ===== */
+/* ==================== CHART 圖表（cht-）==================== */
+/* 儀表板圖表：stat 統計數字卡（重用 prMetricEl 原子）＋ line 折線／bar 長條／donut 甜甜圈（inline SVG 手刻）。
+   系列色一律綁 token：--accent 主／--ok 成功／--warn 警告／--i-danger 危險；格線 --line、軸線 --line-strong。 */
+
+/* --- 基礎容器 --- */
+.cht-box{display:inline-flex;flex-direction:column;align-items:flex-start;gap:8px;font-family:var(--font-sans);color:var(--ink);max-width:100%;}
+.cht-box svg{display:block;overflow:visible;max-width:100%;}
+.cht-box svg text{font-family:var(--font-sans);}
+
+/* --- 尺寸：m 標準／s 精簡（SVG 用 viewBox 等比縮放，只控顯示寬） --- */
+.cht-line.cht-sz-m svg,.cht-bar.cht-sz-m svg{width:220px;height:auto;}
+.cht-line.cht-sz-s svg,.cht-bar.cht-sz-s svg{width:150px;height:auto;}
+.cht-donut.cht-sz-m svg{width:120px;height:auto;}
+.cht-donut.cht-sz-s svg{width:80px;height:auto;}
+
+/* --- SVG 內文字（class 掛在 <text> 上，inline SVG 吃得到頁面 CSS；數字一律 tabular-nums） --- */
+.cht-donut-num{font-size:24px;font-weight:700;fill:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+.cht-donut-sub{font-size:9.5px;font-weight:500;fill:var(--muted);letter-spacing:.04em;}
+.cht-val{font-size:8.5px;font-weight:600;fill:var(--muted);font-variant-numeric:tabular-nums;}
+
+/* --- 矩陣格／Live 舞台的 dashboard tile 容器（panel 底＋細邊） --- */
+.cht-tile{display:inline-flex;flex-direction:column;align-items:flex-start;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;max-width:100%;}
+
+/* --- 圖例：重用 .tg 原子（v-soft i-neutral），前置色點綁各系列色 token --- */
+.cht-legend{display:flex;flex-wrap:wrap;gap:6px;}
+.cht-dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;display:inline-block;}
+.cht-dot.c-accent{background:var(--accent);}
+.cht-dot.c-ok{background:var(--ok);}
+.cht-dot.c-warn{background:var(--warn);}
+.cht-dot.c-danger{background:var(--i-danger);}
+
+/* --- Showcase：dashboard 組合（6 欄 grid：stat 2＋stat 2＋donut 2／line 3＋bar 3） --- */
+.cht-dash{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;width:100%;}
+.cht-card{grid-column:span 2;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;}
+.cht-card.cht-span-3{grid-column:span 3;}
+.cht-card-h{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;}
+.cht-card-t{font-size:12.5px;font-weight:600;color:var(--muted);letter-spacing:.02em;}
+/* 卡內圖表撐滿卡寬（donut 例外：維持固定圓徑不變形拉伸） */
+.cht-card .cht-box{width:100%;}
+.cht-card .cht-line svg,.cht-card .cht-bar svg{width:100%;}
+.cht-card .cht-donut svg{width:110px;}
+@media(max-width:760px){.cht-card,.cht-card.cht-span-3{grid-column:span 6;}}
+
+/* --- Live 舞台 --- */
+.cht-live-stage{display:flex;justify-content:center;padding:8px 0;}
+  /* ===== Table&Chart group: tree-view ===== */
+/* ==================== Tree View 樹狀（trv- namespace）==================== */
+/* 樹容器：ul 巢狀結構，縮排靠 .trv-children 的 padding-left 疊出 depth */
+.trv-tree{list-style:none;margin:0;padding:0;font-family:var(--font-sans);font-size:13px;color:var(--ink);}
+.trv-tree ul{list-style:none;margin:0;}
+.trv-children{padding-left:22px;}
+.trv-item{position:relative;}
+.trv-item:not(.is-open)>.trv-children{display:none;}   /* 收合：直接藏子層 */
+
+/* --- 節點列：箭頭＋(cbx)＋icon＋名稱＋count --- */
+.trv-row{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;
+  min-width:0;transition:background .12s;cursor:default;}
+.trv-row.live{cursor:pointer;}
+/* hover：矩陣用靜態 is-hover、Live/showcase 用真實 :hover（選取列不再變灰） */
+.trv-row.is-hover,
+.trv-row.live:hover:not(.is-selected){background:var(--panel-2);}
+/* selected：淡藍底＋名稱/圖示轉主色 */
+.trv-row.is-selected{background:var(--i-primary-tint);}
+.trv-row.is-selected .trv-name{color:var(--accent);font-weight:600;}
+.trv-row.is-selected .trv-ic,
+.trv-row.is-selected .trv-caret{color:var(--accent);}
+
+/* --- 展開箭頭：重用 ICON_CARET（下箭頭），收合時轉 -90 度朝右 --- */
+.trv-caret{width:16px;height:16px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  color:var(--muted);transform:rotate(-90deg);transition:transform .15s;}
+.trv-caret svg{width:12px;height:12px;display:block;}
+.trv-item.is-open>.trv-row .trv-caret{transform:rotate(0deg);}
+.trv-caret.trv-blank{visibility:hidden;}                /* 葉子節點：同寬占位對齊 */
+
+/* --- 分支/葉子 icon（IC_FOLDER / IC_FILE）與名稱、count --- */
+.trv-ic{width:16px;height:16px;flex:0 0 auto;display:inline-flex;color:var(--muted);}
+.trv-ic svg{width:16px;height:16px;display:block;}
+.trv-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.5;}
+.trv-count{margin-left:auto;padding-left:10px;flex:0 0 auto;
+  font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums;}
+
+/* checkbox variant：列內重用 .cbx 原子，live hover 給邊框提示 */
+.trv-row .cbx{flex:0 0 auto;}
+.trv-row.live:hover .cbx:not(.st-checked){border-color:var(--accent);}
+
+/* --- lines variant：L 形連接線（--line token；只畫第二層以下） --- */
+.trv-v-lines .trv-children{padding-left:26px;}
+/* 每個子節點一段 L：直線落在父層箭頭中心，橫線接到子列前緣 */
+.trv-v-lines .trv-children>.trv-item::before{content:'';position:absolute;left:-10px;top:0;
+  width:10px;height:15px;border-left:1px solid var(--line);border-bottom:1px solid var(--line);
+  border-bottom-left-radius:6px;}
+/* 非最後一個手足：直線繼續往下延伸 */
+.trv-v-lines .trv-children>.trv-item:not(:last-child)::after{content:'';position:absolute;left:-10px;top:0;bottom:0;
+  border-left:1px solid var(--line);}
+
+/* --- 容器：矩陣格輕量包、showcase/Live 用 panel 卡 --- */
+.trv-cellbox{width:100%;min-width:0;padding:2px 0;box-sizing:border-box;}
+.trv-box{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px;box-sizing:border-box;}
+
+/* showcase 三棵並排 */
+.trv-show-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;align-items:start;}
+.trv-show-cap{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:8px;}
+  /* ===== Table&Chart group: schedule-chart ===== */
+/* ==================== Schedule Chart 排程圖（gnt- namespace）==================== */
+/* 三 variant：gantt 甘特圖（任務欄＋日期軸＋起訖橫條）／week 週排程（7 天 × 時段格）／timeline 垂直時間軸
+   × size m 標準／s 精簡。系列色一律經 --gc 綁 token（accent/ok/warn/i-danger），格線 --line、字 --muted/--faint。 */
+
+/* --- 容器共通：panel 底 + line 邊框 + radius token；數字一律 tabular --- */
+.gnt-box{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  font-family:var(--font-sans);font-variant-numeric:tabular-nums;max-width:100%;box-sizing:border-box;}
+
+/* --- size 兩級：所有尺寸經 CSS 變數收斂，m 標準／s 精簡 --- */
+.gnt-sz-m{--gnt-row:34px;--gnt-bar:16px;--gnt-day:46px;--gnt-fs:12.5px;--gnt-fs-sm:11px;
+  --gnt-slot:34px;--gnt-timew:52px;--gnt-side:150px;--gnt-ww:560px;--gnt-tlw:380px;}
+.gnt-sz-s{--gnt-row:26px;--gnt-bar:10px;--gnt-day:34px;--gnt-fs:11.5px;--gnt-fs-sm:10px;
+  --gnt-slot:24px;--gnt-timew:44px;--gnt-side:112px;--gnt-ww:430px;--gnt-tlw:310px;}
+
+/* --- 系列色：橫條／事件塊／節點一律走 --gc，禁 hard-code 色值 --- */
+.gnt-bar,.gnt-evt{--gc:var(--accent);}
+.gnt-bar.c-ok,.gnt-evt.c-ok{--gc:var(--ok);}
+.gnt-bar.c-warn,.gnt-evt.c-warn{--gc:var(--warn);}
+.gnt-bar.c-danger,.gnt-evt.c-danger{--gc:var(--i-danger);}
+
+/* ==================== variant 1：gantt 甘特圖 ==================== */
+.gnt-gantt{display:flex;overflow:hidden;width:fit-content;}
+/* 左側任務名欄：表頭 + 每列任務名（+ .tg 狀態標，重用 Tag 原子靠右） */
+.gnt-g-side{flex:0 0 var(--gnt-side);min-width:0;border-right:1px solid var(--line-strong);}
+.gnt-g-side-head{height:var(--gnt-row);display:flex;align-items:center;padding:0 12px;
+  font-family:var(--font-mono);font-size:var(--gnt-fs-sm);color:var(--faint);border-bottom:1px solid var(--line-strong);}
+.gnt-g-task{height:var(--gnt-row);display:flex;align-items:center;gap:6px;padding:0 12px;
+  border-bottom:1px solid var(--line);font-size:var(--gnt-fs);color:var(--ink);white-space:nowrap;min-width:0;}
+.gnt-g-task:last-child{border-bottom:0;}
+.gnt-g-name{overflow:hidden;text-overflow:ellipsis;font-weight:500;}
+.gnt-g-task .tg{margin-left:auto;flex:0 0 auto;}
+.gnt-sz-s .gnt-g-task .tg{display:none;}          /* s 精簡：側欄不放狀態標 */
+
+/* 右側時間軸：日期表頭 + 格線背景 + 每列橫條；過寬時容器內橫向捲動 */
+.gnt-g-scroll{flex:1;min-width:0;overflow-x:auto;}
+.gnt-g-main{min-width:max-content;}
+.gnt-g-head{display:flex;border-bottom:1px solid var(--line-strong);}
+.gnt-g-hcell{flex:1 0 var(--gnt-day);height:var(--gnt-row);display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:var(--gnt-fs-sm);color:var(--faint);border-left:1px solid var(--line);}
+.gnt-g-hcell:first-child{border-left:0;}
+.gnt-g-hcell.is-wkend{background:var(--panel-2);}                       /* 週末欄：panel-2 淺灰 */
+.gnt-g-hcell.is-today{color:var(--accent);font-weight:700;background:var(--i-primary-tint);}
+.gnt-g-rows{position:relative;}
+.gnt-g-bg{position:absolute;inset:0;display:flex;}                      /* 背景直欄格線 */
+.gnt-g-col{flex:1 0 var(--gnt-day);border-left:1px solid var(--line);}
+.gnt-g-col:first-child{border-left:0;}
+.gnt-g-col.is-wkend{background:var(--panel-2);}
+.gnt-g-row{position:relative;height:var(--gnt-row);border-bottom:1px solid var(--line);}
+.gnt-g-row:last-child{border-bottom:0;}
+
+/* 橫條：依起訖日以 % 定位；底＝系列色 24% 淡底，疊加進度實色填充，皆全圓角 */
+.gnt-bar{position:absolute;top:50%;transform:translateY(-50%);height:var(--gnt-bar);border-radius:999px;
+  background:color-mix(in srgb,var(--gc) 24%,transparent);z-index:1;}
+.gnt-bar-fill{position:absolute;left:0;top:0;bottom:0;max-width:100%;background:var(--gc);border-radius:999px;}
+.gnt-bar-lab{position:absolute;left:100%;top:50%;transform:translate(6px,-50%);line-height:1;
+  font-family:var(--font-mono);font-size:var(--gnt-fs-sm);color:var(--faint);white-space:nowrap;}
+.gnt-gantt.no-prog .gnt-bar{background:var(--gc);}                      /* 關進度：整條實色 */
+.gnt-gantt.no-prog .gnt-bar-fill,.gnt-gantt.no-prog .gnt-bar-lab{display:none;}
+.gnt-box.live .gnt-bar:hover{filter:brightness(1.08);}                  /* Live 真實 hover */
+
+/* 今日線：accent 直線 + 頂端「今日」小籤（#fff 比照 .tg i-brand 的 --ton 慣例） */
+.gnt-today{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--accent);z-index:2;}
+.gnt-today-pin{position:absolute;top:3px;left:50%;transform:translateX(-50%);padding:1px 6px;border-radius:999px;
+  background:var(--accent);color:#fff;font-size:10px;line-height:1.5;white-space:nowrap;}
+
+/* 矩陣縮小示意：更窄側欄、隱藏進度百分比與狀態標 */
+.gnt-g-compact{--gnt-side:88px;width:100%;}
+.gnt-g-compact .gnt-bar-lab{display:none;}
+.gnt-g-compact .gnt-g-task .tg{display:none;}
+.gnt-g-compact .gnt-g-task,.gnt-g-compact .gnt-g-side-head{padding:0 9px;}
+
+/* ==================== variant 2：week 週排程 ==================== */
+.gnt-week{overflow:hidden;width:var(--gnt-ww);}
+.gnt-w-grid{display:grid;}                                              /* columns/rows 由 JS 依時段數設定 */
+.gnt-w-corner{border-bottom:1px solid var(--line-strong);border-right:1px solid var(--line);}
+.gnt-w-dhead{height:var(--gnt-row);display:flex;align-items:center;justify-content:center;
+  font-size:var(--gnt-fs-sm);font-weight:600;color:var(--muted);border-bottom:1px solid var(--line-strong);border-left:1px solid var(--line);}
+.gnt-w-dhead.first{border-left:0;}
+.gnt-w-dhead.is-wkend{background:var(--panel-2);color:var(--faint);}
+.gnt-w-time{display:flex;align-items:flex-start;justify-content:flex-end;padding:3px 8px 0 0;
+  font-family:var(--font-mono);font-size:var(--gnt-fs-sm);color:var(--faint);border-right:1px solid var(--line);}
+.gnt-w-cell{border-left:1px solid var(--line);border-top:1px solid var(--line);min-width:0;}
+.gnt-w-cell.firstcol{border-left:0;}
+.gnt-w-cell.firstrow{border-top:0;}
+.gnt-w-cell.is-wkend{background:var(--panel-2);}
+
+/* 事件方塊：疊在格上（grid-row span 跨時段），系列色淡底 + 左粗邊 */
+.gnt-evt{position:relative;z-index:1;margin:2px 3px;padding:4px 7px;border-radius:6px;min-width:0;
+  display:flex;flex-direction:column;gap:2px;overflow:hidden;
+  background:color-mix(in srgb,var(--gc) 15%,var(--panel));border-left:3px solid var(--gc);font-size:var(--gnt-fs-sm);}
+.gnt-evt .t{font-weight:600;color:var(--ink);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.gnt-evt .tm{font-family:var(--font-mono);color:var(--muted);white-space:nowrap;}
+.gnt-sz-s .gnt-evt{margin:1px 2px;padding:2px 5px;border-left-width:2px;border-radius:5px;}
+.gnt-box.live .gnt-evt:hover{background:color-mix(in srgb,var(--gc) 24%,var(--panel));}  /* Live 真實 hover */
+.gnt-w-compact{width:100%;}
+.gnt-w-compact .gnt-evt .tm{display:none;}
+
+/* ==================== variant 3：timeline 垂直時間軸 ==================== */
+.gnt-tl{padding:16px 18px;display:flex;flex-direction:column;width:var(--gnt-tlw);}
+.gnt-sz-s.gnt-tl{padding:12px 14px;}
+.gnt-tl-item{display:flex;gap:12px;min-width:0;}
+.gnt-tl-rail{display:flex;flex-direction:column;align-items:center;flex:0 0 14px;}
+/* 節點圓點：狀態綁語意色（完成 ok 實心／進行中 accent 空心／延遲 danger 實心／待開始 line-strong 空心） */
+.gnt-tl-dot{--gc:var(--accent);width:12px;height:12px;border-radius:50%;flex:0 0 auto;margin-top:4px;
+  background:var(--panel);border:3px solid var(--gc);box-sizing:border-box;}
+.gnt-tl-dot.st-done{--gc:var(--ok);background:var(--gc);}
+.gnt-tl-dot.st-active{--gc:var(--accent);}
+.gnt-tl-dot.st-delay{--gc:var(--i-danger);background:var(--gc);}
+.gnt-tl-dot.st-todo{--gc:var(--line-strong);}
+.gnt-tl-cord{width:2px;flex:1;min-height:14px;background:var(--line);margin-top:4px;}   /* 連接線 */
+.gnt-tl.no-line .gnt-tl-cord{visibility:hidden;}
+
+/* 事件卡：時間（IC_CLOCK）＋狀態 tag（重用 .tg）＋標題＋描述 */
+.gnt-tl-card{flex:1;min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:10px 12px;margin-bottom:14px;transition:border-color .15s,box-shadow .15s;}
+.gnt-tl-item:last-child .gnt-tl-card{margin-bottom:0;}
+.gnt-box.live .gnt-tl-card:hover{border-color:var(--line-strong);
+  box-shadow:0 2px 8px color-mix(in srgb,var(--ink) 8%,transparent);}                    /* Live 真實 hover */
+.gnt-tl-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.gnt-tl-time{display:inline-flex;align-items:center;gap:5px;
+  font-family:var(--font-mono);font-size:var(--gnt-fs-sm);color:var(--muted);}
+.gnt-tl-time svg{width:13px;height:13px;color:var(--faint);}
+.gnt-tl-title{font-size:var(--gnt-fs);font-weight:600;color:var(--ink);margin-top:4px;line-height:1.4;}
+.gnt-tl-desc{font-size:var(--gnt-fs-sm);color:var(--muted);margin-top:2px;line-height:1.5;}
+.gnt-sz-s .gnt-tl-card{padding:7px 10px;margin-bottom:10px;}
+.gnt-sz-s .gnt-tl-dot{width:10px;height:10px;border-width:2.5px;margin-top:3px;}
+.gnt-sz-s .gnt-tl-desc{display:none;}              /* s 精簡：不放描述 */
+
+/* ==================== 矩陣格容器：撐滿格寬，box 改 100% ==================== */
+.gnt-cellwrap{width:100%;min-width:0;}
+.gnt-cellwrap .gnt-tl{width:100%;}
+  /* ===== Table&Chart group: calendar ===== */
+/* ==================== Calendar 日曆時間（cal- namespace）==================== */
+/* 日期時間選擇：month 月曆／range 日期區間／time 時間清單 × size m 標準／s 精簡。
+   表頭上下月鈕重用 .btn v-text icon-only 原子；日格為 .cal-day（一般／今日 accent 圈／
+   選取 accent 實心／非本月淡／停用劃掉／有事件下方圓點）；range 用起訖實心＋中間淡 accent 連續帶。
+   矩陣用靜態 class（is-hover）模擬；Live／showcase 加 .live 走真實 :hover。
+   全部綁 token：--accent／--i-primary-tint／--line／--panel*／--ink／--muted／--faint，不 hard-code 色值。 */
+
+.cal{display:inline-flex;flex-direction:column;gap:6px;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);
+  font-family:var(--font-sans);text-align:left;flex:0 0 auto;}
+.cal-sz-m{width:290px;padding:12px;}
+.cal-sz-s{width:232px;padding:10px;gap:4px;}
+
+/* ---- 表頭：‹ 2026 年 7 月 ›（上下月鈕＝Button 原子 v-text icon-only）---- */
+.cal-head{display:flex;align-items:center;gap:4px;}
+.cal-head-title{flex:1;text-align:center;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums;}
+.cal-sz-m .cal-head-title{font-size:13.5px;}
+.cal-sz-s .cal-head-title{font-size:12.5px;}
+/* s 尺寸把 icon-only 鈕微縮（僅覆蓋尺寸，樣式仍走 .btn 原子） */
+.cal-sz-s .cal-head .btn.icon-only{width:26px;height:26px;border-radius:6px;font-size:11px;}
+
+/* ---- 星期列（日一二三四五六）---- */
+.cal-dow{display:grid;grid-template-columns:repeat(7,1fr);}
+.cal-dow-c{display:flex;align-items:center;justify-content:center;color:var(--faint);font-weight:600;}
+.cal-sz-m .cal-dow-c{height:24px;font-size:11px;}
+.cal-sz-s .cal-dow-c{height:20px;font-size:10px;}
+
+/* ---- 6×7 日格（column-gap=0 讓 range 連續帶不斷開）---- */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:2px;}
+/* 週數欄開啟時左側多一欄 */
+.cal-has-wk .cal-dow,.cal-has-wk .cal-grid{grid-template-columns:24px repeat(7,1fr);}
+.cal-wk,.cal-wk-head{display:flex;align-items:center;justify-content:center;color:var(--faint);
+  font-size:10px;font-variant-numeric:tabular-nums;}
+
+/* ---- 日格 ---- */
+.cal-day{position:relative;display:flex;align-items:center;justify-content:center;
+  border:1px solid transparent;background:transparent;color:var(--ink);cursor:pointer;
+  font-family:inherit;font-variant-numeric:tabular-nums;padding:0;
+  transition:background .12s,color .12s;}
+.cal-sz-m .cal-day{height:34px;font-size:13px;border-radius:9px;}
+.cal-sz-s .cal-day{height:26px;font-size:11.5px;border-radius:7px;}
+/* 非本月：淡 */
+.cal-day.is-out{color:var(--faint);}
+/* 今日：accent 內圈描邊 */
+.cal-day.is-today{box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent);font-weight:650;}
+/* 滑過：矩陣靜態模擬 */
+.cal-day.is-hover{background:var(--panel-2);}
+/* 選取：accent 實心 */
+.cal-day.is-selected{background:var(--accent);color:var(--primary-on);font-weight:650;box-shadow:none;}
+/* 停用：淡化＋劃掉、不可點 */
+.cal-day.is-disabled{color:var(--faint);opacity:.5;cursor:not-allowed;text-decoration:line-through;}
+/* 有事件：下方小圓點（選取日反白） */
+.cal-day.has-event::after{content:'';position:absolute;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--accent);}
+.cal-sz-m .cal-day.has-event::after{bottom:4px;}
+.cal-sz-s .cal-day.has-event::after{bottom:2px;}
+.cal-day.is-selected.has-event::after{background:var(--primary-on);}
+
+/* ---- range 區間：起訖實心、中間淡 accent 連續帶 ---- */
+.cal-day.is-in-range{background:var(--i-primary-tint);border-radius:0;}
+.cal-day.is-range-start,.cal-day.is-range-end{background:var(--accent);color:var(--primary-on);
+  font-weight:650;box-shadow:none;}
+.cal-sz-m .cal-day.is-range-start{border-radius:9px 0 0 9px;}
+.cal-sz-m .cal-day.is-range-end{border-radius:0 9px 9px 0;}
+.cal-sz-s .cal-day.is-range-start{border-radius:7px 0 0 7px;}
+.cal-sz-s .cal-day.is-range-end{border-radius:0 7px 7px 0;}
+/* 起訖同一天：恢復完整圓角 */
+.cal-sz-m .cal-day.is-range-start.is-range-end{border-radius:9px;}
+.cal-sz-s .cal-day.is-range-start.is-range-end{border-radius:7px;}
+
+/* Live／showcase 真實 hover（.live 才啟用；選取／起訖／停用不反應） */
+.cal.live .cal-day:hover:not(:disabled):not(.is-selected):not(.is-range-start):not(.is-range-end){background:var(--panel-2);}
+
+/* ---- 區間文字 foot（range 用）---- */
+.cal-foot{border-top:1px solid var(--line);padding-top:8px;margin-top:2px;font-size:12px;color:var(--muted);}
+.cal-foot b{color:var(--accent);font-variant-numeric:tabular-nums;font-weight:650;}
+
+/* ---- time 時間清單 ---- */
+.cal-v-time.cal-sz-m{width:206px;}
+.cal-v-time.cal-sz-s{width:170px;}
+.cal-time-head{display:flex;align-items:center;gap:6px;color:var(--muted);font-weight:600;padding:2px 2px 4px;}
+.cal-sz-m .cal-time-head{font-size:12.5px;}
+.cal-sz-s .cal-time-head{font-size:11.5px;}
+.cal-time-ic{display:inline-flex;color:var(--faint);}
+.cal-time-ic svg{width:14px;height:14px;}
+.cal-time-list{display:flex;flex-direction:column;gap:2px;overflow-y:auto;padding-right:2px;}
+.cal-sz-m .cal-time-list{max-height:238px;}
+.cal-sz-s .cal-time-list{max-height:186px;}
+.cal-time-item{display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+  border:1px solid transparent;background:transparent;color:var(--ink);cursor:pointer;
+  font-family:inherit;font-variant-numeric:tabular-nums;transition:background .12s,color .12s;}
+.cal-sz-m .cal-time-item{height:32px;font-size:13px;border-radius:8px;}
+.cal-sz-s .cal-time-item{height:26px;font-size:11.5px;border-radius:6px;}
+.cal-time-item.is-hover{background:var(--panel-2);}
+.cal-time-item.is-selected{background:var(--accent);color:var(--primary-on);font-weight:650;}
+.cal.live .cal-time-item:hover:not(.is-selected){background:var(--panel-2);}
+
+/* ---- 日格狀態一覽（裸格：拿掉容器外框只留單一日格）---- */
+.cal-staterow{display:flex;flex-wrap:wrap;gap:18px;}
+.cal-statecell{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.cal-statecap{font-size:12px;color:var(--muted);}
+.cal-bare{border:0;background:transparent;padding:0;width:auto;border-radius:0;}
+.cal-bare .cal-grid{grid-template-columns:38px;}
+
+/* ---- showcase／Live 舞台 ---- */
+.cal-show{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;}
+.cal-live-stage{display:flex;justify-content:flex-start;}
 </style>
 
 <div class="shell" id="shell">
@@ -1915,11 +2343,11 @@
       {id:'article-card',name:'Article Card 文章卡',st:'ready'},
     ]},
     {group:'Table & Chart 表格圖表',emoji:'📊',items:[
-      {id:'table',name:'Table 表格'},
-      {id:'chart',name:'Chart 圖表'},
-      {id:'tree-view',name:'Tree View 樹狀'},
-      {id:'schedule-chart',name:'Schedule Chart 排程圖'},
-      {id:'calendar',name:'Calendar 日曆／時間'},
+      {id:'table',name:'Table 表格',st:'ready'},
+      {id:'chart',name:'Chart 圖表',st:'ready'},
+      {id:'tree-view',name:'Tree View 樹狀',st:'ready'},
+      {id:'schedule-chart',name:'Schedule Chart 排程圖',st:'ready'},
+      {id:'calendar',name:'Calendar 日曆／時間',st:'ready'},
     ]},
   ];
   const STAT={ready:'已定案',partial:'部分'};
@@ -2009,7 +2437,12 @@
     card:{label:'Card 卡片',order:['variant','state','size'],axes:{variant:['elevated','outlined','filled'],state:['default','hover','selected','disabled'],size:['m','s']},zh:{variant:{elevated:'浮起',outlined:'外框',filled:'填色'},state:{default:'預設',hover:'滑過',selected:'選取',disabled:'停用'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 型態',state:'State 狀態',size:'Size 尺寸'}}},
     'product-card':{label:'Product Card 商品卡',order:['variant','state','size'],axes:{variant:['vertical','horizontal','minimal'],state:['default','hover','soldout'],size:['m','s']},zh:{variant:{vertical:'直式',horizontal:'橫式',minimal:'精簡'},state:{default:'預設',hover:'滑過',soldout:'售完'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 型態',state:'State 狀態',size:'Size 尺寸'}}},
     'category-tile':{label:'Category Tile 分類磚',order:['variant','state','size'],axes:{variant:['icon','image','gradient'],state:['default','hover','active'],size:['m','s']},zh:{variant:{icon:'圖示磚',image:'圖片磚',gradient:'漸層磚'},state:{default:'預設',hover:'滑過',active:'選中'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 磚型',state:'State 狀態',size:'Size 尺寸'}}},
-    'article-card':{label:'Article Card 文章卡',order:['variant','state','size'],axes:{variant:['vertical','horizontal','overlay'],state:['default','hover'],size:['m','s']},zh:{variant:{vertical:'直式',horizontal:'橫式',overlay:'疊字'},state:{default:'預設',hover:'滑過'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 版式',state:'State 狀態',size:'Size 尺寸'}}}
+    'article-card':{label:'Article Card 文章卡',order:['variant','state','size'],axes:{variant:['vertical','horizontal','overlay'],state:['default','hover'],size:['m','s']},zh:{variant:{vertical:'直式',horizontal:'橫式',overlay:'疊字'},state:{default:'預設',hover:'滑過'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 版式',state:'State 狀態',size:'Size 尺寸'}}},
+    table:{label:'Table 資料表格',order:['variant','density'],axes:{variant:['bordered','striped','plain'],density:['comfortable','compact']},zh:{variant:{bordered:'格線',striped:'斑馬紋',plain:'簡潔'},density:{comfortable:'寬鬆',compact:'緊湊'},axisName:{variant:'Variant 型態',density:'Density 密度'}}},
+    chart:{label:'Chart 圖表',order:['variant','size'],axes:{variant:['stat','line','bar','donut'],size:['m','s']},zh:{variant:{stat:'統計數字',line:'折線',bar:'長條',donut:'甜甜圈'},size:{m:'標準',s:'精簡'},axisName:{variant:'Variant 圖型',size:'Size 尺寸'}}},
+    'tree-view':{label:'Tree View 樹狀',order:['variant','state'],axes:{variant:['lines','plain','checkbox'],state:['default','hover','selected']},zh:{variant:{lines:'連接線',plain:'無線',checkbox:'勾選樹'},state:{default:'預設',hover:'滑過',selected:'選取'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
+    'schedule-chart':{label:'Schedule Chart 排程圖',order:['variant','size'],axes:{variant:['gantt','week','timeline'],size:['m','s']},zh:{variant:{gantt:'甘特圖',week:'週排程',timeline:'時間軸'},size:{m:'標準',s:'精簡'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
+    calendar:{label:'Calendar 日曆時間',order:['variant','size'],axes:{variant:['month','range','time'],size:['m','s']},zh:{variant:{month:'月曆',range:'區間',time:'時間'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}}
   
   };
   const CHOICE={};
@@ -5813,7 +6246,1125 @@ function buildArticleCard(view){
   });
 }
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep,quantity:buildQuantity,progress:buildProgress,card:buildCard,'product-card':buildProductCard,'category-tile':buildCategoryTile,'article-card':buildArticleCard};
+
+  /* ===== Table&Chart group build: table ===== */
+/* ===================== Table 資料表格（tbl-） =====================
+   variant（bordered 格線／striped 斑馬紋／plain 簡潔）× density（comfortable 寬鬆／compact 緊湊）
+   重用原子：.cbx（全選＋列選，含 st-indeterminate 半選）、.tg（狀態欄標籤）、.btn（排序鈕／分頁）、
+             ICON_CHECK（勾）、ICON_CARET（排序方向／分頁箭頭）
+   新增 icon：TBL_IC_SORT（Phosphor caret-up-down；表頭「未排序」中性指示） */
+
+/* ---- 新增 icon：caret-up-down（未排序中性雙箭頭） ---- */
+  const TBL_IC_SORT='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,170.34a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-48-48a8,8,0,0,1,11.32-11.32L128,212.69l42.34-42.35A8,8,0,0,1,181.66,170.34ZM85.66,85.66,128,43.31l42.34,42.35a8,8,0,0,0,11.32-11.32l-48-48a8,8,0,0,0-11.32,0l-48,48A8,8,0,0,0,85.66,85.66Z"/></svg>';
+
+/* ---- 狀態欄標籤對照（重用 .tg 原子：完成 i-brand／進行中 i-neutral／逾期 i-danger） ---- */
+  const TBL_STATUS={done:['完成','i-brand'],doing:['進行中','i-neutral'],late:['逾期','i-danger']};
+
+/* ---- 示意資料池（每張表都取深拷貝，排序／選取互不污染） ---- */
+  const TBL_DATA=[
+    {name:'王小明',status:'done', amount:12800,date:'2026-07-02'},
+    {name:'陳美華',status:'doing',amount:4600, date:'2026-07-05'},
+    {name:'林志豪',status:'late', amount:23150,date:'2026-06-28'},
+    {name:'張雅婷',status:'done', amount:8990, date:'2026-07-11'},
+    {name:'李承翰',status:'doing',amount:1500, date:'2026-07-14'},
+  ];
+
+/* ---- 小工具 ---- */
+  function tblFmt(n){return 'NT$ '+n.toLocaleString('en-US');}                     // 金額格式化
+  function tblTagEl(status){                                                       // 狀態標籤：重用 .tg
+    const s=TBL_STATUS[status];
+    const t=ce('div','tg v-soft c-round '+s[1]+' st-default');
+    t.innerHTML='<span>'+s[0]+'</span>';return t;}
+  function tblCbxEl(density,checked){                                              // 勾選框：重用 .cbx（緊湊縮 sz-s）
+    const c=ce('div','cbx '+(density==='compact'?'sz-s':'sz-m')+' '+(checked?'st-checked':'st-default'));
+    if(checked)c.innerHTML=ICON_CHECK;return c;}
+
+/* ---- 分頁列（showcase 示意；重用 .btn 原子） ---- */
+  function tblPagerEl(){
+    const bar=ce('div','tbl-pgbar');
+    const info=ce('div','tbl-pginfo');info.textContent='共 5 筆 · 第 1-5 筆';bar.appendChild(info);
+    const mk=(cls,html,aria)=>{const b=ce('button','btn '+cls+' sz-s live');b.innerHTML=html;if(aria)b.setAttribute('aria-label',aria);return b;};
+    const prev=mk('v-text i-secondary icon-only tbl-pgprev',ICON_CARET,'上一頁');
+    const next=mk('v-text i-secondary icon-only tbl-pgnext',ICON_CARET,'下一頁');
+    const pages=[1,2,3].map((n,i)=>mk(i===0?'v-soft i-primary':'v-text i-secondary','<span>'+n+'</span>'));
+    pages.forEach(pb=>pb.addEventListener('click',()=>{                             // 點頁碼切換 active（純示意）
+      pages.forEach(o=>{o.className='btn v-text i-secondary sz-s live';});
+      pb.className='btn v-soft i-primary sz-s live';}));
+    bar.appendChild(prev);pages.forEach(pb=>bar.appendChild(pb));bar.appendChild(next);
+    return bar;}
+
+/* ---- 主要工廠：tblTable(variant,density,opts) → .tbl-wrap ----
+   opts：checkbox 勾選欄／sortable 可排序表頭／zebra 額外斑馬紋／footer 總計列／pager 分頁列
+         selected:[idx] 預選列／live 真實 hover／interactive 點列切選取／mini 矩陣小表（去日期欄、3 列）／simHover 靜態 hover 列 */
+  function tblTable(variant,density,o){
+    o=o||{};
+    const rows=(o.data||(o.mini?TBL_DATA.slice(0,3):TBL_DATA)).map(d=>Object.assign({},d)); // 資料副本
+    (o.selected||[]).forEach(i=>{if(rows[i])rows[i]._sel=true;});
+    const zebra=variant==='striped'||!!o.zebra;                                    // v-striped 或 stripe 開關都算斑馬紋
+    const wrap=ce('div','tbl-wrap tbl-v-'+variant+' tbl-dn-'+density+(zebra?' tbl-zebra':'')+(o.live?' live':''));
+    const table=ce('table','tbl');wrap.appendChild(table);
+    const cols=[
+      {key:'name',  lab:'姓名',sortable:true, cls:'tbl-name'},
+      {key:'status',lab:'狀態',sortable:false,cls:''},
+      {key:'amount',lab:'金額',sortable:true, cls:'tbl-num'},
+      {key:'date',  lab:'日期',sortable:true, cls:'tbl-mut'},
+    ].filter(c=>!(o.mini&&c.key==='date'));                                        // 矩陣小表拿掉日期欄
+    let sortKey=null,sortAsc=true;                                                 // 排序狀態（每張表獨立）
+    const interactive=!!o.live&&o.interactive!==false;
+
+    const thead=ce('thead'),htr=ce('tr');thead.appendChild(htr);table.appendChild(thead);
+    const tbody=ce('tbody');table.appendChild(tbody);
+    let headCbx=null;
+
+    function syncHead(){                                                           // 全選框三態同步（重用 .cbx st-indeterminate＋.dash）
+      if(!headCbx)return;
+      const n=rows.filter(r=>r._sel).length;
+      headCbx.classList.remove('st-checked','st-indeterminate','st-default');
+      if(n===rows.length&&n>0){headCbx.classList.add('st-checked');headCbx.innerHTML=ICON_CHECK;}
+      else if(n>0){headCbx.classList.add('st-indeterminate');headCbx.innerHTML='<span class="dash"></span>';}
+      else{headCbx.classList.add('st-default');headCbx.innerHTML='';}}
+
+    function renderHead(){                                                         // 表頭（排序鈕重用 .btn v-text）
+      htr.innerHTML='';
+      if(o.checkbox){
+        const th=ce('th','tbl-th tbl-col-cbx');
+        headCbx=tblCbxEl(density,false);
+        if(interactive)headCbx.addEventListener('click',()=>{                      // 點全選框：全選 ↔ 全不選
+          const all=rows.every(r=>r._sel);
+          rows.forEach(r=>{r._sel=!all;});renderBody();syncHead();});
+        th.appendChild(headCbx);htr.appendChild(th);syncHead();}
+      cols.forEach(c=>{
+        const th=ce('th','tbl-th'+(c.key==='amount'?' tbl-num':''));
+        if(o.sortable&&c.sortable){
+          const cur=sortKey===c.key;
+          const b=ce('button','btn v-text i-secondary sz-s live tbl-sortbtn'+(cur?' is-active':''));
+          b.innerHTML='<span>'+c.lab+'</span><span class="tbl-sortic'+(cur&&sortAsc?' tbl-asc':'')+'">'
+            +(cur?ICON_CARET:TBL_IC_SORT)+'</span>';                               // 排序中：caret 升／降；未排序：中性雙箭頭
+          b.addEventListener('click',()=>{
+            if(sortKey===c.key)sortAsc=!sortAsc;else{sortKey=c.key;sortAsc=true;}
+            renderHead();renderBody();});
+          th.appendChild(b);
+        }else{th.textContent=c.lab;}
+        htr.appendChild(th);});}
+
+    function renderBody(){                                                         // 資料列
+      tbody.innerHTML='';
+      const rs=rows.slice();
+      if(sortKey){const k=sortKey;rs.sort((a,b)=>{
+        let r;
+        if(k==='amount')r=a.amount-b.amount;
+        else if(k==='name')r=a.name.localeCompare(b.name,'zh-Hant');
+        else r=a.date<b.date?-1:a.date>b.date?1:0;
+        return sortAsc?r:-r;});}
+      rs.forEach((d,i)=>{
+        const tr=ce('tr','tbl-row'+(d._sel?' is-selected':'')+(o.simHover===i?' is-hover':''));
+        if(o.checkbox){const td=ce('td','tbl-td tbl-col-cbx');td.appendChild(tblCbxEl(density,!!d._sel));tr.appendChild(td);}
+        cols.forEach(c=>{
+          const td=ce('td','tbl-td'+(c.cls?' '+c.cls:''));
+          if(c.key==='status')td.appendChild(tblTagEl(d.status));
+          else if(c.key==='amount')td.textContent=tblFmt(d.amount);
+          else td.textContent=d[c.key];
+          tr.appendChild(td);});
+        if(interactive){                                                           // 點列切換選取，勾選框／全選框連動
+          tr.style.cursor='pointer';
+          tr.addEventListener('click',()=>{d._sel=!d._sel;renderBody();syncHead();});}
+        tbody.appendChild(tr);});}
+
+    renderHead();renderBody();
+
+    if(o.footer){                                                                  // 表尾總計列（金額右對齊 tabular-nums）
+      const tfoot=ce('tfoot'),ftr=ce('tr');
+      const lab=ce('td','tbl-td tbl-ft tbl-ft-lab');lab.colSpan=(o.checkbox?1:0)+2;lab.textContent='總計';
+      const amt=ce('td','tbl-td tbl-ft tbl-num');amt.textContent=tblFmt(rows.reduce((s,d)=>s+d.amount,0));
+      ftr.append(lab,amt);
+      if(cols.some(c=>c.key==='date'))ftr.appendChild(ce('td','tbl-td tbl-ft'));
+      tfoot.appendChild(ftr);table.appendChild(tfoot);}
+
+    if(o.pager)wrap.appendChild(tblPagerEl());                                     // 分頁列（重用 .btn）
+    return wrap;}
+
+/* ---- 矩陣格：tblCell(variant,density) → 小表（表頭＋3 列，呈現該組合外觀） ---- */
+  function tblCell(variant,density){
+    return tblTable(variant,density,{mini:true});}
+
+/* ---- 頁面組裝 ---- */
+  function buildTable(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Table',title:'Table 資料表格',
+      lede:'資料密集場景的<b>表格容器</b>：可排序表頭 ＋ 資料列（斑馬紋／hover／選取）＋ 表尾總計／分頁。三種 variant——<b>bordered 格線</b>（完整直橫格線）、<b>striped 斑馬紋</b>（偶數列鋪淺灰）、<b>plain 簡潔</b>（只留表頭底線）；兩級 density——<b>comfortable 寬鬆</b>／<b>compact 緊湊</b>。重用 <b>.cbx</b>（全選含半選態／列選）、<b>.tg</b>（狀態欄）、<b>.btn</b>(排序鈕／分頁）；金額欄右對齊 tabular-nums。',
+      specRows:[['axes','<code>variant × density</code>'],['formula','<code>3 × 2 = 6</code>'],['token-policy','<code>semantic.*.table.*</code>'],['slots','header（sortable）/ rows / footer（總計／分頁）']]});
+    const axes=DIAL_SPECS.table.axes, zh=DIAL_SPECS.table.zh, active=CHOICE.table.active; // 接中央 store
+    const VN={bordered:['格線','bordered'],striped:['斑馬紋','striped'],plain:['簡潔','plain']};
+    const DN={comfortable:['寬鬆','comfortable'],compact:['緊湊','compact']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ds=axes.density.filter(d=>active.density.has(d));
+      p.appendChild(matrixPanel({badge:'table',name:'Variant × Density（框線體系 × 密度）',
+        rows:vs,cols:ds,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:d=>labHTML(DN[d][0],DN[d][1]),
+        cell:(v,d)=>tblCell(v,d),mincol:300})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Density 矩陣','列＝框線體系（格線／斑馬紋／簡潔）、欄＝密度（寬鬆／緊湊）。每格是一張縮小示意表（表頭＋3 列）；斑馬紋偶數列鋪淺灰、簡潔款去外框只留表頭底線、緊湊款 padding 收窄且勾選框／標籤同步縮小。');
+    p=panelsIn(sec);renderM();
+
+    // ---- Showcase：完整表（checkbox 欄＋可排序表頭＋選取列＋狀態 tag＋金額＋表尾總計＋分頁），真實 hover ----
+    const sc=section(body,'Showcase 完整範例','格線＋寬鬆的滿配表：左側勾選欄（全選框支援<b>半選</b>三態）、姓名／金額／日期表頭可點擊<b>排序</b>（升／降 caret 主色指示）、狀態欄重用 Tag、金額右對齊 tabular-nums、表尾總計＋分頁列（重用 Button）。滑鼠移到列上看真實 hover，<b>點列</b>切換選取（淡藍底＋勾選連動）。');
+    const demo=ce('div','tbl-demo');
+    demo.appendChild(tblTable('bordered','comfortable',{checkbox:true,sortable:true,footer:true,pager:true,live:true,selected:[1]}));
+    sc.appendChild(demo);
+
+    // ---- 實際互動 Live：segs＝variant/density；每個開關都對應可見樣式 ----
+    const sl=section(body,'實際互動 Live','切 variant／density，勾選各 feature：checkbox 勾選欄、sortable 排序表頭、stripe 斑馬紋（bordered／plain 上疊加；striped 本身已含）、footer 總計列、selected 選取列示意。點列可切換選取（勾選框與全選框連動）、點表頭排序。');
+    mountLive(sl,{
+      initial:{variant:'bordered',density:'comfortable',checkbox:true,sortable:true,stripe:false,footer:true,selrow:true},
+      segs:[
+        {key:'variant',label:'Variant 型態',options:['bordered','striped','plain'],labels:['bordered 格線','striped 斑馬紋','plain 簡潔']},
+        {key:'density',label:'Density 密度',options:['comfortable','compact'],labels:['comfortable 寬鬆','compact 緊湊']},
+      ],
+      bools:[
+        {key:'checkbox',label:'checkbox 勾選欄'},
+        {key:'sortable',label:'sortable 排序表頭'},
+        {key:'stripe',label:'stripe 斑馬紋'},
+        {key:'footer',label:'footer 總計列'},
+        {key:'selrow',label:'selected 選取列示意'},
+      ],
+      boolLabel:'Features',
+      render:st=>{
+        const w=tblTable(st.variant,st.density,{
+          checkbox:st.checkbox,sortable:st.sortable,zebra:st.stripe,footer:st.footer,
+          selected:st.selrow?[1]:[],live:true});
+        const box=ce('div');box.style.width='680px';box.style.maxWidth='100%';box.appendChild(w);return box; // Live 固定寬 680px
+      },
+      note:'每個開關都對應可見樣式：<b>checkbox</b> 開左側勾選欄（全選框支援半選三態）、<b>sortable</b> 表頭出現排序鈕（未排序中性雙箭頭、排序中主色 caret 升／降）、<b>stripe</b> 在 bordered／plain 上疊加斑馬紋（striped variant 本身已含）、<b>footer</b> 收總計列、<b>selected</b> 預選第二列示意。<b>hover</b> 滑鼠移上即見（斑馬紋表自動用更深一階）；點列切換選取、勾選框連動。'
+    });
+  }
+
+  /* ===== Table&Chart group build: chart ===== */
+  /* ==================== Chart 圖表（cht-）==================== */
+  /* 儀表板圖表：stat 統計數字卡＋ line 折線／bar 長條／donut 甜甜圈迷你圖，全部 inline SVG 手刻（無外部 lib）。
+     variant：stat／line／bar／donut × size：m 標準／s 精簡（精簡＝sparkline 式簡配：折線收掉格線端點、長條單系列、甜甜圈收圖例）。
+     重用原子：stat 卡直接用 prMetricEl（含標題＋趨勢 delta，icon 走 IC_TRENDING）；圖例／delta 用 .tg；
+     系列色一律綁 token：--accent／--ok／--warn／--i-danger；格線 --line、軸線 --line-strong；數字 tabular-nums。 */
+
+  /* --- 示意資料池（固定不隨機，方便明暗／尺寸對照） --- */
+  const CHT_LINE_DATA=[42,54,48,66,60,78,72,92,86,108];      // 折線：近 10 期上升趨勢
+  const CHT_BAR_A=[64,92,78,110,88,120,72];                  // 長條系列 A（本週，--accent）
+  const CHT_BAR_B=[48,70,90,84,64,96,58];                    // 長條系列 B（上週，--ok）
+  const CHT_DONUT_SEGS=[                                     // 甜甜圈四段，各綁一個 intent 色 token
+    {k:'已完成',v:46,c:'--accent',dot:'c-accent'},
+    {k:'進行中',v:26,c:'--ok',dot:'c-ok'},
+    {k:'待處理',v:18,c:'--warn',dot:'c-warn'},
+    {k:'逾期',v:10,c:'--i-danger',dot:'c-danger'}
+  ];
+
+  /* --- SVG helpers：資料陣列 → 座標／path 字串 --- */
+  /* 把資料陣列映射到 viewBox 座標點（pad 為四邊留白） */
+  function chtPts(data,w,h,pad){
+    const mx=Math.max.apply(null,data),mn=Math.min.apply(null,data),span=(mx-mn)||1;
+    return data.map((v,i)=>[
+      pad+i*(w-pad*2)/(data.length-1),
+      h-pad-((v-mn)/span)*(h-pad*2)
+    ]);
+  }
+  /* 折線 path d 字串（M/L 折線） */
+  function chtLinePath(data,w,h,pad){
+    return chtPts(data,w,h,pad).map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  }
+  /* 折線圖 SVG：o={w,h,area 面積填充,grid 淡格線,dots 端點圓點} */
+  function chtLineSVG(o){
+    const w=o.w,h=o.h,pad=6,data=o.data||CHT_LINE_DATA;
+    const pts=chtPts(data,w,h,pad),d=chtLinePath(data,w,h,pad);
+    let s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="折線圖：近 '+data.length+' 期呈上升趨勢">';
+    if(o.grid)for(let i=0;i<4;i++){ // 4 條水平淡格線（--line）
+      const y=(pad+i*(h-pad*2)/3).toFixed(1);
+      s+='<line x1="'+pad+'" y1="'+y+'" x2="'+(w-pad)+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>';
+    }
+    if(o.area) // 面積填充：折線閉合到底邊，accent 半透明（fill-opacity，不 hard-code 混色）
+      s+='<path d="'+d+' L'+pts[pts.length-1][0].toFixed(1)+' '+(h-pad)+' L'+pts[0][0].toFixed(1)+' '+(h-pad)+' Z" fill="var(--accent)" fill-opacity=".14" stroke="none"/>';
+    s+='<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+    if(o.dots)pts.forEach(p=>{ // 端點圓點：accent 實心＋panel 描邊做分離
+      s+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="2.6" fill="var(--accent)" stroke="var(--panel)" stroke-width="1.5"/>';
+    });
+    return s+'</svg>';
+  }
+  /* 長條圖 SVG：o={w,h,series2 第二系列並排,vals 數值標}；底部一條 --line-strong 軸線 */
+  function chtBarSVG(o){
+    const w=o.w,h=o.h,A=CHT_BAR_A,B=CHT_BAR_B,n=A.length;
+    const padX=6,top=o.vals?14:6,bot=6;
+    const mx=Math.max.apply(null,o.series2?A.concat(B):A);
+    const gw=(w-padX*2)/n; // 每組寬
+    let s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="長條圖：近 '+n+' 期'+(o.series2?'雙系列對照':'數值')+'">';
+    for(let i=0;i<n;i++){
+      const cx=padX+gw*i+gw/2;
+      const bh=(A[i]/mx)*(h-top-bot);
+      if(o.series2){ // 兩系列並排：A 綁 --accent、B 綁 --ok
+        const bw=Math.min(gw*0.30,10),bh2=(B[i]/mx)*(h-top-bot);
+        s+='<rect x="'+(cx-bw-1).toFixed(1)+'" y="'+(h-bot-bh).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2" fill="var(--accent)"/>';
+        s+='<rect x="'+(cx+1).toFixed(1)+'" y="'+(h-bot-bh2).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh2.toFixed(1)+'" rx="2" fill="var(--ok)"/>';
+        if(o.vals){
+          s+='<text x="'+(cx-bw/2-1).toFixed(1)+'" y="'+(h-bot-bh-3).toFixed(1)+'" class="cht-val" text-anchor="middle">'+A[i]+'</text>';
+          s+='<text x="'+(cx+bw/2+1).toFixed(1)+'" y="'+(h-bot-bh2-3).toFixed(1)+'" class="cht-val" text-anchor="middle">'+B[i]+'</text>';
+        }
+      }else{
+        const bw=Math.min(gw*0.52,16);
+        s+='<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+(h-bot-bh).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2" fill="var(--accent)"/>';
+        if(o.vals)s+='<text x="'+cx.toFixed(1)+'" y="'+(h-bot-bh-3).toFixed(1)+'" class="cht-val" text-anchor="middle">'+A[i]+'</text>';
+      }
+    }
+    s+='<line x1="'+padX+'" y1="'+(h-bot)+'" x2="'+(w-padX)+'" y2="'+(h-bot)+'" stroke="var(--line-strong)" stroke-width="1"/>';
+    return s+'</svg>';
+  }
+  /* 甜甜圈 SVG：pathLength=100 ＋ stroke-dasharray 分段畫環（各段綁 intent 色 token），o.center 顯示中央百分比 */
+  function chtDonutSVG(o){
+    let off=0,s='<svg viewBox="0 0 120 120" role="img" aria-label="甜甜圈圖：任務狀態分布，已完成 46%、進行中 26%、待處理 18%、逾期 10%">';
+    s+='<g transform="rotate(-90 60 60)">'; // 轉 -90 度讓第一段從 12 點鐘開始
+    CHT_DONUT_SEGS.forEach(g=>{
+      s+='<circle cx="60" cy="60" r="46" fill="none" stroke="var('+g.c+')" stroke-width="15" pathLength="100" stroke-dasharray="'+g.v+' '+(100-g.v)+'" stroke-dashoffset="'+(-off)+'"/>';
+      off+=g.v;
+    });
+    s+='</g>';
+    if(o.center)s+='<text x="60" y="58" class="cht-donut-num" text-anchor="middle">46%</text><text x="60" y="75" class="cht-donut-sub" text-anchor="middle">完成率</text>';
+    return s+'</svg>';
+  }
+  /* 圖例：重用 .tg 原子（v-soft i-neutral），前置 .cht-dot 色點綁各系列色 token */
+  function chtLegend(items){
+    const lg=ce('div','cht-legend');
+    (items||CHT_DONUT_SEGS).forEach(g=>{
+      const t=ce('div','tg v-soft c-round i-neutral st-default');
+      t.innerHTML='<span class="cht-dot '+g.dot+'"></span><span>'+g.k+(g.v!=null?' '+g.v+'%':'')+'</span>';
+      lg.appendChild(t);
+    });
+    return lg;
+  }
+
+  /* --- 圖表工廠：chtChart(variant,size,o) → .cht-box ---
+     size 決定預設配置（m 標準＝完整配置、s 精簡＝sparkline 式簡配），o 可逐項覆寫（Live 用）：
+     stat {title,trend,unit}／line {area,grid,dots}／bar {series2,vals}／donut {center,legend} */
+  function chtChart(variant,size,o){
+    o=o||{};
+    const s=size==='s';
+    const box=ce('div','cht-box cht-'+variant+' cht-sz-'+size);
+    if(variant==='stat'){ // 統計數字卡：直接重用 Number 頁的 prMetricEl 原子（含趨勢 delta）
+      box.appendChild(prMetricEl(s?'sm':'md',{
+        title:o.title!==false,
+        trend:o.trend===undefined?'up':o.trend,
+        unit:o.unit
+      }));
+    }else if(variant==='line'){
+      box.innerHTML=chtLineSVG({w:s?150:220,h:s?64:110,
+        area:o.area===undefined?true:o.area,
+        grid:o.grid===undefined?!s:o.grid,
+        dots:o.dots===undefined?!s:o.dots});
+    }else if(variant==='bar'){
+      box.innerHTML=chtBarSVG({w:s?150:220,h:s?64:110,
+        series2:o.series2===undefined?!s:o.series2,
+        vals:!!o.vals});
+    }else{ // donut
+      box.innerHTML=chtDonutSVG({center:o.center===undefined?true:o.center});
+      if(o.legend===undefined?!s:o.legend)box.appendChild(chtLegend());
+    }
+    return box;
+  }
+  /* 矩陣格：dashboard tile（panel 底＋細邊）包一顆對應 variant × size 的小圖 */
+  function chtCell(variant,size){
+    const t=ce('div','cht-tile');
+    t.appendChild(chtChart(variant,size,{}));
+    return t;
+  }
+
+  /* --- Live 勾選項 scoped 控制：bools 依 variant 顯示對應選項，避免空轉 ---
+     mountLive 控制列只建一次，故在 render 時依 label 文字比對、隱藏非當前 variant 的勾選項 */
+  const CHT_BOOL_SCOPE={
+    '趨勢 trend':'stat','單位 unit':'stat',
+    '面積填充 area':'line','格線 grid':'line','端點 dots':'line',
+    '第二系列 series2':'bar','數值標 values':'bar',
+    '中央數字 center':'donut','圖例 legend':'donut'
+  };
+  function chtScopeBools(host,variant){
+    requestAnimationFrame(()=>{ // render 回傳後控制列才在 DOM，延一拍再掃
+      host.querySelectorAll('.livewrap label.chk').forEach(l=>{
+        const key=l.textContent.trim();
+        if(CHT_BOOL_SCOPE[key])l.style.display=(CHT_BOOL_SCOPE[key]===variant)?'':'none';
+      });
+    });
+  }
+
+  function buildChart(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Chart',title:'Chart 圖表',
+      lede:'儀表板圖表四型態：<b>stat 統計數字</b>（直接重用 Number 頁的 <b>prMetricEl</b> 原子，含標題＋趨勢 delta）、<b>line 折線</b>（淡格線＋accent 面積填充＋端點圓點）、<b>bar 長條</b>（可雙系列並排對照）、<b>donut 甜甜圈</b>（<code>stroke-dasharray</code> 分段環＋中央百分比）。× 兩尺寸：<b>m 標準</b>＝完整配置、<b>s 精簡</b>＝sparkline 式簡配（收格線端點／單系列／收圖例）。全部 <b>inline SVG 手刻</b>、無外部 lib；系列色綁 <code>--accent／--ok／--warn／--i-danger</code>，圖例與 delta 重用 <b>.tg</b>，數字一律 <code>tabular-nums</code>。',
+      specRows:[['axes','<code>variant × size</code>'],['formula','<code>4 × 2 = 8</code>'],['token-policy','<code>--accent / --ok / --warn / --i-danger / --line</code>'],['tech','<code>inline SVG 手刻 · pathLength 環 · tabular-nums</code>']]});
+    const axes=DIAL_SPECS.chart.axes, zh=DIAL_SPECS.chart.zh, active=CHOICE.chart.active; // 接中央 store
+    const VN={stat:['統計數字','stat'],line:['折線','line'],bar:['長條','bar'],donut:['甜甜圈','donut']};
+    const SZN={m:['標準','m'],s:['精簡','s']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.size.filter(s=>active.size.has(s));
+      p.appendChild(matrixPanel({badge:'chart',name:'Variant × Size',desc:'列＝圖型、欄＝尺寸；每格為一塊 dashboard tile',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(SZN[s][0],SZN[s][1]),
+        cell:(v,s)=>chtCell(v,s),mincol:240}));
+    }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Size 矩陣','m 標準＝完整配置（折線含格線＋端點、長條雙系列、甜甜圈含圖例）；s 精簡＝sparkline 式簡配，適合塞進表格列或緊湊卡片。stat 直接沿用 prMetricEl 的 sm／md 兩級。');
+    p=panelsIn(sec);renderM();
+
+    /* showcase：一組 dashboard 並排（stat ×2 ＋ line ＋ bar ＋ donut），示意真實儀表板 */
+    const cs=section(body,'Dashboard 組合示意','五張卡組成的迷你儀表板：兩張統計數字卡（prMetricEl 上升／下降）＋近期走勢折線＋雙週對照長條＋任務狀態甜甜圈。卡標題旁的 delta 與圖例都重用 .tg 原子；示意數據為固定值，方便明暗模式對照。');
+    const dash=ce('div','cht-dash');
+    /* dashboard 卡工廠：標題列（muted 小字＋可選 .tg delta）＋圖表本體 */
+    function dashCard(title,delta,node,span){
+      const c=ce('div','cht-card'+(span?' cht-span-'+span:''));
+      const h=ce('div','cht-card-h');
+      const t=ce('div','cht-card-t');t.textContent=title;h.appendChild(t);
+      if(delta){ // delta 重用 .tg：上升 i-brand／下降 i-danger
+        const tg=ce('div','tg v-soft c-round '+(delta.up?'i-brand':'i-danger')+' st-default');
+        tg.innerHTML='<span>'+delta.txt+'</span>';h.appendChild(tg);
+      }
+      c.append(h,node);return c;
+    }
+    dash.appendChild(dashCard('本月營收',null,chtChart('stat','m',{title:false,trend:'up',unit:true})));
+    dash.appendChild(dashCard('客訴案件',null,chtChart('stat','m',{title:false,trend:'down'})));
+    dash.appendChild(dashCard('任務狀態分布',null,chtChart('donut','m',{center:true,legend:true})));
+    dash.appendChild(dashCard('近 10 期營收走勢',{up:true,txt:'+12.5%'},chtChart('line','m',{grid:true,dots:true,area:true}),3));
+    const barCard=dashCard('每日訂單 本週 vs 上週',null,chtChart('bar','m',{series2:true}),3);
+    barCard.appendChild(chtLegend([{k:'本週',dot:'c-accent'},{k:'上週',dot:'c-ok'}])); // 雙系列圖例（.tg＋色點）
+    dash.appendChild(barCard);
+    cs.appendChild(dash);
+
+    /* Live：seg 切 variant／size；bools 依 variant scoped 顯示（隱藏非當前圖型的選項，避免空轉開關） */
+    const sl=section(body,'實際互動 Live','切圖型與尺寸；勾選項會隨圖型切換只留對應選項——折線控面積填充／格線／端點，長條控第二系列／數值標，甜甜圈控中央數字／圖例，統計數字控趨勢／單位。');
+    mountLive(sl,{
+      initial:{variant:'line',size:'m',
+        statTrend:true,statUnit:false,
+        lineArea:true,lineGrid:true,lineDots:true,
+        barSeries2:true,barVals:false,
+        donutCenter:true,donutLegend:true},
+      segs:[{key:'variant',label:'Variant',options:['stat','line','bar','donut'],labels:['統計數字','折線','長條','甜甜圈']},
+            {key:'size',label:'Size',options:['m','s'],labels:['標準','精簡']}],
+      bools:[{key:'statTrend',label:'趨勢 trend'},{key:'statUnit',label:'單位 unit'},
+             {key:'lineArea',label:'面積填充 area'},{key:'lineGrid',label:'格線 grid'},{key:'lineDots',label:'端點 dots'},
+             {key:'barSeries2',label:'第二系列 series2'},{key:'barVals',label:'數值標 values'},
+             {key:'donutCenter',label:'中央數字 center'},{key:'donutLegend',label:'圖例 legend'}],
+      boolLabel:'選項（依圖型）',
+      render:st=>{
+        chtScopeBools(sl,st.variant); // 依當前 variant 只留對應勾選項
+        const stage=ce('div','cht-live-stage');
+        let node;
+        if(st.variant==='stat')node=chtChart('stat',st.size,{title:true,trend:st.statTrend?'up':null,unit:st.statUnit});
+        else if(st.variant==='line')node=chtChart('line',st.size,{area:st.lineArea,grid:st.lineGrid,dots:st.lineDots});
+        else if(st.variant==='bar')node=chtChart('bar',st.size,{series2:st.barSeries2,vals:st.barVals});
+        else node=chtChart('donut',st.size,{center:st.donutCenter,legend:st.donutLegend});
+        const tile=ce('div','cht-tile');tile.appendChild(node);
+        stage.appendChild(tile);
+        return stage;
+      },
+      note:'↓ 四圖型精簡尺寸快速對照（sparkline 式簡配）。系列色全綁 token（--accent／--ok／--warn／--i-danger），明暗模式自動跟切；甜甜圈環用 <code>pathLength=100</code>＋<code>stroke-dasharray</code> 分段。',
+      free:()=>['stat','line','bar','donut'].map(v=>{const t=ce('div','cht-tile');t.appendChild(chtChart(v,'s',{}));return t;})
+    });
+  }
+
+  /* ===== Table&Chart group build: tree-view ===== */
+/* ==================== Tree View 樹狀（trv-）==================== */
+/* 重用原子：ICON_CARET（展開箭頭・旋轉）、.cbx + ICON_CHECK（勾選樹）、IC_FOLDER / IC_FILE（分支/葉子 icon）
+   無新增 icon const——需要的資料夾/檔案 icon 主檔都已存在 */
+
+/* 單一節點（遞迴建 li）：d={name, ic:'folder'|'file', count, open, children, hover, sel, checked}
+   o={variant:'lines'|'plain'|'checkbox', live, showIcon(預設true), showCount(預設true), onPick(row,d)} */
+function trvNode(d,o){
+  o=o||{};
+  const hasKids=Array.isArray(d.children)&&d.children.length>0;
+  const li=ce('li','trv-item'+((hasKids&&d.open)?' is-open':''));
+  li.setAttribute('role','treeitem');
+  if(hasKids)li.setAttribute('aria-expanded',d.open?'true':'false');
+
+  const row=ce('div','trv-row'
+    +(d.hover?' is-hover':'')                       // 矩陣格：靜態模擬 hover
+    +(d.sel?' is-selected':'')
+    +(o.live?' live':''));                          // Live/showcase 才吃真實 :hover
+
+  /* 展開箭頭：有子節點才有；葉子放同寬 spacer 讓縮排對齊 */
+  const car=ce('span','trv-caret'+(hasKids?'':' trv-blank'));
+  if(hasKids)car.innerHTML=ICON_CARET;
+  row.appendChild(car);
+
+  /* checkbox variant：列內重用 .cbx 原子（sz-s） */
+  if(o.variant==='checkbox'){
+    const cb=ce('span','cbx sz-s '+(d.checked?'st-checked':'st-default'));
+    if(d.checked)cb.innerHTML=ICON_CHECK;
+    cb.setAttribute('role','checkbox');
+    cb.setAttribute('aria-checked',d.checked?'true':'false');
+    row.appendChild(cb);
+  }
+
+  /* 分支/葉子 icon：IC_FOLDER / IC_FILE（showIcon 可關） */
+  if(o.showIcon!==false){
+    const ic=ce('span','trv-ic');
+    ic.innerHTML=(d.ic==='file'?IC_FILE:IC_FOLDER);
+    row.appendChild(ic);
+  }
+
+  const nm=ce('span','trv-name');nm.textContent=d.name;row.appendChild(nm);
+
+  /* 右側 count／檔案大小（showCount 可關） */
+  if(o.showCount!==false&&d.count!=null){
+    const ct=ce('span','trv-count');ct.textContent=d.count;row.appendChild(ct);
+  }
+  li.appendChild(row);
+
+  if(hasKids){
+    const ul=ce('ul','trv-children');
+    ul.setAttribute('role','group');
+    d.children.forEach(c=>ul.appendChild(trvNode(c,o)));
+    li.appendChild(ul);
+  }
+
+  /* Live 真實互動：點箭頭展開/收合（不觸發選取）、點列選取、點 cbx 只切換勾選 */
+  if(o.live){
+    if(hasKids)car.addEventListener('click',e=>{
+      e.stopPropagation();
+      const open=li.classList.toggle('is-open');
+      li.setAttribute('aria-expanded',open?'true':'false');
+    });
+    row.addEventListener('click',e=>{
+      const cb=e.target.closest?e.target.closest('.cbx'):null;
+      if(cb){                                        // 勾選框：只切換勾選、不選取列
+        e.stopPropagation();
+        const on=cb.classList.toggle('st-checked');
+        cb.classList.toggle('st-default',!on);
+        cb.innerHTML=on?ICON_CHECK:'';
+        cb.setAttribute('aria-checked',on?'true':'false');
+        return;
+      }
+      if(o.onPick)o.onPick(row,d);
+    });
+  }
+  return li;
+}
+
+/* 一棵樹：data=節點陣列；o 同 trvNode。live 時內建單選互斥（點列清掉其他 is-selected） */
+function trvTree(data,o){
+  o=o||{};
+  const ul=ce('ul','trv-tree trv-v-'+(o.variant||'plain'));
+  ul.setAttribute('role','tree');
+  if(o.live&&!o.onPick){
+    o.onPick=row=>{
+      ul.querySelectorAll('.trv-row.is-selected').forEach(r=>r.classList.remove('is-selected'));
+      row.classList.add('is-selected');
+    };
+  }
+  data.forEach(d=>ul.appendChild(trvNode(d,o)));
+  return ul;
+}
+
+/* 範例資料（檔案總管）：每次呼叫回傳全新物件，避免 Live 重畫共用狀態；open 控制資料夾初始展開 */
+function trvSample(open){
+  return [
+    {name:'專案文件',ic:'folder',count:'8',open:open,children:[
+      {name:'設計稿',ic:'folder',count:'3',open:open,children:[
+        {name:'首頁-v2.fig',ic:'file',count:'2.4 MB'},
+        {name:'元件庫.fig',ic:'file',count:'8.1 MB'},
+        {name:'流程圖.fig',ic:'file',count:'1.2 MB'},
+      ]},
+      {name:'規格書',ic:'folder',count:'2',open:open,children:[
+        {name:'PRD-v1.md',ic:'file',count:'36 KB'},
+        {name:'API 規格.md',ic:'file',count:'52 KB'},
+      ]},
+      {name:'會議記錄.md',ic:'file',count:'12 KB'},
+    ]},
+    {name:'共用資源',ic:'folder',count:'4',open:open,children:[
+      {name:'品牌素材',ic:'folder',count:'2',open:false,children:[
+        {name:'logo.svg',ic:'file',count:'8 KB'},
+        {name:'配色表.png',ic:'file',count:'214 KB'},
+      ]},
+      {name:'字型授權.pdf',ic:'file',count:'1.1 MB'},
+    ]},
+  ];
+}
+
+/* 矩陣格：一棵三層小樹靜態呈現該 variant × state；hover/selected 落在「設計稿」列 */
+function trvCell(v,s){
+  const data=[
+    {name:'專案文件',ic:'folder',count:'3',open:true,checked:v==='checkbox',children:[
+      {name:'設計稿',ic:'folder',count:'2',open:true,
+        hover:s==='hover',sel:s==='selected',checked:v==='checkbox',children:[
+        {name:'首頁-v2.fig',ic:'file',count:'2.4 MB',checked:v==='checkbox'},
+        {name:'元件庫.fig',ic:'file',count:'8.1 MB'},
+      ]},
+      {name:'會議記錄.md',ic:'file',count:'12 KB'},
+    ]},
+  ];
+  const box=ce('div','trv-cellbox');
+  box.appendChild(trvTree(data,{variant:v}));        // 靜態：不掛 live、不綁事件
+  return box;
+}
+
+function buildTreeView(view){
+  const body=viewScaffold(view,{eyebrow:'L3 Component · Tree View',title:'Tree View 樹狀',
+    lede:'階層資料的<b>樹狀清單</b>：可展開／收合節點（重用 <b>ICON_CARET</b>，收合時轉 -90°）、依 depth 縮排、資料夾／檔案 icon（<b>IC_FOLDER／IC_FILE</b>）、選取列淡藍底。三 variant：<b>lines 連接線</b>（L 形引導線・--line token）、<b>plain 無線</b>(純縮排)、<b>checkbox 勾選樹</b>（重用 <b>.cbx</b> 原子多選）。',
+    specRows:[['axes','<code>variant × state</code>'],['formula','<code>3 × 3 = 9</code>'],['token-policy','<code>semantic.*.tree.*</code>'],['reuse','ICON_CARET / .cbx / IC_FOLDER / IC_FILE']]});
+  const axes=DIAL_SPECS['tree-view'].axes, zh=DIAL_SPECS['tree-view'].zh, active=CHOICE['tree-view'].active; // 接中央 store（hyphen id 用括號取值）
+  const VN={lines:['連接線','lines'],plain:['無線','plain'],checkbox:['勾選樹','checkbox']};
+  const STN={default:['預設','default'],hover:['滑過','hover'],selected:['選取','selected']};
+  let p;
+  function renderM(){ if(!p)return; p.innerHTML='';
+    const vs=axes.variant.filter(v=>active.variant.has(v));
+    const ss=axes.state.filter(s=>active.state.has(s));
+    p.appendChild(matrixPanel({badge:'tree-view',name:'Variant × State',rows:vs,cols:ss,
+      rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+      colLab:s=>labHTML(STN[s][0],STN[s][1]),
+      cell:(v,s)=>trvCell(v,s),mincol:250})); }
+  mountDial(body,{axes,zh,active,onRender:renderM});
+  const sec=section(body,'Variant × State 矩陣','列＝三 variant、欄＝狀態（靜態呈現，hover 以 is-hover 模擬）。每格為一棵三層小樹；hover／selected 狀態落在中段「設計稿」節點——selected 為淡藍底＋名稱轉主色。');
+  p=panelsIn(sec);renderM();
+
+  /* ---- Showcase：三 variant 各一棵完整可互動樹 ---- */
+  const sw=section(body,'檔案總管 Showcase','三 variant 各一棵完整樹，真實可互動：點<b>箭頭</b>展開／收合（箭頭旋轉）、點<b>列</b>選取（單選互斥・淡藍底）、checkbox 樹點<b>勾選框</b>多選（不觸發選取）。');
+  const grid=ce('div','trv-show-grid');
+  [['lines','連接線 lines'],['plain','無線 plain'],['checkbox','勾選樹 checkbox']].forEach(pair=>{
+    const col=ce('div','trv-show-col');
+    const cap=ce('div','trv-show-cap');cap.textContent=pair[1];col.appendChild(cap);
+    const bx=ce('div','trv-box');
+    bx.appendChild(trvTree(trvSample(true),{variant:pair[0],live:true}));
+    col.appendChild(bx);grid.appendChild(col);
+  });
+  sw.appendChild(grid);
+
+  /* ---- 實際互動 Live ---- */
+  const sl=section(body,'實際互動 Live','切換 variant 與內容開關，即時重畫整棵樹；點箭頭展開／收合、點列選取、勾選樹點 cbx 多選皆為真實互動。');
+  mountLive(sl,{
+    initial:{variant:'lines',showIcon:true,showCount:true,defaultOpen:true},
+    segs:[{key:'variant',label:'Variant',options:['lines','plain','checkbox'],labels:['lines 連接線','plain 無線','checkbox 勾選樹']}],
+    bools:[
+      {key:'showIcon',label:'showIcon 圖示'},
+      {key:'showCount',label:'showCount 計數／大小'},
+      {key:'defaultOpen',label:'defaultOpen 預設展開'},
+    ],
+    boolLabel:'Content',
+    render:st=>{
+      const box=ce('div','trv-box');box.style.width='420px';box.style.maxWidth='100%'; // Live 固定寬 420px
+      box.appendChild(trvTree(trvSample(st.defaultOpen),{
+        variant:st.variant,live:true,showIcon:st.showIcon,showCount:st.showCount}));
+      return box;
+    },
+    note:'點<b>箭頭</b>展開／收合（ICON_CARET 旋轉）、點<b>列</b>選取（單選互斥）。每個開關都對應可見變化：<b>showIcon</b> 收掉資料夾/檔案 icon、<b>showCount</b> 收掉右側計數/大小、<b>defaultOpen</b> 切資料夾初始展開/收合；lines 連接線由 variant 控制。'
+  });
+}
+
+  /* ===== Table&Chart group build: schedule-chart ===== */
+/* ==================== Schedule Chart 排程圖（gnt-）==================== */
+/* 重用原子：.tg（任務／節點狀態：進行中 i-brand／完成 i-neutral／延遲 i-danger／待開始 outline）、
+   IC_CLOCK（timeline 時間列，既有 icon）。無新增 icon const。
+   三 variant：gantt 甘特圖／week 週排程／timeline 垂直時間軸 × size m 標準／s 精簡。
+   橫條／事件塊系列色一律綁 token（--accent/--ok/--warn/--i-danger），格線 --line、字 --muted/--faint。 */
+
+/* 狀態 → .tg 標籤（重用 Tag 原子，不重畫） */
+function gntTag(st){
+  const map={active:['進行中','i-brand','v-soft'],done:['完成','i-neutral','v-soft'],
+             delay:['延遲','i-danger','v-soft'],todo:['待開始','i-neutral','v-outline']};
+  const m=map[st]||map.active;
+  const t=ce('div','tg '+m[2]+' c-round '+m[1]+' st-default');
+  t.innerHTML='<span>'+m[0]+'</span>';
+  return t;
+}
+
+/* --- 示意資料 --- */
+/* gantt：s/e＝起訖日 index（0-based，e 不含）；c＝系列色；prog＝進度 %；st＝狀態（接 .tg） */
+const GNT_TASKS=[
+  {name:'需求訪談',s:0,e:3,c:'ok',st:'done',prog:100},
+  {name:'線框設計',s:2,e:6,c:'ok',st:'done',prog:100},
+  {name:'視覺設計',s:5,e:9,c:'accent',st:'active',prog:60},
+  {name:'前端開發',s:7,e:12,c:'accent',st:'active',prog:35},
+  {name:'API 串接',s:8,e:11,c:'warn',st:'delay',prog:20},
+  {name:'測試驗收',s:11,e:14,c:'danger',st:'todo',prog:0}
+];
+const GNT_TASKS_SM=[                                             /* 矩陣格縮小版：3 任務 × 8 天 */
+  {name:'需求',s:0,e:3,c:'ok',st:'done',prog:100},
+  {name:'設計',s:2,e:6,c:'accent',st:'active',prog:55},
+  {name:'開發',s:5,e:8,c:'warn',st:'delay',prog:20}
+];
+/* week：d＝星期（0=一）；s＝起始時段 index（0=09:00）；du＝跨幾個時段；tm＝起始時間 */
+const GNT_WEVENTS=[
+  {d:0,s:0,du:2,t:'產品週會',c:'accent',tm:'09:00'},
+  {d:1,s:3,du:1,t:'需求訪談',c:'ok',tm:'12:00'},
+  {d:2,s:1,du:3,t:'設計衝刺',c:'warn',tm:'10:00'},
+  {d:3,s:5,du:2,t:'用戶測試',c:'accent',tm:'14:00'},
+  {d:4,s:2,du:2,t:'版本回顧',c:'danger',tm:'11:00'},
+  {d:5,s:4,du:2,t:'工作坊',c:'ok',tm:'13:00'}
+];
+const GNT_WEVENTS_SM=[                                           /* 矩陣格縮小版：5 時段內 */
+  {d:0,s:0,du:2,t:'週會',c:'accent',tm:'09:00'},
+  {d:2,s:1,du:3,t:'衝刺',c:'warn',tm:'10:00'},
+  {d:4,s:2,du:2,t:'回顧',c:'ok',tm:'11:00'},
+  {d:5,s:3,du:1,t:'測試',c:'danger',tm:'12:00'}
+];
+/* timeline：tm＝時間；t＝標題；d＝描述；st＝狀態（接 .tg 與節點圓點色） */
+const GNT_TLNODES=[
+  {tm:'09:30',t:'需求確認會議',d:'與客戶對齊本期範圍與交付項目',st:'done'},
+  {tm:'11:00',t:'線框稿評審',d:'PM／工程雙方確認資訊架構',st:'done'},
+  {tm:'14:00',t:'視覺設計交付',d:'主頁與列表頁 hi-fi 稿上傳 Figma',st:'active'},
+  {tm:'16:30',t:'前端切版排程',d:'依交付稿拆 component 工單',st:'delay'},
+  {tm:'18:00',t:'每日站會回顧',d:'同步進度與風險',st:'todo'}
+];
+
+/* 週末判定：示意月份 7/01 為週一 → 7/05、7/06（index 4、5）與 7/12、7/13（11、12）為週末 */
+function gntIsWkend(i){const w=i%7;return w===4||w===5;}
+
+/* ---- variant 1：gantt 甘特圖 ----
+   o={live, prog(進度填色,預設開), wkend(週末標記,預設開), today(今日線,預設開), tasks, days, todayIx, compact} */
+function gntGantt(size,o){
+  o=o||{};
+  const tasks=o.tasks||GNT_TASKS, days=o.days||14, todayIx=o.todayIx==null?9:o.todayIx;
+  const box=ce('div','gnt-box gnt-gantt gnt-sz-'+size
+    +(o.live?' live':'')+(o.prog===false?' no-prog':'')+(o.compact?' gnt-g-compact':''));
+  /* 左：任務名欄（名稱 + .tg 狀態標） */
+  const side=ce('div','gnt-g-side');
+  const sh=ce('div','gnt-g-side-head');sh.textContent='任務';side.appendChild(sh);
+  tasks.forEach(t=>{
+    const r=ce('div','gnt-g-task');
+    const n=ce('span','gnt-g-name');n.textContent=t.name;r.appendChild(n);
+    r.appendChild(gntTag(t.st));
+    side.appendChild(r);
+  });
+  /* 右：日期表頭 + 格線背景 + 橫條列（過寬容器內捲動） */
+  const scroll=ce('div','gnt-g-scroll');
+  const main=ce('div','gnt-g-main');
+  const head=ce('div','gnt-g-head');
+  for(let i=0;i<days;i++){
+    const h=ce('div','gnt-g-hcell'
+      +(o.wkend!==false&&gntIsWkend(i)?' is-wkend':'')
+      +(o.today!==false&&i===todayIx?' is-today':''));
+    h.textContent='7/'+String(i+1).padStart(2,'0');
+    head.appendChild(h);
+  }
+  main.appendChild(head);
+  const rows=ce('div','gnt-g-rows');
+  const bg=ce('div','gnt-g-bg');
+  for(let i=0;i<days;i++)bg.appendChild(ce('div','gnt-g-col'+(o.wkend!==false&&gntIsWkend(i)?' is-wkend':'')));
+  rows.appendChild(bg);
+  tasks.forEach(t=>{
+    const row=ce('div','gnt-g-row');
+    const bar=ce('div','gnt-bar c-'+t.c);
+    bar.style.left=(t.s/days*100)+'%';                           /* 依起訖日以 % 定位／設寬 */
+    bar.style.width=((t.e-t.s)/days*100)+'%';
+    const fill=ce('div','gnt-bar-fill');fill.style.width=t.prog+'%';bar.appendChild(fill);
+    const lab=ce('span','gnt-bar-lab');lab.textContent=t.prog+'%';bar.appendChild(lab);
+    bar.title=t.name+'（'+t.prog+'%）';
+    row.appendChild(bar);rows.appendChild(row);
+  });
+  if(o.today!==false){                                           /* 今日線：accent 直線 + 頂端小籤 */
+    const tl=ce('div','gnt-today');tl.style.left=((todayIx+0.5)/days*100)+'%';
+    const pin=ce('span','gnt-today-pin');pin.textContent='今日';tl.appendChild(pin);
+    rows.appendChild(tl);
+  }
+  main.appendChild(rows);scroll.appendChild(main);
+  box.append(side,scroll);
+  return box;
+}
+
+/* ---- variant 2：week 週排程 ----
+   o={live, times(時段標籤,預設開), detail(事件細節,預設開), events, slots, compact} */
+function gntWeek(size,o){
+  o=o||{};
+  const evts=o.events||GNT_WEVENTS, slots=o.slots||8, hasT=o.times!==false;
+  const box=ce('div','gnt-box gnt-week gnt-sz-'+size+(o.live?' live':'')+(o.compact?' gnt-w-compact':''));
+  const g=ce('div','gnt-w-grid');
+  /* 欄列模板依「有無時段欄」與時段數計算（版面數學，非樣式 token） */
+  g.style.gridTemplateColumns=(hasT?'var(--gnt-timew) ':'')+'repeat(7,minmax(0,1fr))';
+  g.style.gridTemplateRows='auto repeat('+slots+',var(--gnt-slot))';
+  const off=hasT?2:1;                                            /* 天欄的 grid column 起點 */
+  if(hasT)g.appendChild(ce('div','gnt-w-corner'));
+  ['一','二','三','四','五','六','日'].forEach((d,i)=>{
+    const h=ce('div','gnt-w-dhead'+(i===0&&!hasT?' first':'')+(i>=5?' is-wkend':''));
+    h.textContent='週'+d;g.appendChild(h);
+  });
+  for(let s=0;s<slots;s++){
+    if(hasT){
+      const t=ce('div','gnt-w-time');t.textContent=String(9+s).padStart(2,'0')+':00';
+      t.style.gridRow=String(s+2);t.style.gridColumn='1';g.appendChild(t);
+    }
+    for(let d=0;d<7;d++){
+      const c=ce('div','gnt-w-cell'+(s===0?' firstrow':'')+(d===0&&!hasT?' firstcol':'')+(d>=5?' is-wkend':''));
+      c.style.gridRow=String(s+2);c.style.gridColumn=String(d+off);
+      g.appendChild(c);
+    }
+  }
+  evts.forEach(e=>{
+    const b=ce('div','gnt-evt c-'+e.c);
+    b.style.gridColumn=String(e.d+off);
+    b.style.gridRow=(e.s+2)+' / span '+e.du;                     /* 事件跨時段＝grid-row span */
+    b.innerHTML='<span class="t">'+e.t+'</span>'
+      +(o.detail!==false?'<span class="tm">'+e.tm+'–'+String(9+e.s+e.du).padStart(2,'0')+':00</span>':'');
+    b.title=e.t;
+    g.appendChild(b);
+  });
+  box.appendChild(g);
+  return box;
+}
+
+/* ---- variant 3：timeline 垂直時間軸 ----
+   o={live, tags(狀態 tag,預設開), line(連接線,預設開), nodes, compact} */
+function gntTimeline(size,o){
+  o=o||{};
+  const nodes=o.nodes||GNT_TLNODES;
+  const box=ce('div','gnt-box gnt-tl gnt-sz-'+size+(o.live?' live':'')+(o.line===false?' no-line':''));
+  nodes.forEach((n,i)=>{
+    const it=ce('div','gnt-tl-item');
+    const rail=ce('div','gnt-tl-rail');                          /* 左軌：圓點 + 連接線 */
+    rail.appendChild(ce('span','gnt-tl-dot st-'+n.st));
+    if(i<nodes.length-1)rail.appendChild(ce('span','gnt-tl-cord'));
+    it.appendChild(rail);
+    const card=ce('div','gnt-tl-card');                          /* 事件卡：時間 + tag + 標題 + 描述 */
+    const top=ce('div','gnt-tl-top');
+    const tm=ce('span','gnt-tl-time');tm.innerHTML=IC_CLOCK+'<span>'+n.tm+'</span>';
+    top.appendChild(tm);
+    if(o.tags!==false)top.appendChild(gntTag(n.st));
+    card.appendChild(top);
+    const tt=ce('div','gnt-tl-title');tt.textContent=n.t;card.appendChild(tt);
+    if(n.d&&!o.compact){const de=ce('div','gnt-tl-desc');de.textContent=n.d;card.appendChild(de);}
+    it.appendChild(card);
+    box.appendChild(it);
+  });
+  return box;
+}
+
+/* ---- 矩陣格：該 variant × size 的縮小示意（靜態呈現） ---- */
+function gntCell(variant,size){
+  const wrap=ce('div','gnt-cellwrap');
+  if(variant==='gantt')wrap.appendChild(gntGantt(size,{compact:true,tasks:GNT_TASKS_SM,days:8,todayIx:5}));
+  else if(variant==='week')wrap.appendChild(gntWeek(size,{compact:true,slots:5,detail:false,events:GNT_WEVENTS_SM}));
+  else wrap.appendChild(gntTimeline(size,{compact:true,nodes:GNT_TLNODES.slice(1,4)}));
+  return wrap;
+}
+
+function buildScheduleChart(view){
+  const body=viewScaffold(view,{eyebrow:'L3 Component · Schedule Chart',title:'Schedule Chart 排程圖',
+    lede:'專案排程／時段視覺化：<b>gantt 甘特圖</b>（左任務欄＋日期軸，每列一條依起訖日定位的圓角橫條，可疊進度填色／週末標記／今日線）、<b>week 週排程</b>（7 天欄 × 時段列，事件方塊落格、可跨時段）、<b>timeline 時間軸</b>（垂直節點：圓點＋連接線＋事件卡）。× size <b>m 標準／s 精簡</b>。純 DOM＋CSS 排版無外部圖表庫；橫條／事件系列色綁 <code>--accent/--ok/--warn/--i-danger</code>，狀態標重用 <b>Tag（.tg）</b>，時間 icon 重用既有 <b>IC_CLOCK</b>。',
+    specRows:[['axes','<code>variant × size</code>'],['formula','<code>3 × 2 = 6</code>'],
+      ['atoms','<code>.tg · IC_CLOCK</code>'],['series','<code>accent / ok / warn / danger</code>'],
+      ['token-policy','<code>semantic.*.schedule.*</code>'],['slots','tasks / days / events / slots / nodes']]});
+  const axes=DIAL_SPECS['schedule-chart'].axes, zh=DIAL_SPECS['schedule-chart'].zh, active=CHOICE['schedule-chart'].active; // 接中央 store（hyphen id 用括號取值）
+  const VN={gantt:['甘特圖','gantt'],week:['週排程','week'],timeline:['時間軸','timeline']};
+  const SN={m:['標準','m'],s:['精簡','s']};
+  let p;
+  function renderM(){ if(!p)return; p.innerHTML='';
+    const vs=axes.variant.filter(v=>active.variant.has(v));
+    const ss=axes.size.filter(s=>active.size.has(s));
+    p.appendChild(matrixPanel({badge:'schedule-chart',name:'Variant × Size（縮小示意；s 精簡＝更矮列高、隱藏狀態標／描述）',
+      rows:vs,cols:ss,
+      rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+      colLab:s=>labHTML(SN[s][0],SN[s][1]),
+      cell:(v,s)=>gntCell(v,s),mincol:300})); }
+  mountDial(body,{axes,zh,active,onRender:renderM});
+  const sec=section(body,'Variant × Size 矩陣','列＝三型態（甘特圖／週排程／時間軸）、欄＝兩尺寸；格內為縮小示意（甘特 3 任務 × 8 天、週排程 5 時段、時間軸 3 節點）。');
+  p=panelsIn(sec);renderM();
+
+  /* Showcase：三 variant 各一張較完整範例（size m、live 真實 hover） */
+  const sw=section(body,'Showcase 範例','三種 variant 的完整組合：甘特圖 6 任務 × 14 天（進度填色＋週末標記＋今日線）、週排程一週 6 個事件（可跨時段）、時間軸 5 個節點（狀態 tag＋連接線）。滑上橫條／事件／卡片看真實 hover。');
+  const rd=ce('div','row-demo');
+  [['gantt 甘特圖 · 6 任務 × 14 天',()=>gntGantt('m',{live:true})],
+   ['week 週排程 · 一週 6 事件',()=>gntWeek('m',{live:true})],
+   ['timeline 時間軸 · 5 節點',()=>gntTimeline('m',{live:true})]
+  ].forEach(([cap,fn])=>{const it=ce('div','demo-item');it.style.maxWidth='100%';it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
+  sw.appendChild(rd);
+
+  /* Live：segs 切 variant／size；勾選項依 variant 條件顯示（避免空轉開關） */
+  const sl=section(body,'實際互動 Live','切 variant／size 即時重組；勾選項隨 variant 切換——甘特圖：進度填色／週末標記／今日線；週排程：時段標籤／事件細節；時間軸：狀態 tag／連接線。');
+  const GNT_BOOL_OWNER=['gantt','gantt','gantt','week','week','timeline','timeline']; // 勾選項 ↔ 所屬 variant（與 bools 順序一致）
+  mountLive(sl,{
+    initial:{variant:'gantt',size:'m',prog:true,wkend:true,today:true,times:true,detail:true,tags:true,line:true},
+    segs:[{key:'variant',label:'Variant',options:['gantt','week','timeline'],labels:['甘特圖','週排程','時間軸']},
+          {key:'size',label:'Size',options:['m','s'],labels:['m 標準','s 精簡']}],
+    bools:[{key:'prog',label:'進度填色'},{key:'wkend',label:'週末標記'},{key:'today',label:'今日線'},
+           {key:'times',label:'時段標籤'},{key:'detail',label:'事件細節'},
+           {key:'tags',label:'狀態 tag'},{key:'line',label:'連接線'}],
+    boolLabel:'Options（依 variant 顯示）',
+    render:st=>{
+      /* 條件顯示：只留當前 variant 有意義的勾選項（控制列只建一次，改用 display 切換） */
+      sl.querySelectorAll('.checks .chk').forEach((c,i)=>{c.style.display=GNT_BOOL_OWNER[i]===st.variant?'':'none';});
+      if(st.variant==='gantt')return gntGantt(st.size,{live:true,prog:st.prog,wkend:st.wkend,today:st.today});
+      if(st.variant==='week')return gntWeek(st.size,{live:true,times:st.times,detail:st.detail});
+      return gntTimeline(st.size,{live:true,tags:st.tags,line:st.line});
+    },
+    note:'甘特圖：關「進度填色」整條轉實色、關「週末標記」拿掉灰底欄、關「今日線」移除 accent 直線；週排程：關「時段標籤」收起左欄、關「事件細節」只留標題；時間軸：關「狀態 tag」拿掉 .tg、關「連接線」只剩節點圓點。hover 為真實 <code>:hover</code>（橫條增亮／事件加深／卡片浮起）。'
+  });
+}
+
+  /* ===== Table&Chart group build: calendar ===== */
+  /* ==================== Calendar 日曆時間（cal-）==================== */
+  /* 日期時間選擇：month 月曆／range 日期區間／time 時間清單 × size m／s。
+     表頭上下月鈕重用 .btn v-text i-secondary icon-only 原子；time 表頭重用既有 IC_CLOCK。
+     ‼️ 勿用 Date.now / new Date（環境不穩）：示意日期全部寫死——「今日」＝2026 年 7 月 16、
+     選取＝18、區間＝12–16、事件日＝3/10/16/21/24、停用日＝5/26；月份切換用純數學（Zeller）推算。 */
+
+  /* 新增 icon：既有只有 ICON_CARET（朝下）與 LST_IC_CHEVRON（lst- 專用），故補左右 caret（Phosphor regular） */
+  const CAL_IC_CARET_L='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>';
+  const CAL_IC_CARET_R='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
+
+  /* ---- 純數學日曆工具（不碰 Date）---- */
+  function calLeap(y){return (y%4===0&&y%100!==0)||y%400===0;} // 閏年判斷
+  function calDim(y,m){return [31,calLeap(y)?29:28,31,30,31,30,31,31,30,31,30,31][m-1];} // 該月天數
+  function calDow(y,m,d){ // Zeller 公式：回傳星期 0=日 … 6=六
+    if(m<3){m+=12;y--;}
+    const K=y%100,J=Math.floor(y/100);
+    const h=(d+Math.floor(13*(m+1)/5)+K+Math.floor(K/4)+Math.floor(J/4)+5*J)%7; // 0=六
+    return (h+6)%7;
+  }
+  function calDoy(y,m,d){let n=d;for(let i=1;i<m;i++)n+=calDim(y,i);return n;} // 年內第幾天
+  function calWeekNo(y,m,d){ // 該列（週日起算）的第幾週示意：取該週「週四」的年內天數 / 7 進位（近似 ISO）
+    let dd=d+4,mm=m,yy=y;
+    while(dd>calDim(yy,mm)){dd-=calDim(yy,mm);mm++;if(mm>12){mm=1;yy++;}}
+    return Math.ceil(calDoy(yy,mm,dd)/7);
+  }
+  function calGridDays(y,m){ // 回傳 6×7=42 格 {y,m,d,out}：前後補上／下月的日
+    const first=calDow(y,m,1), dim=calDim(y,m);
+    const pm=m===1?12:m-1, py=m===1?y-1:y, pdim=calDim(py,pm);
+    const nm=m===12?1:m+1, ny=m===12?y+1:y;
+    const cells=[];
+    for(let i=0;i<42;i++){
+      const n=i-first+1;
+      if(n<1)cells.push({y:py,m:pm,d:pdim+n,out:true});
+      else if(n>dim)cells.push({y:ny,m:nm,d:n-dim,out:true});
+      else cells.push({y:y,m:m,d:n,out:false});
+    }
+    return cells;
+  }
+
+  /* ---- 月曆／區間工廠：calMonthEl(size,o) ----
+     o={range, y, m, today, selected, rs, re, events, disabled, weeknum, rangeText, live, interactive}
+     today=null 可關今日標記；events 傳 [] 可關事件圓點；interactive=true 點日可選、上下月鈕可切月 */
+  function calMonthEl(size,o){
+    o=o||{};
+    const range=!!o.range;
+    const TY=2026,TM=7; // 「今日」寫死落在 2026 年 7 月
+    const todayD=(o.today!==undefined)?o.today:16;
+    const events=(o.events!==undefined)?o.events:[3,10,16,21,24];
+    const dis=(o.disabled!==undefined)?o.disabled:[5,26]; // 每月 5、26 示意停用（公休日）
+    let y=o.y||2026,m=o.m||7;
+    let selY=2026,selM=7,sel=(o.selected!==undefined)?o.selected:18; // 單日選取（month 用）
+    let rY=2026,rM=7,rs=(o.rs!==undefined)?o.rs:12,re=(o.re!==undefined)?o.re:16,picking=false; // 區間起訖（range 用）
+
+    const root=ce('div','cal cal-v-'+(range?'range':'month')+' cal-sz-'+size
+      +(o.weeknum?' cal-has-wk':'')+(o.live?' live':''));
+
+    /* 表頭：上下月鈕＝Button 原子（v-text icon-only） */
+    const head=ce('div','cal-head');
+    const prev=ce('button','btn v-text i-secondary sz-s icon-only'+(o.live?' live':''));
+    prev.type='button';prev.setAttribute('aria-label','上一月');prev.innerHTML=CAL_IC_CARET_L;
+    const title=ce('div','cal-head-title');
+    const next=ce('button','btn v-text i-secondary sz-s icon-only'+(o.live?' live':''));
+    next.type='button';next.setAttribute('aria-label','下一月');next.innerHTML=CAL_IC_CARET_R;
+    head.append(prev,title,next);root.appendChild(head);
+
+    const dow=ce('div','cal-dow');root.appendChild(dow);
+    const grid=ce('div','cal-grid');grid.setAttribute('role','grid');root.appendChild(grid);
+    let foot=null;
+    if(range&&o.rangeText){foot=ce('div','cal-foot');root.appendChild(foot);}
+
+    function ftxt(){ // 區間文字：已選 7/12 – 7/16（5 天）
+      if(!foot)return;
+      if(rs==null){foot.innerHTML='請點選起始日';}
+      else if(re==null){foot.innerHTML='起 <b>'+rM+'/'+rs+'</b>，請再點選結束日';}
+      else{foot.innerHTML='已選 <b>'+rM+'/'+rs+' – '+rM+'/'+re+'</b>（'+(re-rs+1)+' 天）';}
+    }
+    function draw(){
+      title.textContent=y+' 年 '+m+' 月';
+      dow.innerHTML='';
+      if(o.weeknum){const w=ce('span','cal-dow-c cal-wk-head');w.textContent='週';dow.appendChild(w);}
+      ['日','一','二','三','四','五','六'].forEach(t=>{const s=ce('span','cal-dow-c');s.textContent=t;dow.appendChild(s);});
+      grid.innerHTML='';
+      const cells=calGridDays(y,m);
+      cells.forEach((c,i)=>{
+        if(o.weeknum&&i%7===0){ // 每列開頭補週數
+          const wk=ce('span','cal-wk');wk.textContent=calWeekNo(c.y,c.m,c.d);grid.appendChild(wk);
+        }
+        const b=ce('button','cal-day');b.type='button';b.textContent=c.d;
+        const cur=!c.out;
+        if(c.out)b.classList.add('is-out');
+        if(cur&&dis.indexOf(c.d)>=0){b.classList.add('is-disabled');b.disabled=true;}
+        if(cur&&y===TY&&m===TM&&todayD===c.d)b.classList.add('is-today');
+        if(!range){
+          if(cur&&y===selY&&m===selM&&sel===c.d){b.classList.add('is-selected');b.setAttribute('aria-selected','true');}
+          if(cur&&events.indexOf(c.d)>=0)b.classList.add('has-event');
+        }else if(cur&&y===rY&&m===rM&&rs!=null){
+          if(c.d===rs)b.classList.add('is-range-start');
+          if(re!=null&&c.d===re)b.classList.add('is-range-end');
+          if(re!=null&&c.d>rs&&c.d<re)b.classList.add('is-in-range');
+        }
+        if(o.interactive&&cur&&!b.disabled){
+          b.onclick=()=>{
+            if(!range){selY=y;selM=m;sel=c.d;} // 單日：點誰選誰
+            else if(!picking){rY=y;rM=m;rs=c.d;re=null;picking=true;} // 區間：第一下＝起點
+            else if(y===rY&&m===rM&&c.d>=rs){re=c.d;picking=false;}   // 第二下（不早於起點）＝終點
+            else{rY=y;rM=m;rs=c.d;re=null;}                            // 點得比起點早＝重新起算
+            draw();
+          };
+        }
+        grid.appendChild(b);
+      });
+      ftxt();
+    }
+    if(o.interactive){ // 上下月鈕切月（純數學推算，不碰 Date）
+      prev.onclick=()=>{m--;if(m<1){m=12;y--;}draw();};
+      next.onclick=()=>{m++;if(m>12){m=1;y++;}draw();};
+    }
+    draw();
+    return root;
+  }
+
+  /* ---- 時間清單工廠：calTimeEl(size,o) ----
+     o={selected(分鐘制), h24, step, live, interactive}；選項寫死 09:00–18:00，預設選中 09:30 */
+  function calTimeEl(size,o){
+    o=o||{};
+    const step=o.step||30;
+    const h24=(o.h24!==undefined)?o.h24:true;
+    let sel=(o.selected!==undefined)?o.selected:570; // 570 分＝09:30（寫死示意）
+    sel=Math.round(sel/step)*step; // 換 step 時貼齊最近選項
+    const root=ce('div','cal cal-v-time cal-sz-'+size+(o.live?' live':''));
+    const head=ce('div','cal-time-head'); // 表頭重用既有 IC_CLOCK
+    head.innerHTML='<span class="cal-time-ic">'+IC_CLOCK+'</span><span>選擇時間</span>';
+    root.appendChild(head);
+    const list=ce('div','cal-time-list');
+    const pad=n=>(n<10?'0':'')+n;
+    function fmt(t){const h=Math.floor(t/60),mm=t%60;
+      return h24?pad(h)+':'+pad(mm):(h<12?'上午':'下午')+' '+(((h+11)%12)+1)+':'+pad(mm);}
+    for(let t=9*60;t<=18*60;t+=step){
+      const it=ce('button','cal-time-item'+(t===sel?' is-selected':''));
+      it.type='button';it.textContent=fmt(t);
+      it.setAttribute('aria-selected',t===sel?'true':'false');
+      if(o.interactive){
+        it.onclick=()=>{sel=t;
+          [...list.children].forEach(x=>{x.classList.remove('is-selected');x.setAttribute('aria-selected','false');});
+          it.classList.add('is-selected');it.setAttribute('aria-selected','true');};
+      }
+      list.appendChild(it);
+    }
+    root.appendChild(list);
+    return root;
+  }
+
+  /* 矩陣格：該 variant×size 的靜態縮影（不互動、示意值寫死） */
+  function calCell(variant,size){
+    if(variant==='time')return calTimeEl(size,{});
+    return calMonthEl(size,{range:variant==='range'});
+  }
+
+  /* 日格狀態一覽用：單顆裸日格 */
+  function calStateChip(cls,txt,event){
+    const shell=ce('div','cal cal-sz-m cal-bare');
+    const g=ce('div','cal-grid');
+    const b=ce('button','cal-day'+(cls?' '+cls:'')+(event?' has-event':''));
+    b.type='button';b.textContent=txt;
+    if(cls&&cls.indexOf('is-disabled')>=0)b.disabled=true;
+    g.appendChild(b);shell.appendChild(g);
+    return shell;
+  }
+
+  function buildCalendar(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Calendar',title:'Calendar 日曆時間',
+      lede:'日期時間選擇：<b>month 月曆</b>（單日選取）／<b>range 區間</b>（起訖實心＋中間淡 accent 連續帶）／<b>time 時間清單</b>（可捲動時段），各有 <b>m 標準／s 精簡</b> 兩尺寸。表頭上下月鈕重用 <b>Button</b> 原子（v-text icon-only）；日格狀態含一般／今日（accent 圈）／選取（accent 實心）／非本月（淡）／停用（劃掉）／有事件（下方圓點）。示意日期寫死在 <b>2026 年 7 月</b>（今日＝16、選取＝18、區間＝12–16），不依賴系統時間。',
+      specRows:[['axes','<code>variant × size</code>'],['formula','<code>3 × 2 = 6</code>'],['token-policy','<code>--accent / --i-primary-tint / --line</code>'],['a11y','<code>role=grid・aria-selected・aria-label 上/下月</code>']]});
+    const axes=DIAL_SPECS.calendar.axes, zh=DIAL_SPECS.calendar.zh, active=CHOICE.calendar.active; // 接中央 store
+    const VN={month:['月曆','month'],range:['區間','range'],time:['時間','time']};
+    const SZN={m:['標準','m'],s:['精簡','s']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.size.filter(s=>active.size.has(s));
+      p.appendChild(matrixPanel({badge:'calendar',name:'Variant × Size（三型態 × 兩尺寸）',
+        desc:'列＝月曆／區間／時間、欄＝標準 m／精簡 s；示意月固定 2026 年 7 月',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(SZN[s][0]+'尺寸',SZN[s][1]),
+        cell:(v,s)=>calCell(v,s),mincol:310}));
+    }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Size 矩陣','month＝今日 accent 圈＋選取實心＋事件圓點＋非本月淡＋停用劃掉；range＝起訖實心、中間淡 accent 連續帶；time＝時段清單選中高亮。矩陣為靜態呈現，互動請到下方 Live。');
+    p=panelsIn(sec);renderM();
+
+    /* 日格狀態一覽：六（＋滑過）種狀態並排 */
+    const stt=section(body,'日格狀態 Day States','單一日格的七種狀態：一般／滑過／今日（accent 圈）／選取（accent 實心）／非本月（淡）／停用（劃掉）／有事件（下方小圓點）。');
+    const srow=ce('div','cal-staterow');
+    [['','一般','15',false],['is-hover','滑過','9',false],['is-today','今日','16',false],
+     ['is-selected','選取','18',false],['is-out','非本月','2',false],
+     ['is-disabled','停用','5',false],['','有事件','21',true]].forEach(a=>{
+      const cell=ce('div','cal-statecell');
+      cell.appendChild(calStateChip(a[0],a[2],a[3]));
+      const cap=ce('div','cal-statecap');cap.textContent=a[1];
+      cell.append(cap);
+      srow.appendChild(cell);
+    });
+    stt.appendChild(srow);
+
+    /* showcase：三 variant 各一（m 尺寸、真互動：點日可選、上下月可切、時段可點） */
+    const ss2=section(body,'三型態完整範例','完整月曆／區間選取／時間清單並排（皆為 m 尺寸、真互動）：點日格試選取、按 ‹ › 切月、點時段試選中。');
+    const shell=ce('div','row-demo');
+    const row=ce('div','cal-show');
+    [['month 完整月曆','今日圈＋選取實心＋事件圓點',()=>calMonthEl('m',{live:true,interactive:true})],
+     ['range 區間選取','起訖實心、中間連續帶＋區間文字',()=>calMonthEl('m',{range:true,rangeText:true,live:true,interactive:true})],
+     ['time 時間清單','09:00–18:00 每 30 分、可捲動',()=>calTimeEl('m',{live:true,interactive:true})]].forEach(([cap,sub,mk])=>{
+      const it=ce('div','demo-item');
+      it.appendChild(mk());
+      const c=ce('div','cap');c.innerHTML='<b>'+cap+'</b> '+sub;it.appendChild(c);
+      row.appendChild(it);
+    });
+    shell.appendChild(row);ss2.appendChild(shell);
+
+    /* Live：segs=variant/size；bools 依 variant 動態換（month：今日/事件/週數；range：區間文字；time：24 小時/間隔 30 分）
+       比照 Progress 頁前例手刻控制列（mountLive 的 bools 建一次就固定，無法跟著 variant 換） */
+    const sl=section(body,'實際互動 Live','切 variant／size；勾選項會跟著 variant 換組。月曆點日真的可選取、‹ › 真的可切月（切走再切回，今日圈只在 2026 年 7 月出現）；區間點兩下選起訖；時間清單點時段選中。');
+    const st={variant:'month',size:'m',today:true,events:true,weeknum:false,rangeText:true,h24:true,step30:true};
+    const wrap=ce('div','livewrap');
+    const ctlRow=ce('div','ctl-row');
+    const stage=ce('div','live-stage');
+    function draw(){stage.innerHTML='';const box=ce('div','cal-live-stage');
+      if(st.variant==='time'){
+        box.appendChild(calTimeEl(st.size,{h24:st.h24,step:st.step30?30:60,live:true,interactive:true}));
+      }else{
+        box.appendChild(calMonthEl(st.size,{
+          range:st.variant==='range',
+          today:st.today?16:null,                      // 關掉＝今日圈消失
+          events:(st.variant==='month'&&st.events)?[3,10,16,21,24]:[],
+          weeknum:st.variant==='month'&&st.weeknum,
+          rangeText:st.variant==='range'&&st.rangeText,
+          live:true,interactive:true}));
+      }
+      stage.appendChild(box);}
+    function calSeg(key,label,opts,labels){ // 比照 mountLive 的 seg 樣式
+      const c=ce('div','ctl');c.innerHTML='<span class="lab">'+label+'</span>';
+      const seg=ce('div','seg');
+      opts.forEach((op,i)=>{const b=document.createElement('button');b.textContent=labels?labels[i]:op;
+        b.setAttribute('aria-pressed',st[key]===op);
+        b.onclick=()=>{st[key]=op;[...seg.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');
+          if(key==='variant')rebuildBools();draw();};
+        seg.appendChild(b);});
+      c.appendChild(seg);return c;}
+    /* bools 依 variant 動態重建 */
+    const CAL_BOOLS={
+      month:[['today','今日標記'],['events','事件圓點'],['weeknum','週數']],
+      range:[['rangeText','顯示已選區間文字']],
+      time:[['h24','24 小時制'],['step30','間隔 30 分']]
+    };
+    const boolC=ce('div','ctl');boolC.innerHTML='<span class="lab">Options</span>';
+    const checks=ce('div','checks');boolC.appendChild(checks);
+    function rebuildBools(){checks.innerHTML='';
+      CAL_BOOLS[st.variant].forEach(([k,lb])=>{
+        const l=ce('label','chk');const i=document.createElement('input');i.type='checkbox';i.checked=!!st[k];
+        i.onchange=()=>{st[k]=i.checked;draw();};
+        l.append(i,document.createTextNode(lb));checks.appendChild(l);});}
+    ctlRow.appendChild(calSeg('variant','Variant',['month','range','time'],['月曆','區間','時間']));
+    ctlRow.appendChild(calSeg('size','Size',['m','s'],['標準','精簡']));
+    ctlRow.appendChild(boolC);
+    wrap.append(ctlRow,stage);
+    const note=ce('p','live-note');
+    note.innerHTML='示意日期寫死 <b>2026 年 7 月</b>（今日＝16、事件＝3/10/16/21/24、停用＝每月 5/26），月份切換用純數學推算、不碰系統時間。<b>今日標記</b>關掉＝16 的 accent 圈消失；<b>事件圓點</b>關掉＝日格下方小點消失；<b>週數</b>開啟＝左側多一欄；<b>區間文字</b>＝月曆下緣顯示「已選 7/12 – 7/16（5 天）」；<b>24 小時制</b>關掉＝上午/下午格式；<b>間隔 30 分</b>關掉＝改每 60 分一格。';
+    wrap.appendChild(note);
+    sl.appendChild(wrap);rebuildBools();draw();
+  }
+
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep,quantity:buildQuantity,progress:buildProgress,card:buildCard,'product-card':buildProductCard,'category-tile':buildCategoryTile,'article-card':buildArticleCard,table:buildTable,chart:buildChart,'tree-view':buildTreeView,'schedule-chart':buildScheduleChart,calendar:buildCalendar};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -5843,7 +7394,12 @@ function buildArticleCard(view){
     card:'card',
     'product-card':'product-card',
     'category-tile':'category-tile',
-    'article-card':'article-card'
+    'article-card':'article-card',
+    table:'table',
+    chart:'chart',
+    'tree-view':'tree-view',
+    'schedule-chart':'schedule-chart',
+    calendar:'calendar'
   }; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){
