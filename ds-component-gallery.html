@@ -844,16 +844,21 @@
 
 /* ===== image (im-) ===== */
 /* ===== Image 圖片 ===== */
-.im-box{position:relative;overflow:hidden;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;background:var(--panel-2);border:1px solid var(--line);}
+.im-box{position:relative;overflow:hidden;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;background:var(--panel-2);border:1px solid var(--line);aspect-ratio:1;}
 /* 形狀 variant：矩形（小圓角）／圓角（中圓角）／圓形（正圓） */
 .im-rectangular{border-radius:4px;}
 .im-rounded{border-radius:12px;}
 .im-circular{border-radius:50%;}
 /* 尺寸 size → 正方邊長 */
-.im-sz-s{width:64px;height:64px;}
-.im-sz-m{width:96px;height:96px;}
-.im-sz-l{width:140px;height:140px;}
-.im-sz-xl{width:200px;height:200px;}
+.im-sz-s{width:64px;}
+.im-sz-m{width:96px;}
+.im-sz-l{width:140px;}
+.im-sz-xl{width:200px;}
+/* 比例 ratio：改寫盒子長寬比（circular 不套、恆正方）*/
+.im-r-4x3{aspect-ratio:4/3;}
+.im-r-16x9{aspect-ratio:16/9;}
+.im-r-2x1{aspect-ratio:2/1;}
+.im-r-1x1{aspect-ratio:1/1;}
 /* default：真圖填滿盒子 */
 .im-img{width:100%;height:100%;object-fit:cover;display:block;}
 /* loading：骨架佔位 + shimmer 掃過（沿用 skeleton 的光澤手法；淺色高透白、深色低透白）*/
@@ -1009,9 +1014,9 @@
       axes:{size:['s','m','l','xl'],tone:['default','primary','secondary','danger']},
       zh:{axisName:{size:'Size 尺寸',tone:'Tone 色調'},size:{s:'16 s',m:'20 m',l:'24 l',xl:'32 xl'},tone:{default:'預設',primary:'主要',secondary:'次要',danger:'危險'}}},
     price:{label:'Price 價格',order:['variant','size'],axes:{variant:['normal','discount','sale','free'],size:['sm','md','lg']},zh:{axisName:{variant:'Variant 型態',size:'Size 尺寸'},variant:{normal:'一般',discount:'折扣',sale:'特價',free:'免費'},size:{sm:'小 sm',md:'標準 md',lg:'大 lg'}}},
-    image:{label:'Image 圖片',order:['variant','state','size'],
-      axes:{variant:['rectangular','rounded','circular'],state:['default','loading','error'],size:['s','m','l','xl']},
-      zh:{axisName:{variant:'Shape 形狀',state:'State 狀態',size:'Size 尺寸'},variant:{rectangular:'矩形',rounded:'圓角',circular:'圓形'},state:{default:'正常',loading:'載入中',error:'錯誤'},size:{s:'小 s',m:'中 m',l:'大 l',xl:'特大 xl'}}},
+    image:{label:'Image 圖片',order:['variant','state','size','ratio'],
+      axes:{variant:['rectangular','rounded','circular'],state:['default','loading','error'],size:['s','m','l','xl'],ratio:['4:3','16:9','2:1','1:1']},
+      zh:{axisName:{variant:'Shape 形狀',state:'State 狀態',size:'Size 尺寸',ratio:'Ratio 比例'},variant:{rectangular:'矩形',rounded:'圓角',circular:'圓形'},state:{default:'正常',loading:'載入中',error:'錯誤'},size:{s:'小 s',m:'中 m',l:'大 l',xl:'特大 xl'},ratio:{'4:3':'4:3','16:9':'16:9','2:1':'2:1','1:1':'1:1'}}},
   };
   const CHOICE={};
   Object.keys(DIAL_SPECS).forEach(id=>{const a={};DIAL_SPECS[id].order.forEach(k=>a[k]=new Set(DIAL_SPECS[id].axes[k]));CHOICE[id]={active:a};});
@@ -2271,35 +2276,70 @@ function skelMedia(anim){
 
   /* ==================== icon ==================== */
 /* ---- ICON 圖示（Phosphor set；builders 提升頂層，頁面與 Live 共用）---- */
-  const IC_HEART='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32Zm-50,142.8C109.74,164.6,32,118.94,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,118.91,146.26,164.6,128,174.8Z"/></svg>';
-  const IC_STAR='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M239.2,97.29a16,16,0,0,0-13.81-11L166,81.17,142.72,25.81h0a15.95,15.95,0,0,0-29.44,0L90.07,81.17,30.61,86.32a16,16,0,0,0-9.11,28.06L66.61,153.8,53.09,212.34a16,16,0,0,0,23.84,17.34l51-31,51.11,31a16,16,0,0,0,23.84-17.34l-13.51-58.6,45.1-39.36A16,16,0,0,0,239.2,97.29Zm-15.22,5-45.1,39.36a16,16,0,0,0-5.08,15.71L187.35,216v0l-51.07-31a15.9,15.9,0,0,0-16.54,0l-51,31h0L82.2,157.4a16,16,0,0,0-5.08-15.71L32,102.35a.37.37,0,0,1,0-.09l59.44-5.14a16,16,0,0,0,13.35-9.75L128,32.08l23.2,55.29a16,16,0,0,0,13.35,9.75L224,102.26S224,102.32,224,102.33Z"/></svg>';
-  const IC_BELL='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"/></svg>';
-  const IC_TRASH='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"/></svg>';
-  const IC_USER='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"/></svg>';
-  const IC_PLUS='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"/></svg>';
+  const IC_HOUSE="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z\"/></svg>";
+  const IC_DASHBOARD="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z\"/></svg>";
+  const IC_SETTINGS="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z\"/></svg>";
+  const IC_USER="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z\"/></svg>";
+  const IC_USERS="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z\"/></svg>";
+  const IC_BELL="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z\"/></svg>";
+  const IC_SEARCH="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z\"/></svg>";
+  const IC_CALENDAR="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z\"/></svg>";
+  const IC_CLOCK="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z\"/></svg>";
+  const IC_CHART_BAR="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z\"/></svg>";
+  const IC_TRENDING="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0V156.69l50.34-50.35a8,8,0,0,1,11.32,0L128,132.69,180.69,80H160a8,8,0,0,1,0-16h40a8,8,0,0,1,8,8v40a8,8,0,0,1-16,0V91.31l-58.34,58.35a8,8,0,0,1-11.32,0L96,123.31l-56,56V200H224A8,8,0,0,1,232,208Z\"/></svg>";
+  const IC_PIE="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M100,116.43a8,8,0,0,0,4-6.93v-72A8,8,0,0,0,93.34,30,104.06,104.06,0,0,0,25.73,147a8,8,0,0,0,4.52,5.81,7.86,7.86,0,0,0,3.35.74,8,8,0,0,0,4-1.07ZM88,49.62v55.26L40.12,132.51C40,131,40,129.48,40,128A88.12,88.12,0,0,1,88,49.62ZM128,24a8,8,0,0,0-8,8v91.82L41.19,169.73a8,8,0,0,0-2.87,11A104,104,0,1,0,128,24Zm0,192a88.47,88.47,0,0,1-71.49-36.68l75.52-44a8,8,0,0,0,4-6.92V40.36A88,88,0,0,1,128,216Z\"/></svg>";
+  const IC_FOLDER="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M216,72H131.31L104,44.69A15.86,15.86,0,0,0,92.69,40H40A16,16,0,0,0,24,56V200.62A15.4,15.4,0,0,0,39.38,216H216.89A15.13,15.13,0,0,0,232,200.89V88A16,16,0,0,0,216,72ZM40,56H92.69l16,16H40ZM216,200H40V88H216Z\"/></svg>";
+  const IC_FILE="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z\"/></svg>";
+  const IC_MAIL="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z\"/></svg>";
+  const IC_DOWNLOAD="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z\"/></svg>";
+  const IC_UPLOAD="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z\"/></svg>";
+  const IC_TRASH="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z\"/></svg>";
+  const IC_EDIT="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z\"/></svg>";
+  const IC_PLUS="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z\"/></svg>";
+  const IC_CHECK="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z\"/></svg>";
+  const IC_CLOSE="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"/></svg>";
+  const IC_CARET_DOWN="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z\"/></svg>";
+  const IC_ARROW_RIGHT="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z\"/></svg>";
+  const IC_HEART="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z\"/></svg>";
+  const IC_STAR="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z\"/></svg>";
+  const IC_EYE="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z\"/></svg>";
+  const IC_TAG="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63Zm-96,96L48,132.69V48h84.69L232,147.31ZM96,84A12,12,0,1,1,84,72,12,12,0,0,1,96,84Z\"/></svg>";
+  const IC_FILTER="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M230.6,49.53A15.81,15.81,0,0,0,216,40H40A16,16,0,0,0,28.19,66.76l.08.09L96,139.17V216a16,16,0,0,0,24.87,13.32l32-21.34A16,16,0,0,0,160,194.66V139.17l67.74-72.32.08-.09A15.8,15.8,0,0,0,230.6,49.53ZM40,56h0Zm106.18,74.58A8,8,0,0,0,144,136v58.66L112,216V136a8,8,0,0,0-2.16-5.47L40,56H216Z\"/></svg>";
+  const IC_SLIDERS="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M40,88H73a32,32,0,0,0,62,0h81a8,8,0,0,0,0-16H135a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16Zm64-24A16,16,0,1,1,88,80,16,16,0,0,1,104,64ZM216,168H199a32,32,0,0,0-62,0H40a8,8,0,0,0,0,16h97a32,32,0,0,0,62,0h17a8,8,0,0,0,0-16Zm-48,24a16,16,0,1,1,16-16A16,16,0,0,1,168,192Z\"/></svg>";
+  const IC_CARD="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M224,48H32A16,16,0,0,0,16,64V192a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V64A16,16,0,0,0,224,48Zm0,16V88H32V64Zm0,128H32V104H224v88Zm-16-24a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h32A8,8,0,0,1,208,168Zm-64,0a8,8,0,0,1-8,8H120a8,8,0,0,1,0-16h16A8,8,0,0,1,144,168Z\"/></svg>";
+  const IC_MONEY="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M152,120H136V56h8a32,32,0,0,1,32,32,8,8,0,0,0,16,0,48.05,48.05,0,0,0-48-48h-8V24a8,8,0,0,0-16,0V40h-8a48,48,0,0,0,0,96h8v64H104a32,32,0,0,1-32-32,8,8,0,0,0-16,0,48.05,48.05,0,0,0,48,48h16v16a8,8,0,0,0,16,0V216h16a48,48,0,0,0,0-96Zm-40,0a32,32,0,0,1,0-64h8v64Zm40,80H136V136h16a32,32,0,0,1,0,64Z\"/></svg>";
+  const IC_CART="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M104,216a16,16,0,1,1-16-16A16,16,0,0,1,104,216Zm88-16a16,16,0,1,0,16,16A16,16,0,0,0,192,200ZM239.71,74.14l-25.64,92.28A24.06,24.06,0,0,1,191,184H92.16A24.06,24.06,0,0,1,69,166.42L33.92,40H16a8,8,0,0,1,0-16H40a8,8,0,0,1,7.71,5.86L57.19,64H232a8,8,0,0,1,7.71,10.14ZM221.47,80H61.64l22.81,82.14A8,8,0,0,0,92.16,168H191a8,8,0,0,0,7.71-5.86Z\"/></svg>";
+  const IC_BOOKMARK="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,177.57-51.77-32.35a8,8,0,0,0-8.48,0L72,209.57V48H184Z\"/></svg>";
+  const IC_CHAT="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z\"/></svg>";
+  const IC_GIFT="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M216,72H180.92c.39-.33.79-.65,1.17-1A29.53,29.53,0,0,0,192,49.57,32.62,32.62,0,0,0,158.44,16,29.53,29.53,0,0,0,137,25.91a54.94,54.94,0,0,0-9,14.48,54.94,54.94,0,0,0-9-14.48A29.53,29.53,0,0,0,97.56,16,32.62,32.62,0,0,0,64,49.57,29.53,29.53,0,0,0,73.91,71c.38.33.78.65,1.17,1H40A16,16,0,0,0,24,88v32a16,16,0,0,0,16,16v64a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V136a16,16,0,0,0,16-16V88A16,16,0,0,0,216,72ZM149,36.51a13.69,13.69,0,0,1,10-4.5h.49A16.62,16.62,0,0,1,176,49.08a13.69,13.69,0,0,1-4.5,10c-9.49,8.4-25.24,11.36-35,12.4C137.7,60.89,141,45.5,149,36.51Zm-64.09.36A16.63,16.63,0,0,1,96.59,32h.49a13.69,13.69,0,0,1,10,4.5c8.39,9.48,11.35,25.2,12.39,34.92-9.72-1-25.44-4-34.92-12.39a13.69,13.69,0,0,1-4.5-10A16.6,16.6,0,0,1,84.87,36.87ZM40,88h80v32H40Zm16,48h64v64H56Zm144,64H136V136h64Zm16-80H136V88h80v32Z\"/></svg>";
+  const IC_LOCATION="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z\"/></svg>";
+  const IC_LOGOUT="<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M120,216a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V40a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V208h56A8,8,0,0,1,120,216Zm109.66-93.66-40-40a8,8,0,0,0-11.32,11.32L204.69,120H112a8,8,0,0,0,0,16h92.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,229.66,122.34Z\"/></svg>";
 
   /* icBox：Phosphor svg 容器；size→固定 px（16/20/24/32），tone→currentColor，svg fill 繼承 */
   function icBox(name,size,tone){
     const b=ce('span','ic-box ic-'+size+' ic-t-'+(tone||'default'));
-    b.innerHTML=name||ICON_GEAR;
+    b.innerHTML=name||IC_DASHBOARD;
     return b;
   }
-  /* 本 DS 採用的 Phosphor icon 子集（既有 ICON_* + 自訂補充，共 20 顆）；延遲求值避免 ICON_SPARK（定義較後）在頂層 TDZ */
+  /* 本 DS 採用的 Phosphor icon 子集（官方 regular 線框、viewBox 256、fill=currentColor；常見 dashboard icon）；延遲求值 */
   function icLibrary(){return [
-    ['gear',ICON_GEAR],['house',ICON_HOUSE],['list',ICON_LIST],['search',ICON_SEARCH],
-    ['pencil',ICON_PENCIL],['arrow-right',ICON_ARROW],['check',ICON_CHECK],['minus',ICON_MINUS],
-    ['caret-down',ICON_CARET],['x',ICON_CLOSE],['x-circle',ICON_XCIRCLE],['eye',ICON_EYE],
-    ['eye-slash',ICON_EYE_SLASH],['upload',ICON_UPLOAD],['sparkle',ICON_SPARK],
-    ['heart',IC_HEART],['star',IC_STAR],['bell',IC_BELL],['trash',IC_TRASH],['user',IC_USER]];}
+    ['house',IC_HOUSE],['dashboard',IC_DASHBOARD],['settings',IC_SETTINGS],['user',IC_USER],['users',IC_USERS],
+    ['bell',IC_BELL],['search',IC_SEARCH],['calendar',IC_CALENDAR],['clock',IC_CLOCK],['chart-bar',IC_CHART_BAR],
+    ['trending',IC_TRENDING],['pie',IC_PIE],['folder',IC_FOLDER],['file',IC_FILE],['mail',IC_MAIL],
+    ['download',IC_DOWNLOAD],['upload',IC_UPLOAD],['trash',IC_TRASH],['edit',IC_EDIT],['plus',IC_PLUS],
+    ['check',IC_CHECK],['close',IC_CLOSE],['caret-down',IC_CARET_DOWN],['arrow-right',IC_ARROW_RIGHT],['heart',IC_HEART],
+    ['star',IC_STAR],['eye',IC_EYE],['tag',IC_TAG],['filter',IC_FILTER],['sliders',IC_SLIDERS],
+    ['card',IC_CARD],['money',IC_MONEY],['cart',IC_CART],['bookmark',IC_BOOKMARK],['chat',IC_CHAT],
+    ['gift',IC_GIFT],['location',IC_LOCATION],['logout',IC_LOGOUT]];}
   /* Live 可切換的示意 icon 集 */
-  const IC_LIVE_SET={gear:ICON_GEAR,heart:IC_HEART,star:IC_STAR,bell:IC_BELL,house:ICON_HOUSE};
+  const IC_LIVE_SET={'dashboard':IC_DASHBOARD,'chart-bar':IC_CHART_BAR,'bell':IC_BELL,'user':IC_USER,'settings':IC_SETTINGS,'heart':IC_HEART,'star':IC_STAR,'calendar':IC_CALENDAR};
 
   LIVE.icon=(host)=>mountLive(host,{
-    initial:{size:'l',tone:'primary',glyph:'gear'},
+    initial:{size:'l',tone:'primary',glyph:'dashboard'},
     segs:[
       {key:'size',label:'Size',options:['s','m','l','xl'],labels:['16','20','24','32']},
       {key:'tone',label:'Tone',options:['default','primary','secondary','danger'],labels:['預設','主要','次要','危險']},
-      {key:'glyph',label:'Icon',options:['gear','heart','star','bell','house'],labels:['齒輪','愛心','星','鈴','家']}],
+      {key:'glyph',label:'Icon',options:['dashboard','chart-bar','bell','user','settings','heart','star','calendar'],labels:['儀表板','長條圖','鈴','用戶','設定','愛心','星','日曆']}],
     render:st=>icBox(IC_LIVE_SET[st.glyph],st.size,st.tone),
     note:'Phosphor 單一 weight；色彩走 <code>currentColor</code>，可綁 <code>semantic.icon.*</code> token。'
   });
@@ -2315,13 +2355,13 @@ function skelMedia(anim){
     function renderM(){ if(!p)return; p.innerHTML='';
       const ss=axes.size.filter(v=>active.size.has(v));
       const ts=axes.tone.filter(v=>active.tone.has(v));
-      p.appendChild(matrixPanel({badge:'set · phosphor',name:'Size × Tone（示意 icon 固定為 gear）',
+      p.appendChild(matrixPanel({badge:'set · phosphor',name:'Size × Tone（示意 icon 固定為 dashboard）',
         rows:ss,cols:ts,
         rowLab:s=>labHTML(SZ[s][0]+' px',SZ[s][1]),
         colLab:t=>labHTML(TN[t][0],TN[t][1]),
-        cell:(s,t)=>icBox(ICON_GEAR,s,t),mincol:120})); }
+        cell:(s,t)=>icBox(IC_DASHBOARD,s,t),mincol:120})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Size × Tone 矩陣','列＝四級尺寸 16／20／24／32 px、欄＝四種色調（對應 semantic.icon.*）；示意 icon 固定為 gear。');
+    const sec=section(body,'Size × Tone 矩陣','列＝四級尺寸 16／20／24／32 px、欄＝四種色調（對應 semantic.icon.*）；示意 icon 固定為 dashboard。');
     p=panelsIn(sec);renderM();
 
     /* Icon Library：陳列本 DS 可用的 Phosphor icon 子集 */
@@ -2336,12 +2376,12 @@ function skelMedia(anim){
     const items=[];
     // 1. decorative
     const dItem=ce('div','demo-item');
-    const dBox=icBox(ICON_SPARK,'l','primary');dBox.setAttribute('aria-hidden','true');
+    const dBox=icBox(IC_STAR,'l','primary');dBox.setAttribute('aria-hidden','true');
     dItem.appendChild(dBox);
     const dCap=ce('div','cap');dCap.innerHTML='<b>decorative</b> · aria-hidden="true"';dItem.appendChild(dCap);items.push(dItem);
     // 2. semantic
     const sItem=ce('div','demo-item');
-    const sBox=icBox(ICON_GEAR,'l','default');sBox.setAttribute('role','img');sBox.setAttribute('aria-label','設定');
+    const sBox=icBox(IC_SETTINGS,'l','default');sBox.setAttribute('role','img');sBox.setAttribute('aria-label','設定');
     sItem.appendChild(sBox);
     const sCap=ce('div','cap');sCap.innerHTML='<b>semantic</b> · role="img" aria-label="設定"';sItem.appendChild(sCap);items.push(sItem);
     // 3. inline in text
@@ -2440,16 +2480,17 @@ function skelMedia(anim){
   /* ==================== image ==================== */
 /* ---- IMAGE 圖片（imEl 提升頂層，頁面與 summary Live 共用）---- */
   const IM_BROKEN='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg>';
-  const IM_POOL=['photo-1506744038136-46273834b3fb','photo-1441974231531-c6227db76b6e','photo-1472099645785-5658abf4ff4e','photo-1500648767791-00dcc994a43e','photo-1519125323398-675f0ddb6308','photo-1526779259212-939e64788e3c','photo-1517841905240-472988babdf9','photo-1438761681033-6461ffad8d80','photo-1544005313-94ddf0286df2']; // 已驗證 200 的 Unsplash 風景池
-  const IM_PORTRAIT='photo-1494790108377-be9c29b29330'; // circular 頭像優先用人像
+  const IM_POOL=['photo-1506905925346-21bda4d32df4','photo-1470071459604-3b5ec3a7fe05','photo-1501785888041-af3ef285b470','photo-1426604966848-d7adac402bff','photo-1470770841072-f978cf4d019e','photo-1447752875215-b2761acb3c5d','photo-1472214103451-9374bd1c798e','photo-1433086966358-54859d0ed716']; // 已驗證 200 的 Unsplash 自然風景池（山湖／森林／瀑布／綠丘）
+  const IM_CIRCLE='photo-1501785888041-af3ef285b470'; // circular 用構圖置中的風景（湖光山色）
   const IM_SIZE={s:64,m:96,l:140,xl:200}; // size → 正方邊長（px）
   /* 組出固定方形的 Unsplash URL；一律帶 &h 強制正方，配 object-fit:cover 填滿 */
-  function imUrl(id,w){return `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop&h=${w}`;}
+  function imUrl(id,w){return `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`;} // 不鎖比例，裁切交給盒子 aspect-ratio + object-fit:cover
   /* Image atom：variant=rectangular|rounded|circular；state=default|loading|error；size=s|m|l|xl
      opts={src:Unsplash 圖片 ID, alt:替代文字}。circular 為正方，rectangular/rounded 亦統一用正方最簡單 */
   function imEl(variant,state,size,opts){opts=opts||{};
     size=size||'m';
     const box=ce('div',`im-box im-${variant} im-sz-${size} im-st-${state}`);
+    if(opts.ratio && variant!=='circular'){box.classList.add('im-r-'+opts.ratio.replace(':','x'));} // circular 恆正方，其餘依比例改盒子 aspect-ratio
     if(state==='loading'){
       box.classList.add('im-loading'); // 骨架佔位：--panel-2 底 + shimmer 掃過，不放真圖
     } else if(state==='error'){
@@ -2459,7 +2500,7 @@ function skelMedia(anim){
       box.append(ic,tx);
     } else {
       const img=document.createElement('img');img.className='im-img';
-      img.src=imUrl(opts.src||IM_POOL[0],400); // W 用 400，實際顯示尺寸由 CSS 控制
+      img.src=imUrl(opts.src||IM_POOL[0],600); // W 用 400，實際顯示尺寸由 CSS 控制
       img.alt=(opts.alt!=null)?opts.alt:''; // a11y：必填 alt；裝飾性傳 '' 即可
       img.loading='lazy';
       box.appendChild(img);
@@ -2467,26 +2508,27 @@ function skelMedia(anim){
     return box;
   }
   LIVE.image=(host)=>mountLive(host,{
-    initial:{variant:'rounded',state:'default',size:'m'},
+    initial:{variant:'rounded',state:'default',size:'l',ratio:'4:3'},
     segs:[
       {key:'variant',label:'Shape',options:['rectangular','rounded','circular'],labels:['矩形','圓角','圓形']},
       {key:'state',label:'State',options:['default','loading','error'],labels:['正常','載入中','錯誤']},
-      {key:'size',label:'Size',options:['s','m','l','xl']}
+      {key:'size',label:'Size',options:['s','m','l','xl']},
+      {key:'ratio',label:'Ratio',options:['1:1','4:3','16:9','2:1']}
     ],
     render:st=>{
-      const src=(st.variant==='circular')?IM_PORTRAIT:IM_POOL[2]; // circular 自動改用人像圖
-      return imEl(st.variant,st.state,st.size,{src,alt:'示意圖片'});
+      const src=(st.variant==='circular')?IM_CIRCLE:IM_POOL[3]; // circular 用置中風景
+      return imEl(st.variant,st.state,st.size,{src,alt:'示意圖片',ratio:st.ratio});
     },
     note:'切形狀時 circular 自動改用人像圖；state 切到 loading 看 shimmer 骨架、error 看破圖 fallback。'
   });
   function buildImage(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Image',title:'Image 圖片',
-      lede:'承載照片／插圖的圖片容器，素材統一取自 Unsplash。<b>variant × state × size（3 × 3 × 4 = 36）</b>：三種形狀（矩形／圓角／圓形）× 三種狀態（正常／載入中／錯誤）× 四級尺寸（s／m／l／xl）。載入中顯示 shimmer 骨架、載入失敗顯示破圖 fallback。<b>alt 為必填</b>，純裝飾性圖片則傳 <code>alt=""</code>。',
-      specRows:[['axes','<code>variant × state × size</code>'],['formula','<code>3 × 3 × 4 = 36</code>'],['token-policy','<code>surface.image / border.image / radius</code>'],['a11y','必填 alt；裝飾性 alt=""']]});
+      lede:'承載照片／插圖的圖片容器，素材統一取自 Unsplash。<b>variant × state × size × ratio</b>：三種形狀（矩形／圓角／圓形）× 三種狀態（正常／載入中／錯誤）× 四級尺寸（s／m／l／xl）、四種長寬比（1:1／4:3／16:9／2:1）。載入中顯示 shimmer 骨架、載入失敗顯示破圖 fallback。<b>alt 為必填</b>，純裝飾性圖片則傳 <code>alt=""</code>。',
+      specRows:[['axes','<code>variant × state × size × ratio</code>'],['ratio','<code>1:1 / 4:3 / 16:9 / 2:1</code>'],['token-policy','<code>surface.image / border.image / radius</code>'],['a11y','必填 alt；裝飾性 alt=""']]});
     const axes=DIAL_SPECS.image.axes, zh=DIAL_SPECS.image.zh, active=CHOICE.image.active; // 接中央 store
     const VN={rectangular:['矩形','rectangular'],rounded:['圓角','rounded'],circular:['圓形','circular']};
     const SN={default:['正常','default'],loading:['載入中','loading'],error:['錯誤','error']};
-    const SRC={rectangular:IM_POOL[0],rounded:IM_POOL[1],circular:IM_PORTRAIT}; // 每個形狀給不同示意圖
+    const SRC={rectangular:IM_POOL[0],rounded:IM_POOL[1],circular:IM_CIRCLE}; // 每個形狀給不同示意圖
     let p;
     function renderM(){ if(!p)return; p.innerHTML='';
       const vs=axes.variant.filter(v=>active.variant.has(v));
@@ -2506,6 +2548,12 @@ function skelMedia(anim){
       const it=ce('div','demo-item');it.appendChild(imEl('rounded','default',sz,{src:IM_POOL[3],alt:'示意圖'}));
       const c=ce('div','cap');c.innerHTML=`<b>size ${sz}</b><br>${px}×${px}`;it.appendChild(c);rd.appendChild(it);});
     zs.appendChild(rd);
+    const rs=section(body,'Ratio 長寬比','同一張風景照、固定大尺寸，對照 1:1／4:3／16:9／2:1 四種長寬比（object-fit:cover 自動裁切；circular 不受比例影響、恆正方）。');
+    const rrow=ce('div','row-demo');rrow.style.marginBottom='16px';rrow.style.alignItems='flex-start';
+    [['1:1','正方'],['4:3','標準'],['16:9','寬螢幕'],['2:1','橫幅']].forEach(function(row){var r=row[0],zhr=row[1];
+      const it=ce('div','demo-item');const el=imEl('rounded','default','xl',{src:IM_POOL[0],alt:'示意圖',ratio:r});el.style.width='240px';it.appendChild(el);
+      const c=ce('div','cap');c.innerHTML='<b>'+r+'</b><br>'+zhr;it.appendChild(c);rrow.appendChild(it);});
+    rs.appendChild(rrow);
     const sl=section(body,'實際互動 Live','切形狀／狀態／尺寸即時預覽；circular 自動改用人像圖，切到 loading／error 看佔位與 fallback。');
     LIVE.image(sl);
   }
