@@ -2228,7 +2228,7 @@ function skelMedia(anim){
     const _navOrder=NAV.flatMap(g=>g.items).map(x=>x.id); // 側邊欄由上至下
     const _sumKeys=Object.keys(DIAL_SPECS).slice().sort((a,b)=>{const ia=_navOrder.indexOf(DIAL_PAGE[a]||a),ib=_navOrder.indexOf(DIAL_PAGE[b]||b);return (ia<0?999:ia)-(ib<0?999:ib);}); // checkbox/radio 同對應 selector，穩定排序保留原序
     _sumKeys.forEach((id,i)=>{const spec=DIAL_SPECS[id],rec=rep[id];
-      const card=ce('div','sumcard'+(i===0?'':' collapsed'));card.dataset.id=id; // 第一張預設展開
+      const card=ce('div','sumcard collapsed');card.dataset.id=id; // 全部預設收合
       let axesHTML='';
       spec.order.forEach(k=>{const all=spec.axes[k];const sel=new Set(rec[k]);
         const chips=all.map(v=>`<span class="sum-chip ${sel.has(v)?'on':'off'}">${(spec.zh[k]&&spec.zh[k][v])||v}·${v}</span>`).join('');
@@ -2251,7 +2251,6 @@ function skelMedia(anim){
       head.onclick=()=>{const willOpen=card.classList.contains('collapsed');card.classList.toggle('collapsed');
         if(willOpen && !liveHost.dataset.mounted && LIVE[id]){LIVE[id](liveHost);liveHost.dataset.mounted='1';}}; // 展開時 lazy 掛實際操作 Live
       card.querySelector('.adjustbtn').onclick=()=>renderView(DIAL_PAGE[id]||id); // 右下角「我要調整」→ 跳該元件頁
-      if(i===0&&LIVE[id]){LIVE[id](liveHost);liveHost.dataset.mounted='1';} // 預設展開的第一張，立即掛 Live
       host.appendChild(card);});
     syncTotal();
     const todo=NAV.flatMap(g=>g.items).filter(it=>!DIAL_SPECS[it.id]&&it.id!=='input'&&!it.st).length;
