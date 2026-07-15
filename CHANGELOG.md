@@ -620,3 +620,12 @@ Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、
 - **精簡版跑版修正**：`mkBadge(inline)` 新增 inline 參數——精簡版角標不掛 `.pcd-badge`（絕對定位）也不掛 `tg-glass`（無圖背景），正常排進 `.pcd-toprow`；`.pcd-toprow` 對齊改 `align-items:flex-start`，角標與愛心**靠上對齊**。實測角標 position:static、top 對齊差 0、無溢出。
 
 **驗證**：node --check OK、Playwright 0 console error；13 顆愛心 bg 全 transparent、Live 點擊→紅實心；精簡版角標 static/非玻璃/top 對齊/不跑版。
+
+---
+
+## 2026-07-16　卡片圖片 hover 放大 ＋ 四卡新增 size 軸（m/s）
+
+- **hover 圖片放大**：card（`.crd-media`）、product-card（`.pcd-thumb`）、category-tile（`.cat-image`）的圖片，hover 時 `transform:scale(1.05)`（.35s，比照 article-card）；容器 overflow:hidden 已就位，product soldout 不放大。
+- **size 軸 m/s**：card／product-card／category-tile／article-card 四張卡 DIAL_SPECS 加 `size:['m','s']`（order＋zh＋axisName）；各加 `-sz-s` CSS（字級/間距/尺寸縮小）；工廠函式吃 `size`、矩陣依轉盤 size 呈現、Live 加 Size seg 可切 m/s。
+
+**驗證**：node --check OK、Playwright 0 console error；三卡 hover img scale 1.05（去 transition 讀到 matrix(1.05)）；四卡 Live 有 m/s seg、切 s 加 `-sz-s`、標題字級縮小。

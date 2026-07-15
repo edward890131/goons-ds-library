@@ -1576,6 +1576,8 @@
 .crd-media{position:relative;flex:0 0 auto;border-radius:10px;overflow:hidden;}
 .crd-media .im-box{display:block;width:100%;height:auto;aspect-ratio:16/9;
   border:0;border-radius:10px;}
+.crd-media .im-img{transition:transform .35s ease;}
+.crd.is-hover .crd-media .im-img,.crd.live:hover:not(.is-disabled) .crd-media .im-img{transform:scale(1.05);} /* hover 封面微放大（比照文章卡）*/
 /* badge：重用 Tag 原子（.tg），釘在媒體圖右上角；無媒體圖時釘在卡片右上角 */
 .crd-badge{position:absolute;top:10px;right:10px;z-index:1;}
 /* 圖片上的標籤：半透明黑玻璃＋背景模糊（card / product 共用，壓在照片上）*/
@@ -1606,6 +1608,12 @@
 /* ---- Live 舞台 ---- */
 .crd-live-stage{display:flex;justify-content:flex-start;}
 .crd-live-stage .crd{max-width:320px;min-width:260px;}
+/* size s：精簡尺寸（字級/間距縮小）*/
+.crd-sz-s{padding:9px;}
+.crd-sz-s .crd-body{padding-top:10px;gap:4px;}
+.crd-sz-s .crd-title{font-size:13px;}
+.crd-sz-s .crd-desc{font-size:11.5px;}
+.crd-sz-s .crd-foot{padding-top:10px;}
   /* ===== Card group: product-card ===== */
 /* ==================== Product Card 商品卡（pcd- namespace）==================== */
 /* 卡片本體：panel 底 + line 邊框 + radius token；hover 有浮起過渡 */
@@ -1628,6 +1636,8 @@
 /* --- 縮圖區：重用 image 原子（.im-box），在 pcd 範圍內改為填滿卡寬 --- */
 .pcd-thumb{position:relative;flex:0 0 auto;min-width:0;border-radius:10px;overflow:hidden;}
 .pcd-thumb .im-box{display:block;width:100%;height:auto;border:0;border-radius:10px;}
+.pcd-thumb .im-img{transition:transform .35s ease;}
+.pcd-card.is-hover .pcd-thumb .im-img,.pcd-card.live:hover:not(.is-soldout) .pcd-thumb .im-img{transform:scale(1.05);} /* hover 縮圖微放大 */
 .pcd-v-horizontal .pcd-thumb{width:120px;align-self:stretch;display:flex;}
 .pcd-v-horizontal .pcd-thumb .im-box{width:100%;height:100%;aspect-ratio:auto;}
 
@@ -1670,6 +1680,12 @@
 .pcd-buy{display:flex;flex-direction:column;gap:10px;margin-top:auto;}   /* 貼底：橫式時資訊高度不齊也對齊 */
 .pcd-buy .btn{width:100%;justify-content:center;}
 .pcd-v-horizontal .pcd-buy .btn{width:auto;align-self:flex-start;}
+/* size s：精簡尺寸 */
+.pcd-sz-s{padding:8px;}
+.pcd-sz-s.pcd-v-vertical,.pcd-sz-s.pcd-v-minimal{max-width:184px;}
+.pcd-sz-s .pcd-info{padding-top:10px;gap:6px;}
+.pcd-sz-s .pcd-name{font-size:13px;}
+.pcd-sz-s .pcd-buy .btn{height:30px;}
   /* ===== Card group: category-tile ===== */
 /* ===== category-tile (Card) ===== */
 /* ==================== category-tile 分類磚 ==================== */
@@ -1703,7 +1719,8 @@
 .cat-image{min-height:132px;align-items:flex-end;}
 .cat-media{position:absolute;inset:0;z-index:0;}
 .cat-media .im-box{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;border:0;border-radius:0;} /* 蓋掉原子的固定高/圓角，攤平滿版 */
-.cat-media .im-img{width:100%;height:100%;object-fit:cover;}
+.cat-media .im-img{width:100%;height:100%;object-fit:cover;transition:transform .35s ease;}
+.cat-image.is-hover .cat-media .im-img,.cat-image.live:hover .cat-media .im-img{transform:scale(1.05);} /* hover 圖片微放大 */
 /* 底部暗色漸層遮罩：確保白字可讀（overlay 固定暗色、非主題色，明暗模式皆適用） */
 .cat-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
   background:linear-gradient(180deg,rgba(0,0,0,0) 32%,rgba(0,0,0,.62) 100%);transition:background .13s;}
@@ -1751,6 +1768,12 @@
 .cat-grid .cat-tile{max-width:none;}
 .cat-live{display:flex;justify-content:flex-start;padding:6px 2px;}
 .cat-live .cat-tile{width:280px;}
+/* size s：精簡尺寸 */
+.cat-sz-s{padding:10px;gap:10px;}
+.cat-sz-s .cat-circle{width:36px;height:36px;}
+.cat-sz-s .cat-circle svg{width:18px;height:18px;}
+.cat-sz-s .cat-name{font-size:13px;}
+.cat-sz-s.cat-image{min-height:108px;}
   /* ===== Card group: article-card ===== */
 /* ==================== ARTICLE CARD 文章卡（art-）==================== */
 /* 卡片外殼：--panel 底 + --line 邊框 + --radius 圓角；hover 過渡（浮起/陰影/邊框） */
@@ -1816,6 +1839,10 @@
 .art-showcase{display:flex;flex-wrap:wrap;gap:18px;align-items:stretch;margin-bottom:8px;}
 .art-showcase .art-card{flex:0 1 320px;}
 .art-showcase .art-card.v-horizontal{flex:0 1 520px;}
+/* size s：精簡尺寸 */
+.art-sz-s .art-body{padding:11px 12px 12px;gap:6px;}
+.art-sz-s .art-title{font-size:14px;}
+.art-sz-s .art-excerpt{font-size:11.5px;}
 </style>
 
 <div class="shell" id="shell">
@@ -1979,10 +2006,10 @@
     step:{label:'Step 步驟指示器',order:['orientation','variant'],axes:{orientation:['horizontal','vertical'],variant:['numbered','dotted','icon']},zh:{orientation:{horizontal:'水平',vertical:'垂直'},variant:{numbered:'編號',dotted:'圓點',icon:'圖示'},axisName:{orientation:'Orientation 方向',variant:'Variant 樣式'}}},
     quantity:{label:'Quantity 商品計數',order:['variant','size'],axes:{variant:['outline','pill','plain'],size:['s','m','l']},zh:{variant:{outline:'外框',pill:'膠囊',plain:'極簡'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
     progress:{label:'Progress 進度條',order:['variant','size'],axes:{variant:['bar','label','gradient'],size:['s','m','l']},zh:{variant:{bar:'基本',label:'帶百分比',gradient:'漸層'},size:{s:'細 s',m:'標準 m',l:'粗 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
-    card:{label:'Card 卡片',order:['variant','state'],axes:{variant:['elevated','outlined','filled'],state:['default','hover','selected','disabled']},zh:{variant:{elevated:'浮起',outlined:'外框',filled:'填色'},state:{default:'預設',hover:'滑過',selected:'選取',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
-    'product-card':{label:'Product Card 商品卡',order:['variant','state'],axes:{variant:['vertical','horizontal','minimal'],state:['default','hover','soldout']},zh:{variant:{vertical:'直式',horizontal:'橫式',minimal:'精簡'},state:{default:'預設',hover:'滑過',soldout:'售完'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
-    'category-tile':{label:'Category Tile 分類磚',order:['variant','state'],axes:{variant:['icon','image','gradient'],state:['default','hover','active']},zh:{variant:{icon:'圖示磚',image:'圖片磚',gradient:'漸層磚'},state:{default:'預設',hover:'滑過',active:'選中'},axisName:{variant:'Variant 磚型',state:'State 狀態'}}},
-    'article-card':{label:'Article Card 文章卡',order:['variant','state'],axes:{variant:['vertical','horizontal','overlay'],state:['default','hover']},zh:{variant:{vertical:'直式',horizontal:'橫式',overlay:'疊字'},state:{default:'預設',hover:'滑過'},axisName:{variant:'Variant 版式',state:'State 狀態'}}}
+    card:{label:'Card 卡片',order:['variant','state','size'],axes:{variant:['elevated','outlined','filled'],state:['default','hover','selected','disabled'],size:['m','s']},zh:{variant:{elevated:'浮起',outlined:'外框',filled:'填色'},state:{default:'預設',hover:'滑過',selected:'選取',disabled:'停用'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 型態',state:'State 狀態',size:'Size 尺寸'}}},
+    'product-card':{label:'Product Card 商品卡',order:['variant','state','size'],axes:{variant:['vertical','horizontal','minimal'],state:['default','hover','soldout'],size:['m','s']},zh:{variant:{vertical:'直式',horizontal:'橫式',minimal:'精簡'},state:{default:'預設',hover:'滑過',soldout:'售完'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 型態',state:'State 狀態',size:'Size 尺寸'}}},
+    'category-tile':{label:'Category Tile 分類磚',order:['variant','state','size'],axes:{variant:['icon','image','gradient'],state:['default','hover','active'],size:['m','s']},zh:{variant:{icon:'圖示磚',image:'圖片磚',gradient:'漸層磚'},state:{default:'預設',hover:'滑過',active:'選中'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 磚型',state:'State 狀態',size:'Size 尺寸'}}},
+    'article-card':{label:'Article Card 文章卡',order:['variant','state','size'],axes:{variant:['vertical','horizontal','overlay'],state:['default','hover'],size:['m','s']},zh:{variant:{vertical:'直式',horizontal:'橫式',overlay:'疊字'},state:{default:'預設',hover:'滑過'},size:{m:'標準 m',s:'精簡 s'},axisName:{variant:'Variant 版式',state:'State 狀態',size:'Size 尺寸'}}}
   
   };
   const CHOICE={};
@@ -5340,7 +5367,8 @@ function skelMedia(anim){
     const card=ce('div','crd crd-v-'+variant
       +(state!=='default'?' is-'+state:'')
       +(o.live?' live':'')
-      +(o.compact?' crd-mx':''));
+      +(o.compact?' crd-mx':'')
+      +(o.size==='s'?' crd-sz-s':''));
 
     /* media slot：重用 Image 原子（16:9 滿版），CSS 覆寫為卡片滿寬 */
     if(o.media){
@@ -5379,8 +5407,8 @@ function skelMedia(anim){
   }
 
   /* 矩陣格：一張緊湊代表卡（media＋title＋desc＋actions 全開，看得到完整解剖），state 靜態模擬 */
-  function crdCell(variant,state){
-    return crdCard({variant,state,media:true,badge:false,title:'合歡山日出季',desc:'凌晨出發武嶺，建議預約松雪樓並備保暖衣物。',actions:true,compact:true,src:IM_POOL[(({elevated:0,outlined:1,filled:2})[variant]||0)+3]});
+  function crdCell(variant,state,size){
+    return crdCard({variant,state,size,media:true,badge:false,title:'合歡山日出季',desc:'凌晨出發武嶺，建議預約松雪樓並備保暖衣物。',actions:true,compact:true,src:IM_POOL[(({elevated:0,outlined:1,filled:2})[variant]||0)+3]});
   }
 
   function buildCard(view){
@@ -5394,11 +5422,12 @@ function skelMedia(anim){
     function renderM(){ if(!p)return; p.innerHTML='';
       const vs=axes.variant.filter(v=>active.variant.has(v));
       const ss=axes.state.filter(s=>active.state.has(s));
+      const sz=axes.size.filter(z=>active.size.has(z))[0]||'m';
       p.appendChild(matrixPanel({badge:'card',name:'Variant × State',desc:'列＝容器型態、欄＝狀態；每格為一張完整代表卡（媒體圖＋標題＋描述＋動作）',
         rows:vs,cols:ss,
         rowLab:v=>labHTML(VN[v][0],VN[v][1]),
         colLab:s=>labHTML(STN[s][0],STN[s][1]),
-        cell:(v,s)=>crdCell(v,s),mincol:220}));
+        cell:(v,s)=>crdCell(v,s,sz),mincol:220}));
     }
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'Variant × State 矩陣','hover＝依型態各自加深（陰影變深／邊框轉強／底色再深一階）；selected＝accent 邊框＋主色淡底；disabled＝整卡淡化不可點。矩陣為靜態模擬，真實 hover 請到下方 showcase／Live 試。');
@@ -5419,8 +5448,8 @@ function skelMedia(anim){
     /* Live：seg 切 variant；bools 開關各 slot＋disabled，每個勾選都對應可見變化 */
     const sl=section(body,'實際互動 Live','切換容器型態，勾選開關各個 slot（媒體圖／角標／描述／動作鈕）與停用；整卡支援真實 hover——移上去看陰影／邊框／底色加深。');
     mountLive(sl,{
-      initial:{variant:'elevated',media:true,badge:true,description:true,actions:true,disabled:false},
-      segs:[{key:'variant',label:'Variant',options:['elevated','outlined','filled'],labels:['浮起','外框','填色']}],
+      initial:{variant:'elevated',size:'m',media:true,badge:true,description:true,actions:true,disabled:false},
+      segs:[{key:'variant',label:'Variant',options:['elevated','outlined','filled'],labels:['浮起','外框','填色']},{key:'size',label:'Size',options:['m','s']}],
       bools:[{key:'media',label:'media 媒體圖'},{key:'badge',label:'badge 角標'},{key:'description',label:'description 描述'},{key:'actions',label:'footer actions'},{key:'disabled',label:'disabled'}],
       boolLabel:'Slots',
       render:st=>{
@@ -5430,7 +5459,7 @@ function skelMedia(anim){
           state:st.disabled?'disabled':'default', // 比照其他頁：disabled 勾選項對映 state
           media:st.media,badge:st.badge,
           title:'合歡山日出季開跑',
-          desc:st.description,actions:st.actions,live:true
+          desc:st.description,actions:st.actions,size:st.size,live:true
         }));
         return stage;
       },
@@ -5471,7 +5500,8 @@ function pcdCard(variant,state,o){
   const card=ce('div','pcd-card pcd-v-'+variant
     +(state==='hover'?' is-hover':'')                            // 矩陣格用靜態 class 模擬 hover
     +(soldout?' is-soldout':'')
-    +(o.live?' live':''));                                       // Live/showcase 才吃真實 :hover
+    +(o.live?' live':'')                                       // Live/showcase 才吃真實 :hover
+    +(o.size==='s'?' pcd-sz-s':''));
 
   /* 收藏愛心：.btn v-text icon-only 原子；已收藏換 fill 版 + is-on 轉紅 */
   function mkWish(){
@@ -5531,8 +5561,8 @@ function pcdCard(variant,state,o){
 }
 
 /* 矩陣格：靜態呈現（hover 用 is-hover 模擬、售完灰階＋覆蓋標＋按鈕停用） */
-function pcdCell(variant,state){
-  return pcdCard(variant,state,{src:PCD_IMG.bag});
+function pcdCell(variant,state,size){
+  return pcdCard(variant,state,{src:PCD_IMG.bag,size});
 }
 
 function buildProductCard(view){
@@ -5548,11 +5578,12 @@ function buildProductCard(view){
   function renderM(){ if(!p)return; p.innerHTML='';
     const vs=axes.variant.filter(v=>active.variant.has(v));
     const ss=axes.state.filter(s=>active.state.has(s));
+    const psz=axes.size.filter(z=>active.size.has(z))[0]||'m';
     p.appendChild(matrixPanel({badge:'product-card',name:'Variant × State（hover 為靜態模擬；售完＝灰階＋覆蓋標＋按鈕停用）',
       rows:vs,cols:ss,
       rowLab:v=>labHTML(VN[v][0],VN[v][1]),
       colLab:s=>labHTML(STN[s][0],STN[s][1]),
-      cell:(v,s)=>pcdCell(v,s),mincol:250})); }
+      cell:(v,s)=>pcdCell(v,s,psz),mincol:250})); }
   mountDial(body,{axes,zh,active,onRender:renderM});
   const sec=section(body,'Variant × State 矩陣','列＝三型態（直式／橫式／精簡）、欄＝三狀態；hover 格以靜態 class 模擬浮起，售完格圖轉灰階、覆蓋「售完」標、按鈕停用。');
   p=panelsIn(sec);renderM();
@@ -5570,8 +5601,8 @@ function buildProductCard(view){
   let pcdWished=false;                                           // 收藏狀態跨 render 保留
   const sl=section(body,'實際互動 Live','切 variant，勾選角標／評分／收藏／折扣價／售完即時重組卡片；愛心可點（切換收藏、轉紅實心），售完時整卡灰階、按鈕與愛心停用。');
   mountLive(sl,{
-    initial:{variant:'vertical',badge:true,rating:true,wishlist:true,discount:false,soldout:false},
-    segs:[{key:'variant',label:'Variant',options:['vertical','horizontal','minimal'],labels:['直式','橫式','精簡']}],
+    initial:{variant:'vertical',size:'m',badge:true,rating:true,wishlist:true,discount:false,soldout:false},
+    segs:[{key:'variant',label:'Variant',options:['vertical','horizontal','minimal'],labels:['直式','橫式','精簡']},{key:'size',label:'Size',options:['m','s']}],
     bools:[{key:'badge',label:'badge 角標'},{key:'rating',label:'rating 評分'},
            {key:'wishlist',label:'wishlist 收藏'},{key:'discount',label:'discount 折扣價'},
            {key:'soldout',label:'soldout 售完'}],
@@ -5582,7 +5613,7 @@ function buildProductCard(view){
         wrap.innerHTML='';
         wrap.appendChild(pcdCard(st.variant,st.soldout?'soldout':'default',{
           live:true,src:PCD_IMG.bag,
-          badge:st.badge,rating:st.rating?4.5:false,wishlist:st.wishlist,
+          badge:st.badge,rating:st.rating?4.5:false,wishlist:st.wishlist,size:st.size,
           discount:st.discount,wished:pcdWished,
           onWish:()=>{pcdWished=!pcdWished;draw();}               // 點愛心切換收藏後重畫
         }));
@@ -5615,7 +5646,7 @@ function buildProductCard(view){
      o={data:CAT_DATA 項, count:顯示數量(預設 true), desc:顯示描述(預設 false), arrow:顯示箭頭(預設 true), live:真實 hover} */
   function catTile(variant,state,o){o=o||{};
     const d=o.data||CAT_DATA[0];
-    const t=ce('div','cat-tile cat-'+variant);
+    const t=ce('div','cat-tile cat-'+variant+(o.size==='s'?' cat-sz-s':''));
     if(state==='hover')t.classList.add('is-hover');      // 矩陣用靜態 class 模擬滑過
     if(state==='active')t.classList.add('is-active');    // 選中（目前所在分類）
     if(o.live)t.classList.add('live');                   // Live／showcase 才吃真實 :hover
@@ -5642,7 +5673,7 @@ function buildProductCard(view){
     return t;
   }
   /* 矩陣格：count＋arrow、無描述，資料依 variant 固定 */
-  function catCell(v,s){return catTile(v,s,{data:CAT_DATA[CAT_MDATA[v]],count:true,desc:false,arrow:true});}
+  function catCell(v,s,size){return catTile(v,s,{data:CAT_DATA[CAT_MDATA[v]],count:true,desc:false,arrow:true,size});}
 
   function buildCategoryTile(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Category Tile',title:'Category Tile 分類磚',
@@ -5658,10 +5689,11 @@ function buildProductCard(view){
     function renderM(){ if(!p)return; p.innerHTML='';
       const vs=axes.variant.filter(v=>active.variant.has(v));
       const ss=axes.state.filter(s=>active.state.has(s));
+      const csz=axes.size.filter(z=>active.size.has(z))[0]||'m';
       p.appendChild(matrixPanel({badge:'category-tile',name:'Variant × State',rows:vs,cols:ss,
         rowLab:v=>labHTML(VN[v][0],VN[v][1]),
         colLab:s=>labHTML(STN[s][0],STN[s][1]),
-        cell:(v,s)=>catCell(v,s),mincol:240})); }
+        cell:(v,s)=>catCell(v,s,csz),mincol:240})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'Variant × State 矩陣','列＝三種磚型、欄＝三種狀態。hover 浮起＋底色／遮罩加深、active 出現 accent 邊框（icon 磚圓圈變實心 accent；gradient 磚以 panel 間隙＋外圈表達）。');
     p=panelsIn(sec);renderM();
@@ -5679,14 +5711,14 @@ function buildProductCard(view){
     /* Live */
     const sl=section(body,'實際互動 Live','切磚型、勾數量／描述／箭頭／選中即時預覽；hover 為真實互動、可與選中疊加。');
     mountLive(sl,{
-      initial:{variant:'icon',count:true,description:false,arrow:true,active:false},
-      segs:[{key:'variant',label:'Variant',options:['icon','image','gradient'],labels:['圖示磚','圖片磚','漸層磚']}],
+      initial:{variant:'icon',size:'m',count:true,description:false,arrow:true,active:false},
+      segs:[{key:'variant',label:'Variant',options:['icon','image','gradient'],labels:['圖示磚','圖片磚','漸層磚']},{key:'size',label:'Size',options:['m','s']}],
       bools:[{key:'count',label:'count 數量'},{key:'description',label:'description 描述'},{key:'arrow',label:'arrow 箭頭'},{key:'active',label:'active 選中'}],
       boolLabel:'內容／狀態',
       render:st=>{
         const wrap=ce('div','cat-live');
         wrap.appendChild(catTile(st.variant,st.active?'active':'default',
-          {data:CAT_DATA[CAT_MDATA[st.variant]],count:st.count,desc:st.description,arrow:st.arrow,live:true}));
+          {data:CAT_DATA[CAT_MDATA[st.variant]],count:st.count,desc:st.description,arrow:st.arrow,size:st.size,live:true}));
         return wrap;},
       note:'active 為「目前所在分類」的持續選中態（<code>aria-current="true"</code>）；image 磚白字靠暗色漸層遮罩保可讀、gradient 磚文字一律 <code>--primary-on</code>。'});
   }
@@ -5711,7 +5743,7 @@ const ART_DATA={
 function artCard(variant,state,opts){opts=opts||{};
   const on=k=>opts[k]!==false; // 未指定視為開啟
   const d=ART_DATA[variant]||ART_DATA.vertical;
-  const card=ce('article','art-card v-'+variant+(state==='hover'?' is-hover':'')+(opts.live?' live':''));
+  const card=ce('article','art-card v-'+variant+(state==='hover'?' is-hover':'')+(opts.live?' live':'')+(opts.size==='s'?' art-sz-s':''));
   // 封面：重用 Image 原子 imEl（16:9；橫式/疊字由 CSS 覆寫成填滿）
   const cover=ce('div','art-cover');
   cover.appendChild(imEl('rectangular','default','l',{src:d.srcId,alt:d.title,ratio:'16:9'}));
@@ -5740,7 +5772,7 @@ function artCard(variant,state,opts){opts=opts||{};
   return card;
 }
 /* 矩陣格：靜態呈現一張對應 variant × state 的卡 */
-function artCell(variant,state){const w=ce('div','art-cell');w.appendChild(artCard(variant,state,{}));return w;}
+function artCell(variant,state,size){const w=ce('div','art-cell');w.appendChild(artCard(variant,state,{size}));return w;}
 
 function buildArticleCard(view){
   const body=viewScaffold(view,{eyebrow:'L3 Component · Article Card',title:'Article Card 文章卡',
@@ -5753,11 +5785,12 @@ function buildArticleCard(view){
   function renderM(){ if(!p)return; p.innerHTML='';
     const vs=axes.variant.filter(v=>active.variant.has(v));
     const ss=axes.state.filter(s=>active.state.has(s));
+    const asz=axes.size.filter(z=>active.size.has(z))[0]||'m';
     p.appendChild(matrixPanel({badge:'article-card',name:'Variant × State',
       rows:vs,cols:ss,
       rowLab:v=>labHTML(VN[v][0],VN[v][1]),
       colLab:s=>labHTML(STN[s][0],STN[s][1]),
-      cell:(v,s)=>artCell(v,s),mincol:300})); }
+      cell:(v,s)=>artCell(v,s,asz),mincol:300})); }
   mountDial(body,{axes,zh,active,onRender:renderM});
   const sec=section(body,'Variant × State 矩陣','列＝三種版式、欄＝狀態。hover 為靜態模擬：卡片浮起加陰影、封面微放大、標題轉主色；疊字版文字置底壓在暗漸層遮罩上。');
   p=panelsIn(sec);renderM();
@@ -5771,11 +5804,11 @@ function buildArticleCard(view){
   // ---- 實際互動 Live ----
   const sl=section(body,'實際互動 Live','切版式並開關內容 slot 即時預覽；整張卡吃真實 hover（浮起＋封面微放大＋標題轉主色）。');
   mountLive(sl,{
-    initial:{variant:'vertical',category:true,excerpt:true,author:true,meta:true},
-    segs:[{key:'variant',label:'Variant',options:['vertical','horizontal','overlay'],labels:['直式','橫式','疊字']}],
+    initial:{variant:'vertical',size:'m',category:true,excerpt:true,author:true,meta:true},
+    segs:[{key:'variant',label:'Variant',options:['vertical','horizontal','overlay'],labels:['直式','橫式','疊字']},{key:'size',label:'Size',options:['m','s']}],
     bools:[{key:'category',label:'category 分類標'},{key:'excerpt',label:'excerpt 摘要'},{key:'author',label:'author 作者'},{key:'meta',label:'meta 日期／閱讀'}],
     boolLabel:'內容',
-    render:st=>artCard(st.variant,'default',{live:true,category:st.category,excerpt:st.excerpt,author:st.author,meta:st.meta}),
+    render:st=>artCard(st.variant,'default',{live:true,size:st.size,category:st.category,excerpt:st.excerpt,author:st.author,meta:st.meta}),
     note:'封面重用 <b>Image</b> 原子（imEl 16:9／頭像 circular）、分類標重用 <b>Tag</b> 原子（疊字版自動改 v-solid 保對比）、閱讀更多重用 <b>Button</b> 原子（v-text）。疊字版關掉摘要更接近頭條卡慣例。'
   });
 }
