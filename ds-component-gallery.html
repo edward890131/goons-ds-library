@@ -762,6 +762,10 @@
   .am-item.st-disabled{opacity:.4;cursor:not-allowed;}
   .am-item.is-danger{color:var(--i-danger);} .am-item.is-danger svg{color:var(--i-danger);}
   .am-item.is-danger.st-hover{background:var(--i-danger-tint);}
+  /* Live 面板：真滑鼠 hover（矩陣仍用 .st-hover class 靜態展示、不受影響）*/
+  .am-live-wrap .am-item{cursor:pointer;}
+  .am-live-wrap .am-item:hover{background:var(--panel-2);}
+  .am-live-wrap .am-item.is-danger:hover{background:var(--i-danger-tint);}
   .am-divider{height:1px;background:var(--line);margin:5px 8px;}
   .am-live-wrap{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;} /* Live 面板改順流排在 trigger 下方，框會跟著長高、不溢出 */
   .am-live-wrap .am-panel{position:static;}
@@ -1962,7 +1966,7 @@ function skelMedia(anim){
       {label:'刪除',icon:ICON_CLOSE,danger:true,divBefore:true},
     ];
     if(mode==='matrix')base[1].state='hover';
-    if(mode==='live')base[0].state='focused';
+    // live 模式全部 default（不預設 focused），讓使用者用滑鼠 hover 實際看效果
     return base;
   }
 
