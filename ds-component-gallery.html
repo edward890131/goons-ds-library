@@ -719,6 +719,88 @@
 @keyframes ld-spin{to{transform:rotate(360deg);}}
 @keyframes ld-bounce{0%,80%,100%{transform:scale(.45);opacity:.45;}40%{transform:scale(1);opacity:1;}}
 @keyframes ld-bar{0%{left:-40%;}100%{left:100%;}}
+
+/* ===== menu (mn-) ===== */
+/* ===== Menu 選單 ===== */
+  .mn-item{position:relative;display:inline-flex;align-items:center;gap:8px;font-family:var(--font-sans);color:var(--muted);background:transparent;border:0;border-radius:8px;cursor:pointer;white-space:nowrap;user-select:none;line-height:1.2;transition:background .12s,color .12s;}
+  .mn-item--s{padding:6px 10px;font-size:13px;}
+  .mn-item--m{padding:8px 14px;font-size:14px;}
+  .mn-item--l{padding:11px 18px;font-size:15px;}
+  .mn-item--hover{background:var(--panel-2);color:var(--ink);}
+  .mn-item--active{color:var(--i-primary);font-weight:600;}
+  .mn-item--focus{outline:1px solid var(--accent);outline-offset:1px;color:var(--ink);}
+  .mn-item--disabled{opacity:.45;cursor:not-allowed;}
+  .mn-item:not(.mn-item--active):not(.mn-item--disabled):not(.mn-item--focus):hover{background:var(--panel-2);color:var(--ink);}
+  .mn-ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;flex:0 0 auto;}
+  .mn-ico svg{width:100%;height:100%;display:block;}
+  .mn-item--s .mn-ico{width:16px;height:16px;}
+  .mn-item--l .mn-ico{width:20px;height:20px;}
+  .mn-ind{position:absolute;background:var(--i-primary);border-radius:2px;opacity:0;pointer-events:none;}
+  .mn-item--active .mn-ind{opacity:1;left:10px;right:10px;bottom:0;height:2px;}
+  .mn-bar{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);}
+  .mn-bar--horizontal{flex-direction:row;align-items:center;gap:4px;padding:6px 8px;}
+  .mn-bar--vertical{flex-direction:column;align-items:stretch;gap:2px;padding:8px;width:200px;}
+  .mn-bar--vertical .mn-item{width:100%;justify-content:flex-start;}
+  .mn-bar--vertical .mn-item--active{background:var(--i-primary-tint);}
+  .mn-bar--vertical .mn-item--active .mn-ind{display:none;}
+  .mn-orient{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;}
+  .mn-ocol{display:flex;flex-direction:column;gap:10px;}
+  .mn-ocap{font-family:var(--font-mono);font-size:12px;color:var(--faint);}
+  .mn-ocap b{color:var(--muted);font-weight:600;}
+  .mn-live-box{padding:8px 0;}
+
+/* ===== action-menu (am-) ===== */
+/* ===== Action Menu 動作選單 ===== */
+  .am-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(0,0,0,.16);padding:6px;display:flex;flex-direction:column;gap:2px;}
+  .am-panel.sz-s{min-width:132px;} .am-panel.sz-m{min-width:170px;} .am-panel.sz-l{min-width:210px;}
+  .mcell .am-panel{min-height:max-content;} /* 修正：flex column 面板巢在 grid cell 內會被壓成單列高，撐回內容高 */
+  .am-item{display:flex;align-items:center;gap:10px;min-width:118px;padding:8px 12px;border-radius:10px;border:1px solid transparent;font-family:var(--font-sans);font-size:14px;line-height:1.2;color:var(--ink);cursor:pointer;user-select:none;white-space:nowrap;}
+  .am-item svg{width:16px;height:16px;flex:0 0 auto;color:var(--muted);}
+  .am-item .am-lb{flex:1 1 auto;}
+  .am-item.st-hover{background:var(--panel-2);}
+  .am-item.st-focused{background:var(--i-primary-tint);border-color:var(--i-primary);color:var(--i-primary-p);}
+  .am-item.st-focused svg{color:var(--i-primary-p);}
+  .am-item.st-disabled{opacity:.4;cursor:not-allowed;}
+  .am-item.is-danger{color:var(--i-danger);} .am-item.is-danger svg{color:var(--i-danger);}
+  .am-item.is-danger.st-hover{background:var(--i-danger-tint);}
+  .am-divider{height:1px;background:var(--line);margin:5px 8px;}
+  .am-live-wrap{position:relative;display:inline-block;}
+  .am-live-wrap .am-panel{position:absolute;top:calc(100% + 6px);left:0;z-index:5;}
+  .am-trigger{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;background:var(--i-sec-fill);border:1px solid var(--i-sec-edge);color:var(--i-sec-fg);font-family:var(--font-sans);font-size:14px;cursor:pointer;}
+  .am-trigger:hover{background:var(--i-sec-fill-h);}
+  .am-trigger .am-tcaret{display:inline-flex;width:14px;height:14px;color:var(--muted);transition:transform .15s ease;}
+  .am-trigger .am-tcaret svg{width:14px;height:14px;}
+  .am-trigger.is-open .am-tcaret{transform:rotate(180deg);}
+
+/* ===== breadcrumb (bc-) ===== */
+/* ---- BREADCRUMB 麵包屑 ---- */
+  .bc-trail{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-family:var(--font-sans);font-size:14px;line-height:1.5;}
+  .bc-item{color:var(--muted);cursor:pointer;text-decoration:none;transition:color .12s ease;}
+  .bc-item:hover,.bc-item.bc-hover{color:var(--accent);}
+  .bc-item.bc-current{color:var(--ink);font-weight:600;cursor:default;text-decoration:none;}
+  .bc-item.bc-current:hover{color:var(--ink);text-decoration:none;}
+  .bc-sep{display:inline-flex;align-items:center;color:var(--faint);font-size:13px;user-select:none;}
+  .bc-sep svg{width:14px;height:14px;display:block;}
+  .bc-ellip{color:var(--faint);cursor:default;letter-spacing:.05em;}
+  .bc-live-box{display:flex;padding:8px 2px;}
+
+/* ===== pagination (pg-) ===== */
+/* ---- PAGINATION 分頁器 ---- */
+  .pg-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-family:var(--font-sans);}
+  .pg-btn{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;background:transparent;color:var(--ink);border:1px solid transparent;border-radius:8px;font-family:var(--font-sans);font-weight:600;line-height:1;cursor:pointer;padding:0;transition:background .12s,border-color .12s,color .12s;}
+  .pg-btn.pg-sz-s{min-width:28px;height:28px;font-size:12px;}
+  .pg-btn.pg-sz-m{min-width:34px;height:34px;font-size:13px;}
+  .pg-btn.pg-sz-l{min-width:40px;height:40px;font-size:15px;}
+  .pg-btn.pg-sz-s svg{width:14px;height:14px;}
+  .pg-btn.pg-sz-m svg{width:16px;height:16px;}
+  .pg-btn.pg-sz-l svg{width:18px;height:18px;}
+  .pg-btn:hover:not(:disabled):not(.pg-cur){background:var(--panel-2);}
+  .pg-btn.pg-st-hover{background:var(--panel-2);}
+  .pg-btn.pg-cur{background:var(--i-primary);border-color:var(--i-primary);color:var(--primary-on);cursor:default;}
+  .pg-btn:disabled,.pg-btn.pg-st-disabled{opacity:.45;cursor:not-allowed;pointer-events:none;}
+  .pg-ellip{color:var(--faint);padding:0 2px;user-select:none;font-family:var(--font-sans);font-size:13px;}
+  .pg-info{display:inline-flex;align-items:center;padding:0 12px;font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;}
+  .pg-live-box{display:flex;justify-content:center;padding:10px 0;}
 </style>
 
 <div class="shell" id="shell">
@@ -752,10 +834,10 @@
       {id:'dropdown',name:'Dropdown 下拉',st:'ready'},
       {id:'selector',name:'Selector 選擇',st:'ready'},
       {id:'tab',name:'Tab 分頁',st:'ready'},
-      {id:'menu',name:'Menu 選單'},
-      {id:'action-menu',name:'Action Menu 動作選單'},
-      {id:'breadcrumb',name:'Breadcrumb 麵包屑'},
-      {id:'pagination',name:'Pagination 分頁器'},
+      {id:'menu',name:'Menu 選單',st:'ready'},
+      {id:'action-menu',name:'Action Menu 動作選單',st:'ready'},
+      {id:'breadcrumb',name:'Breadcrumb 麵包屑',st:'ready'},
+      {id:'pagination',name:'Pagination 分頁器',st:'ready'},
       {id:'tag',name:'Tag 標籤',st:'ready'},
       {id:'icon',name:'Icon 圖示'},
       {id:'price',name:'Price 價格'},
@@ -842,6 +924,18 @@
     loader:{label:'Loader 載入器',order:['variant','size'],
       axes:{variant:['circular','dots','bar'],size:['s','m','l']},
       zh:{axisName:{variant:'Variant 樣式',size:'Size 尺寸'},variant:{circular:'旋轉圈',dots:'跳動點',bar:'進度條'},size:{s:'小',m:'標準',l:'大'}}},
+    menu:{label:'Menu 選單',order:['variant','state','size'],
+      axes:{variant:['horizontal','vertical'],state:['default','hover','active','disabled','focus'],size:['s','m','l']},
+      zh:{axisName:{variant:'Variant 方向',state:'State 狀態',size:'Size 尺寸'},variant:{horizontal:'水平',vertical:'垂直'},state:{default:'預設',hover:'滑過',active:'當前頁',disabled:'停用',focus:'聚焦'},size:{s:'小 s',m:'標準 m',l:'大 l'}}},
+    'action-menu':{label:'Action Menu 動作選單',order:['variant','state','size'],
+      axes:{variant:['default','with-icon','with-divider'],state:['closed','open','hover','focused','disabled'],size:['s','m','l']},
+      zh:{axisName:{variant:'Variant 風格',state:'State 狀態',size:'Size 尺寸'},variant:{default:'純文字','with-icon':'帶圖示','with-divider':'含分隔線'},state:{closed:'收合',open:'展開',hover:'滑過',focused:'聚焦',disabled:'停用'},size:{s:'小 s',m:'標準 m',l:'大 l'}}},
+    breadcrumb:{label:'Breadcrumb 麵包屑',order:['separator'],
+      axes:{separator:['chevron','slash','arrow']},
+      zh:{axisName:{separator:'Separator 分隔符'},separator:{chevron:'箭頭 ›',slash:'斜線 /',arrow:'→'}}},
+    pagination:{label:'Pagination 分頁器',order:['variant','state','size'],
+      axes:{variant:['numbered','prev-next'],state:['default','hover','active','disabled'],size:['s','m','l']},
+      zh:{axisName:{variant:'Variant 風格',state:'State 狀態',size:'Size 尺寸'},variant:{numbered:'數字頁碼','prev-next':'前後翻頁'},state:{default:'預設',hover:'滑過',active:'當前頁',disabled:'停用'},size:{s:'小 s',m:'標準 m',l:'大 l'}}},
   };
   const CHOICE={};
   Object.keys(DIAL_SPECS).forEach(id=>{const a={};DIAL_SPECS[id].order.forEach(k=>a[k]=new Set(DIAL_SPECS[id].axes[k]));CHOICE[id]={active:a};});
@@ -1766,7 +1860,339 @@ function skelMedia(anim){
   }
 
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader};
+
+  /* ==================== menu ==================== */
+/* ---- MENU 選單（builders 提升頂層，頁面與 summary Live 共用）---- */
+  const MN_ICONS=[ICON_HOUSE,ICON_LIST,ICON_GEAR,ICON_PENCIL];
+  function mnItem(state,size,o){
+    o=o||{};
+    const it=ce('div','mn-item mn-item--'+size);
+    if(state==='hover')it.classList.add('mn-item--hover');
+    if(state==='active')it.classList.add('mn-item--active');
+    if(state==='focus')it.classList.add('mn-item--focus');
+    if(state==='disabled')it.classList.add('mn-item--disabled');
+    if(o.icon){const ic=ce('span','mn-ico');ic.innerHTML=(typeof o.icon==='string'?o.icon:ICON_HOUSE);it.appendChild(ic);}
+    const lb=ce('span','mn-label');lb.textContent=o.label||'選單項';it.appendChild(lb);
+    const ind=ce('span','mn-ind');it.appendChild(ind);
+    return it;
+  }
+  function mnBar(variant,size,o){
+    o=o||{};
+    const items=o.items||[];
+    const bar=ce('div','mn-bar mn-bar--'+variant);
+    bar.setAttribute('role','navigation');
+    let cur=(o.activeIndex==null?0:o.activeIndex);
+    const nodes=[];
+    items.forEach((label,i)=>{
+      const it=mnItem(i===cur?'active':'default',size,{label:label,icon:o.icon?MN_ICONS[i%MN_ICONS.length]:false});
+      if(i===cur)it.setAttribute('aria-current','page');
+      if(o.clickable!==false){it.onclick=()=>{cur=i;nodes.forEach((n,j)=>{const on=(j===i);n.classList.toggle('mn-item--active',on);if(on)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');});};}
+      nodes.push(it);bar.appendChild(it);
+    });
+    return bar;
+  }
+  LIVE.menu=(host)=>mountLive(host,{
+    initial:{variant:'horizontal',size:'m',icon:false},
+    segs:[{key:'variant',label:'Variant',options:['horizontal','vertical'],labels:['水平','垂直']},
+          {key:'size',label:'Size',options:['s','m','l']}],
+    bools:[{key:'icon',label:'with-icon 帶圖示'}],
+    boolLabel:'Feature',
+    render:st=>{const box=ce('div','mn-live-box');box.appendChild(mnBar(st.variant,st.size,{items:['總覽','訂單','顧客','設定'],activeIndex:1,icon:st.icon}));return box;},
+    note:'menu 是常駐容器；點項目即切換 active（aria-current=page 隨之移動），實際換頁行為由 app router 處理。'
+  });
+  function buildMenu(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Menu',title:'Menu 選單',
+      lede:'常駐式導航容器：<b>horizontal navbar</b> 橫向排列、<b>vertical sidebar</b> 直向排列，內含多個導航項；<b>active</b> 代表目前所在頁面（aria-current=page）。跟浮出動作的 action-menu、同層切換的 tab 不同。',
+      specRows:[['axes','<code>variant × state × size</code>'],['formula','<code>2 × 5 × 3 = 30</code>'],['token-policy','<code>semantic.*.menu.*</code>'],['features','with-icon / active-indicator']]});
+    const STN={default:['預設','default'],hover:['滑過','hover'],active:['當前頁','active'],disabled:['停用','disabled'],focus:['聚焦','focus']};
+    const SZN={s:['小','s'],m:['標準','m'],l:['大','l']};
+    const LBL={default:'總覽',hover:'訂單',active:'顧客',disabled:'設定',focus:'報表'};
+    const axes=DIAL_SPECS.menu.axes, zh=DIAL_SPECS.menu.zh, active=CHOICE.menu.active; // 接中央 store
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const sts=axes.state.filter(v=>active.state.has(v));
+      const szs=axes.size.filter(v=>active.size.has(v));
+      p.appendChild(matrixPanel({badge:'menu · item',name:'State × Size（單一導航項的 5 狀態 × 3 尺寸）',
+        rows:sts,cols:szs,
+        rowLab:s=>labHTML(STN[s][0],STN[s][1]),
+        colLab:z=>labHTML(SZN[z][0]+'尺寸',SZN[z][1]),
+        cell:(s,z)=>mnItem(s,z,{label:LBL[s],icon:false}),mincol:140})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'State × Size 矩陣','列＝五種狀態、欄＝三級尺寸；active 帶 --i-primary 文字與指示線，hover 為 --panel-2 底，focus 顯示 2px 焦點框，disabled 淡化。');
+    p=panelsIn(sec);renderM();
+    const os=section(body,'Orientation 方向','左：水平 navbar（頂部導航，active 底部 2px 指示線）；右：垂直 sidebar（側邊導航，active 左側指示條、各項帶 icon）。');
+    const orow=ce('div','mn-orient');
+    const c1=ce('div','mn-ocol');
+    const cap1=ce('div','mn-ocap');cap1.innerHTML='<b>horizontal navbar</b> · 水平';
+    c1.append(cap1,mnBar('horizontal','m',{items:['首頁','產品','定價','關於'],activeIndex:0}));
+    const c2=ce('div','mn-ocol');
+    const cap2=ce('div','mn-ocap');cap2.innerHTML='<b>vertical sidebar</b> · 垂直';
+    c2.append(cap2,mnBar('vertical','m',{items:['總覽','訂單','顧客','設定'],activeIndex:1,icon:true}));
+    orow.append(c1,c2);os.appendChild(orow);
+    const sl=section(body,'實際互動 Live','切 variant（水平／垂直）、尺寸，勾 with-icon；點任一項即切換 active（aria-current=page 隨之移動）。');
+    LIVE.menu(sl);
+  }
+
+  /* ==================== action-menu ==================== */
+/* ---- ACTION MENU 動作選單（builders 提升頂層，頁面與 summary Live 共用）---- */
+  const AM_IC_COPY='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>';
+  const AM_IC_SHARE='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M237.66,106.35l-80-80A8,8,0,0,0,144,32V72.35c-25.94,2.22-54.59,14.92-78.16,34.91-28.38,24.08-46.05,55.11-49.76,87.37a12,12,0,0,0,20.68,9.58c11-11.71,50.14-48.74,107.24-52V192a8,8,0,0,0,13.66,5.65l80-80A8,8,0,0,0,237.66,106.35Z"/></svg>';
+
+  /* 單一動作列：state = hover / focused / disabled；danger 為刪除類危險動作 */
+  function amItem(label,o){o=o||{};
+    const it=ce('div','am-item'+(o.state?' st-'+o.state:'')+(o.danger?' is-danger':''));
+    let h=''; if(o.icon)h+=o.icon; h+=`<span class="am-lb">${label}</span>`;
+    it.innerHTML=h; return it;
+  }
+  /* 浮出面板：variant 控制是否帶 icon / 分隔線；size 控制 min-width */
+  function amPanel(variant,size,o){
+    const items=(o&&o.items)||[];
+    const p=ce('div','am-panel sz-'+size);
+    items.forEach(it=>{
+      if(variant==='with-divider'&&it.divBefore)p.appendChild(ce('div','am-divider'));
+      const icon=(variant==='with-icon')?it.icon:null;
+      p.appendChild(amItem(it.label,{icon,state:it.state,danger:it.danger}));
+    });
+    return p;
+  }
+  /* 標準動作組：編輯／複製／分享／刪除(danger)。mode='matrix' 第二項 hover；mode='live' 第一項 focused */
+  function amItems(mode){
+    const base=[
+      {label:'編輯',icon:ICON_PENCIL},
+      {label:'複製',icon:AM_IC_COPY},
+      {label:'分享',icon:AM_IC_SHARE},
+      {label:'刪除',icon:ICON_CLOSE,danger:true,divBefore:true},
+    ];
+    if(mode==='matrix')base[1].state='hover';
+    if(mode==='live')base[0].state='focused';
+    return base;
+  }
+
+  LIVE['action-menu']=(host)=>mountLive(host,{
+    initial:{variant:'with-icon',size:'m',open:true},
+    segs:[
+      {key:'variant',label:'Variant',options:['default','with-icon','with-divider'],labels:['純文字','帶圖示','含分隔線']},
+      {key:'size',label:'Size',options:['s','m','l'],labels:['小 s','標準 m','大 l']},
+    ],
+    bools:[{key:'open',label:'open 展開'}],
+    boolLabel:'State',
+    render:st=>{
+      const wrap=ce('div','am-live-wrap');
+      const trig=ce('button','am-trigger'+(st.open?' is-open':''));
+      trig.innerHTML=`<span>動作</span><span class="am-tcaret">${ICON_CARET}</span>`;
+      wrap.appendChild(trig);
+      let panel=null;
+      function sync(){
+        if(st.open){ if(!panel){panel=amPanel(st.variant,st.size,{items:amItems('live')});wrap.appendChild(panel);} trig.classList.add('is-open'); }
+        else { if(panel){panel.remove();panel=null;} trig.classList.remove('is-open'); }
+      }
+      trig.onclick=()=>{st.open=!st.open;sync();};
+      sync(); return wrap;
+    },
+    note:'點「動作 ▾」切換展開／收合；切 Variant 看純文字／帶圖示／含分隔線，切 Size 看面板寬度。展開時第一項自動聚焦。'
+  });
+
+  function buildActionMenu(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Action Menu',title:'Action Menu 動作選單',
+      lede:'由 trigger（按鈕／右鍵）觸發浮出的<b>動作清單</b>：每一項代表一個要<b>執行的動作</b>（編輯／複製／刪除…），與 dropdown（選值）、menu（常駐導航）本質不同。三種 variant（<b>純文字 / 帶圖示 / 含分隔線</b>）× 五狀態 × 三尺寸。',
+      specRows:[['axes','<code>variant × state × size</code>'],['formula','<code>3 × 5 × 3 = 45</code>'],['token-policy','<code>semantic.*.menu.*</code>'],['features','icon / divider / danger-item']]});
+    const axes=DIAL_SPECS['action-menu'].axes, zh=DIAL_SPECS['action-menu'].zh, active=CHOICE['action-menu'].active; // 接中央 store
+    const VN={default:['純文字','default'],'with-icon':['帶圖示','with-icon'],'with-divider':['含分隔線','with-divider']};
+    const SZN={s:['小','s'],m:['標準','m'],l:['大','l']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.size.filter(v=>active.size.has(v));
+      p.appendChild(matrixPanel({badge:'state · open',name:'Variant × Size（展開面板；第二項示意 hover、刪除為 danger）',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(SZN[s][0]+'尺寸',SZN[s][1]),
+        cell:(v,s)=>amPanel(v,s,{items:amItems('matrix')}),mincol:180})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Size 矩陣','列＝三種 variant、欄＝三級尺寸；每格為展開狀態的動作面板（state 軸以「open 展開」呈現）。');
+    p=panelsIn(sec);renderM();
+    const is=section(body,'Item States 動作列狀態','單一動作列的五種狀態：預設、滑過、聚焦（open 時第一項）、停用、危險。');
+    const rd=ce('div','row-demo');rd.style.marginBottom='4px';
+    [['default 預設',()=>amItem('編輯',{icon:ICON_PENCIL})],
+     ['hover 滑過',()=>amItem('複製',{icon:AM_IC_COPY,state:'hover'})],
+     ['focused 聚焦',()=>amItem('分享',{icon:AM_IC_SHARE,state:'focused'})],
+     ['disabled 停用',()=>amItem('封存',{icon:AM_IC_COPY,state:'disabled'})],
+     ['danger 危險',()=>amItem('刪除',{icon:ICON_CLOSE,danger:true})]
+    ].forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
+    is.appendChild(rd);
+    const sl=section(body,'實際互動 Live','點 trigger 切換展開／收合、切 variant 與 size；展開時第一項自動聚焦。');
+    LIVE['action-menu'](sl);
+  }
+
+  /* ==================== breadcrumb ==================== */
+/* ---- BREADCRUMB 麵包屑（builders 提升頂層，頁面與 Live 共用）---- */
+  const bcChevron='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
+  function bcSep(kind){
+    const s=ce('span','bc-sep');
+    if(kind==='chevron')s.innerHTML=bcChevron;        // › 箭頭
+    else if(kind==='slash')s.textContent='/';          // 斜線
+    else s.textContent='→';                            // 箭頭
+    return s;
+  }
+  function bcItem(label,o){
+    o=o||{};
+    const cur=!!o.current;
+    const el=ce('span','bc-item'+(cur?' bc-current':(o.state==='hover'?' bc-hover':'')));
+    el.textContent=label;
+    if(cur)el.setAttribute('aria-current','page');     // 當前層不可點、標記 aria-current
+    return el;
+  }
+  function bcTrail(items,o){
+    o=o||{};
+    const sep=o.sep||'chevron';
+    const wrap=ce('div','bc-trail');
+    let seq;
+    if(o.collapsed && items.length>3){                 // 省略中段：保留首＋末兩層
+      seq=[{label:items[0]},{ellip:true},{label:items[items.length-2]},{label:items[items.length-1],current:true}];
+    }else{
+      seq=items.map((lb,i)=>({label:lb,current:i===items.length-1})); // 末項自動 current
+    }
+    seq.forEach((node,i)=>{
+      if(i>0)wrap.appendChild(bcSep(sep));
+      if(node.ellip){const e=ce('span','bc-ellip');e.textContent='…';wrap.appendChild(e);}
+      else wrap.appendChild(bcItem(node.label,{current:node.current}));
+    });
+    return wrap;
+  }
+  LIVE.breadcrumb=(host)=>mountLive(host,{
+    initial:{separator:'chevron',depth:'5',collapsed:false},
+    segs:[
+      {key:'separator',label:'Separator',options:['chevron','slash','arrow'],labels:['› 箭頭','/ 斜線','→ 箭頭']},
+      {key:'depth',label:'Depth',options:['3','5'],labels:['3 層','5 層']}
+    ],
+    bools:[{key:'collapsed',label:'collapsed 省略中段'}],
+    boolLabel:'Feature',
+    render:st=>{
+      const items3=['首頁','類別','某商品'];
+      const items5=['首頁','產品','類別','子類別','某商品'];
+      const box=ce('div','bc-live-box');
+      box.appendChild(bcTrail(st.depth==='5'?items5:items3,{sep:st.separator,collapsed:st.collapsed}));
+      return box;
+    },
+    note:'最後一層為 current（<b>aria-current=page</b>、粗體、不可點）；勾 collapsed 會把中段收成 …，僅保留首＋末兩層。'
+  });
+  function buildBreadcrumb(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Breadcrumb',title:'Breadcrumb 麵包屑',
+      lede:'顯示目前頁面在<b>階層結構</b>中的路徑導航；各層以分隔符相接，最後一項為 <b>current</b>（<code>aria-current=page</code>、粗體、不可點）。<br><span style="color:var(--faint)">註：L0 原生僅定義 <b>state</b>（default／hover／current），<b>尚未定義 breadcrumb 的 variant／size</b>。下方轉盤的「分隔符」軸為<b>陳列頁補充</b>，屬 gallery 端擴充、非 L0 規範。</span>',
+      specRows:[['axes','<code>separator（gallery 擴充）</code>'],['state','<code>default · hover · current</code>'],['token-policy','<code>semantic.*.breadcrumb.*</code>'],['features','collapsed 中段省略 / wrap 換行']]});
+    const axes=DIAL_SPECS.breadcrumb.axes, zh=DIAL_SPECS.breadcrumb.zh, active=CHOICE.breadcrumb.active; // 接中央 store
+    const SEPN={chevron:['箭頭','chevron ›'],slash:['斜線','slash /'],arrow:['箭頭','arrow →']};
+    const MODEN={std:['標準','standard'],collapse:['省略中段','collapsed']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const ss=axes.separator.filter(v=>active.separator.has(v));
+      p.appendChild(matrixPanel({badge:'gallery · separator',name:'Separator × 展開模式',
+        rows:ss,cols:['std','collapse'],
+        rowLab:sp=>labHTML(SEPN[sp][0],SEPN[sp][1]),
+        colLab:m=>labHTML(MODEN[m][0],MODEN[m][1]),
+        cell:(sp,m)=>bcTrail(['首頁','產品','類別','某商品'],{sep:sp,collapsed:m==='collapse'}),
+        mincol:200})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sts=section(body,'State 狀態','麵包屑單項的三種狀態：一般連結、滑過（hover）、當前層（current，不可點粗體）。');
+    const rd=ce('div','row-demo');
+    [['default link 一般連結',()=>bcItem('產品',{state:'default'})],
+     ['hover link 滑過',()=>bcItem('產品',{state:'hover'})],
+     ['current 當前層',()=>bcItem('某商品',{current:true})]
+    ].forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
+    sts.appendChild(rd);
+    const sec=section(body,'Separator × 展開模式矩陣','列＝三種分隔符、欄＝標準／省略中段；每列為一條完整麵包屑（末項自動 current）。');
+    p=panelsIn(sec);renderM();
+    const sl=section(body,'實際互動 Live','切換分隔符與層數（3／5 層）、勾選 collapsed 省略中段，即時預覽整條麵包屑。');
+    LIVE.breadcrumb(sl);
+  }
+
+  /* ==================== pagination ==================== */
+/* ---- PAGINATION 分頁器（builders 提升頂層，頁面與 summary Live 共用）---- */
+  const pgArrowL='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"/></svg>';
+  const pgArrowR='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L154.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
+  // 單顆頁碼／箭頭方鈕：state 控外觀、size 控邊長、current=當前頁高亮、arrow=left/right 放箭頭
+  function pgBtn(state,size,o){
+    const opt=o||{};
+    const b=document.createElement('button');
+    b.className='pg-btn pg-sz-'+size+' pg-st-'+state+(opt.current?' pg-cur':'')+(opt.arrow?' pg-arw':'');
+    if(state==='disabled')b.disabled=true;
+    if(opt.arrow==='left')b.innerHTML=pgArrowL;
+    else if(opt.arrow==='right')b.innerHTML=pgArrowR;
+    else b.textContent=opt.label;
+    return b;
+  }
+  // 完整分頁器：numbered=數字頁碼＋雙邊箭頭（gap>1 才插省略號）；prev-next=前後翻頁＋頁次資訊
+  function pgBar(variant,size,o){
+    const opt=o||{},total=opt.total,current=opt.current;
+    const bar=ce('div','pg-bar pg-bar-'+size);
+    if(variant==='prev-next'){
+      const prev=pgBtn(current<=1?'disabled':'default',size,{arrow:'left'});
+      const info=ce('span','pg-info');info.textContent='第 '+current+' / '+total+' 頁';
+      const next=pgBtn(current>=total?'disabled':'default',size,{arrow:'right'});
+      if(opt.onNav){if(current>1)prev.onclick=()=>opt.onNav(current-1);if(current<total)next.onclick=()=>opt.onNav(current+1);}
+      bar.append(prev,info,next);return bar;
+    }
+    // numbered：‹ 1 … (c-1)[c](c+1) … total ›
+    const prev=pgBtn(current<=1?'disabled':'default',size,{arrow:'left'});
+    if(opt.onNav&&current>1)prev.onclick=()=>opt.onNav(current-1);
+    bar.appendChild(prev);
+    const set=[]; [1,total,current-1,current,current+1].forEach(n=>{if(n>=1&&n<=total&&set.indexOf(n)<0)set.push(n);});
+    set.sort((a,b)=>a-b);
+    let last=0;
+    set.forEach(n=>{
+      if(last&&n-last>1){const e=ce('span','pg-ellip');e.textContent='…';bar.appendChild(e);}
+      const nb=pgBtn(n===current?'active':'default',size,{label:n,current:n===current});
+      if(opt.onNav&&n!==current)nb.onclick=()=>opt.onNav(n);
+      bar.appendChild(nb);last=n;
+    });
+    const next=pgBtn(current>=total?'disabled':'default',size,{arrow:'right'});
+    if(opt.onNav&&current<total)next.onclick=()=>opt.onNav(current+1);
+    bar.appendChild(next);return bar;
+  }
+  LIVE.pagination=(host)=>{
+    let cur=3; const total=10;                          // 當前頁次以 closure 保存，切 variant／size 不重置
+    return mountLive(host,{
+      initial:{variant:'numbered',size:'m'},
+      segs:[{key:'variant',label:'Variant',options:['numbered','prev-next'],labels:['數字','前後']},
+            {key:'size',label:'Size',options:['s','m','l']}],
+      render:st=>{
+        const box=ce('div','pg-live-box');
+        function draw(){box.innerHTML='';box.appendChild(pgBar(st.variant,st.size,{total,current:cur,onNav:n=>{cur=Math.max(1,Math.min(total,n));draw();}}));}
+        draw();return box;                              // 內部點擊改 cur 後只重繪自身，達成真實翻頁
+      },
+      note:'數字頁碼點頁碼或箭頭會真的移動當前頁；切 variant／size 後沿用目前頁次。'
+    });
+  };
+  function buildPagination(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Pagination',title:'Pagination 分頁器',
+      lede:'翻頁控制。兩種 <b>variant</b>：<b>numbered</b>（數字頁碼＋雙邊箭頭，超過門檻以 … 省略）與 <b>prev-next</b>（純前後翻頁＋頁次資訊）。狀態涵蓋 <b>default／hover／active（當前頁）／disabled</b>，尺寸 <b>s／m／l 三級</b>（2026 已移除 focus）。',
+      specRows:[['axes','<code>variant × state × size</code>'],['formula','<code>2 × 4 × 3 = 24</code>'],['token-policy','<code>semantic.*.pagination.*</code>'],['features','ellipsis / prev-next']]});
+    const axes=DIAL_SPECS.pagination.axes, zh=DIAL_SPECS.pagination.zh, active=CHOICE.pagination.active; // 接中央 store
+    const STN={default:['預設','default'],hover:['滑過','hover'],active:['當前頁','active'],disabled:['停用','disabled']};
+    const SZN={s:['小','s'],m:['標準','m'],l:['大','l']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const sts=axes.state.filter(v=>active.state.has(v));
+      const szs=axes.size.filter(v=>active.size.has(v));
+      p.appendChild(matrixPanel({badge:'page button',name:'State × Size（單顆頁碼方鈕）',
+        rows:sts,cols:szs,
+        rowLab:st=>labHTML(STN[st][0],STN[st][1]),
+        colLab:sz=>labHTML(SZN[sz][0]+'尺寸',SZN[sz][1]),
+        cell:(st,sz)=>pgBtn(st,sz,{label:3,current:st==='active'}),mincol:120})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'State × Size 矩陣','列＝四種狀態、欄＝三級尺寸；每格為單顆頁碼方鈕。當前頁（active）以主色填滿、停用降透明且不可點。');
+    p=panelsIn(sec);renderM();
+    const vs=section(body,'Variant 兩種風格','numbered＝數字頁碼＋雙邊箭頭，中段以 … 省略；prev-next＝純前後翻頁，首尾頁對應箭頭停用。');
+    const rd=ce('div','row-demo');rd.style.marginBottom='4px';
+    [['numbered 數字頁碼（total 10 · current 3）',()=>pgBar('numbered','m',{total:10,current:3})],
+     ['prev-next 前後翻頁（total 10 · current 3）',()=>pgBar('prev-next','m',{total:10,current:3})]
+    ].forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
+    vs.appendChild(rd);
+    const sl=section(body,'實際互動 Live','切 variant／尺寸；數字頁碼點頁碼或箭頭會真的翻頁，前後翻頁到首尾頁時箭頭自動停用。');
+    LIVE.pagination(sl);
+  }
+
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -1780,7 +2206,7 @@ function skelMedia(anim){
   const SUMSEL=new Set(Object.keys(DIAL_SPECS)); // 手動選取要產出的元件（預設全選、跨切頁持久）
   const RECOMMEND=['button','input','dropdown','checkbox','radio','tag']; // AI 建議＝已定案的元件
   let aiOn=false,aiSnapshot=null; // AI 建議 toggle 狀態＋開啟前的選擇快照
-  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',notification:'notification',tooltip:'tooltip',skeleton:'skeleton',loader:'loader'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
+  const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',notification:'notification',tooltip:'tooltip',skeleton:'skeleton',loader:'loader',menu:'menu','action-menu':'action-menu',breadcrumb:'breadcrumb',pagination:'pagination'}; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){
     const rep=choiceReport();
