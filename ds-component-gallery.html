@@ -850,10 +850,10 @@
 .im-rounded{border-radius:12px;}
 .im-circular{border-radius:50%;}
 /* 尺寸 size → 正方邊長 */
-.im-sz-s{width:64px;}
-.im-sz-m{width:96px;}
-.im-sz-l{width:140px;}
-.im-sz-xl{width:200px;}
+.im-sz-s{height:40px;}
+.im-sz-m{height:64px;}
+.im-sz-l{height:120px;}
+.im-sz-xl{height:240px;}
 /* 比例 ratio：改寫盒子長寬比（circular 不套、恆正方）*/
 .im-r-4x3{aspect-ratio:4/3;}
 .im-r-16x9{aspect-ratio:16/9;}
@@ -2482,7 +2482,7 @@ function skelMedia(anim){
   const IM_BROKEN='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></svg>';
   const IM_POOL=['photo-1506905925346-21bda4d32df4','photo-1470071459604-3b5ec3a7fe05','photo-1501785888041-af3ef285b470','photo-1426604966848-d7adac402bff','photo-1470770841072-f978cf4d019e','photo-1447752875215-b2761acb3c5d','photo-1472214103451-9374bd1c798e','photo-1433086966358-54859d0ed716']; // 已驗證 200 的 Unsplash 自然風景池（山湖／森林／瀑布／綠丘）
   const IM_CIRCLE='photo-1501785888041-af3ef285b470'; // circular 用構圖置中的風景（湖光山色）
-  const IM_SIZE={s:64,m:96,l:140,xl:200}; // size → 正方邊長（px）
+  const IM_SIZE={s:40,m:64,l:120,xl:240}; // size → 高度（px）；寬度由 aspect-ratio 依比例算
   /* 組出固定方形的 Unsplash URL；一律帶 &h 強制正方，配 object-fit:cover 填滿 */
   function imUrl(id,w){return `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`;} // 不鎖比例，裁切交給盒子 aspect-ratio + object-fit:cover
   /* Image atom：variant=rectangular|rounded|circular；state=default|loading|error；size=s|m|l|xl
@@ -2542,16 +2542,16 @@ function skelMedia(anim){
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'Shape × State 矩陣','三種形狀 × 三種狀態，尺寸固定 m。default 顯示真圖、loading 顯示 shimmer 骨架、error 顯示破圖 fallback。');
     p=panelsIn(sec);renderM();
-    const zs=section(body,'Size 尺寸軸','default 狀態、rounded 形狀，對照 s／m／l／xl 四級正方邊長。');
+    const zs=section(body,'Size 尺寸軸','default 狀態、rounded 形狀、1:1 比例，對照 s／m／l／xl 四級高度（40／64／120／240 px）；寬度＝高度×比例。');
     const rd=ce('div','row-demo');rd.style.marginBottom='16px';
-    [['s',64],['m',96],['l',140],['xl',200]].forEach(function(row){var sz=row[0],px=row[1];
+    [['s',40],['m',64],['l',120],['xl',240]].forEach(function(row){var sz=row[0],px=row[1];
       const it=ce('div','demo-item');it.appendChild(imEl('rounded','default',sz,{src:IM_POOL[3],alt:'示意圖'}));
       const c=ce('div','cap');c.innerHTML=`<b>size ${sz}</b><br>${px}×${px}`;it.appendChild(c);rd.appendChild(it);});
     zs.appendChild(rd);
-    const rs=section(body,'Ratio 長寬比','同一張風景照、固定大尺寸，對照 1:1／4:3／16:9／2:1 四種長寬比（object-fit:cover 自動裁切；circular 不受比例影響、恆正方）。');
+    const rs=section(body,'Ratio 長寬比','同一張風景照、固定高度（size l＝120px），寬度依比例伸縮，對照 1:1／4:3／16:9／2:1（object-fit:cover 自動裁切；circular 不受比例影響、恆正方）。');
     const rrow=ce('div','row-demo');rrow.style.marginBottom='16px';rrow.style.alignItems='flex-start';
     [['1:1','正方'],['4:3','標準'],['16:9','寬螢幕'],['2:1','橫幅']].forEach(function(row){var r=row[0],zhr=row[1];
-      const it=ce('div','demo-item');const el=imEl('rounded','default','xl',{src:IM_POOL[0],alt:'示意圖',ratio:r});el.style.width='240px';it.appendChild(el);
+      const it=ce('div','demo-item');const el=imEl('rounded','default','l',{src:IM_POOL[0],alt:'示意圖',ratio:r});it.appendChild(el);
       const c=ce('div','cap');c.innerHTML='<b>'+r+'</b><br>'+zhr;it.appendChild(c);rrow.appendChild(it);});
     rs.appendChild(rrow);
     const sl=section(body,'實際互動 Live','切形狀／狀態／尺寸即時預覽；circular 自動改用人像圖，切到 loading／error 看佔位與 fallback。');
