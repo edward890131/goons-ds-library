@@ -1404,7 +1404,8 @@
   /* 3) FAB 浮動主鈕：圓形（沿用 .btn v-solid i-primary，僅改圓角＋尺寸） */
   .flo-fabwrap{flex-direction:column;align-items:flex-end;gap:12px;}
   .flo-fab.btn{border-radius:999px;width:52px;height:52px;padding:0;box-shadow:0 10px 26px rgba(0,0,0,.24);}
-  .flo-fab.btn svg{width:24px;height:24px;}
+  .flo-fab.btn svg{width:24px;height:24px;transition:transform .2s ease;}
+  .flo-fab.is-open svg{transform:rotate(45deg);} /* 展開時＋旋轉成×，暗示可收合 */
   /* FAB 展開的子項：單顆白底膠囊按鈕（icon＋文字整顆可點）；白底＋外框＋陰影，明顯浮於灰底之上 */
   .flo-fab-child-btn.btn{align-self:flex-end;border-radius:999px;background:var(--panel);color:var(--ink);
     border:1px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.14);font-weight:600;}
@@ -1502,9 +1503,10 @@
   .prg-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:12px;}
   .prg-cap{font-size:13px;color:var(--muted);}
   .prg-pct{font-size:12px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;}
-  /* 粗（l）尺寸：標題與百分比字級一併放大 */
+  /* 標準（m）／粗（l）尺寸：百分比數字再放大（標題同步微調） */
+  .prg-sz-m .prg-pct{font-size:15px;}
   .prg-sz-l .prg-cap{font-size:15px;}
-  .prg-sz-l .prg-pct{font-size:14px;}
+  .prg-sz-l .prg-pct{font-size:19px;}
   .prg-track{width:100%;background:var(--panel-3);border-radius:999px;overflow:hidden;}
   .prg-sz-s .prg-track{height:4px;} .prg-sz-m .prg-track{height:8px;} .prg-sz-l .prg-track{height:12px;}
   .prg-fill{height:100%;border-radius:999px;transition:width .3s ease;}
@@ -1566,7 +1568,7 @@
       {id:'pagination',name:'Pagination 分頁器',st:'ready'},
       {id:'tag',name:'Tag 標籤',st:'ready'},
       {id:'icon',name:'Icon 圖示',st:'ready'},
-      {id:'price',name:'Price 價格',st:'ready'},
+      {id:'price',name:'Number 數值',st:'ready'},
       {id:'image',name:'Image 圖片',st:'ready'},
       {id:'notification',name:'Notification 通知',st:'ready'},
       {id:'tooltip',name:'Tooltip 提示',st:'ready'},
@@ -1675,7 +1677,7 @@
     icon:{label:'Icon 圖示',order:['size','tone'],
       axes:{size:['s','m','l','xl'],tone:['default','primary','secondary','danger']},
       zh:{axisName:{size:'Size 尺寸',tone:'Tone 色調'},size:{s:'16 s',m:'20 m',l:'24 l',xl:'32 xl'},tone:{default:'預設',primary:'主要',secondary:'次要',danger:'危險'}}},
-    price:{label:'Price 價格',order:['variant','size'],axes:{variant:['normal','discount','sale','free'],size:['sm','md','lg']},zh:{axisName:{variant:'Variant 型態',size:'Size 尺寸'},variant:{normal:'一般',discount:'折扣',sale:'特價',free:'免費'},size:{sm:'小 sm',md:'標準 md',lg:'大 lg'}}},
+    price:{label:'Number 數值',order:['variant','size'],axes:{variant:['normal','discount','sale','free'],size:['sm','md','lg']},zh:{axisName:{variant:'Variant 型態',size:'Size 尺寸'},variant:{normal:'一般',discount:'折扣',sale:'特價',free:'免費'},size:{sm:'小 sm',md:'標準 md',lg:'大 lg'}}},
     image:{label:'Image 圖片',order:['variant','state','size','ratio'],
       axes:{variant:['rectangular','rounded','circular'],state:['default','loading','error'],size:['s','m','l','xl'],ratio:['4:3','16:9','2:1','1:1']},
       zh:{axisName:{variant:'Shape 形狀',state:'State 狀態',size:'Size 尺寸',ratio:'Ratio 比例'},variant:{rectangular:'矩形',rounded:'圓角',circular:'圓形'},state:{default:'正常',loading:'載入中',error:'錯誤'},size:{s:'小 s',m:'中 m',l:'大 l',xl:'特大 xl'},ratio:{'4:3':'4:3','16:9':'16:9','2:1':'2:1','1:1':'1:1'}}},
@@ -3131,21 +3133,21 @@ function skelMedia(anim){
     }
     return el;
   }
-  /* metric 數值（dashboard KPI）：plain 純數字／delta 數字＋趨勢／unit 數字＋單位／label 標題＋數字
-     opts.trend='up'|'down'（僅 delta 用；up 綁 --ok 正向綠、down 綁 --i-danger，icon 重用 IC_TRENDING） */
-  function prMetricEl(mvariant,size,opts){opts=opts||{};
-    const el=ce('span','pr-metric pr-m-sz-'+size+' pr-m-'+mvariant);
-    if(mvariant==='plain'){
-      el.innerHTML='<span class="pr-numrow"><span class="pr-num">8,542</span></span>';
-    }else if(mvariant==='delta'){
-      const up=(opts.trend||'up')==='up';
-      el.setAttribute('aria-label',up?'8,542，較上期上升 12.5%':'8,542，較上期下降 3.2%'); // a11y：容器報讀升降語意，內部視覺元素 aria-hidden
-      el.innerHTML='<span class="pr-numrow"><span class="pr-num" aria-hidden="true">8,542</span><span class="pr-delta '+(up?'d-up':'d-down')+'" aria-hidden="true">'+IC_TRENDING+'<span>'+(up?'+12.5%':'-3.2%')+'</span></span></span>';
-    }else if(mvariant==='unit'){
-      el.innerHTML='<span class="pr-numrow"><span class="pr-num">82</span><span class="pr-unit">%</span></span>';
-    }else{ // label：上方小標題 + 下方大數字（幣別當 unit 前綴）
-      el.innerHTML='<span class="pr-mlabel">本月營收</span><span class="pr-numrow"><span class="pr-unit">NT$</span><span class="pr-num">4.3M</span></span>';
-    }
+  /* metric 數值（dashboard KPI）：可組合式——基底大數字，另可各自開關 標題／單位／趨勢
+     o.title=true 上方顯示標題、o.unit=true 數字後接單位、o.trend='up'|'down' 顯示趨勢 delta
+     （趨勢 up 綁 --ok 正向綠、down 綁 --i-danger，icon 重用 IC_TRENDING；三者彼此正交、可任意組合） */
+  function prMetricEl(size,o){o=o||{};
+    const el=ce('span','pr-metric pr-m-sz-'+size);
+    if(o.title){const t=ce('span','pr-mlabel');t.textContent='本月營收';el.appendChild(t);}
+    const row=ce('span','pr-numrow');
+    const num=ce('span','pr-num');num.textContent='8,542';row.appendChild(num);
+    if(o.unit){const u=ce('span','pr-unit');u.textContent='筆';row.appendChild(u);}
+    if(o.trend){const up=o.trend==='up';
+      const d=ce('span','pr-delta '+(up?'d-up':'d-down'));d.setAttribute('aria-hidden','true');
+      d.innerHTML=IC_TRENDING+'<span>'+(up?'+12.5%':'-3.2%')+'</span>';row.appendChild(d);}
+    el.appendChild(row);
+    if(o.trend){num.setAttribute('aria-hidden','true'); // a11y：容器報讀升降語意
+      el.setAttribute('aria-label','8,542'+(o.unit?' 筆':'')+'，較上期'+(o.trend==='up'?'上升 12.5%':'下降 3.2%'));}
     return el;
   }
   LIVE.price=(host)=>{
@@ -3158,20 +3160,21 @@ function skelMedia(anim){
       note:'價格 price：discount 用 &lt;s&gt; 包原價（螢幕報讀「原價 X、優惠價 Y」）；free 容器加 <code>aria-label=免費</code>。',
       free:()=>['normal','discount','sale','free'].map(v=>prEl(v,'md'))
     });
-    /* 第二段：數值 metric（dashboard KPI），獨立控制列避免與價格軸互相干擾 */
+    /* 第二段：數值 metric（dashboard KPI），獨立控制列避免與價格軸互相干擾；標題／單位／趨勢皆可各自開關 */
     mountLive(host,{
-      initial:{mvariant:'delta',trend:'up',size:'md'},
-      segs:[{key:'mvariant',label:'Metric',options:['plain','delta','unit','label'],labels:['純數字','趨勢','單位','標題']},
-            {key:'trend',label:'Trend',options:['up','down'],labels:['上升','下降']},
-            {key:'size',label:'Size',options:['sm','md','lg']}],
-      render:st=>{const box=ce('div','pr-live-box');box.appendChild(prMetricEl(st.mvariant,st.size,{trend:st.trend}));return box;},
-      note:'數值 metric：數字一律 <code>tabular-nums</code>；delta 上升綁 <code>--ok</code>、下降綁 <code>--i-danger</code>，趨勢 icon 重用 IC_TRENDING。',
-      free:()=>['plain','delta','unit','label'].map(v=>prMetricEl(v,'md',{trend:'up'})).concat([prMetricEl('delta','md',{trend:'down'})])
+      initial:{size:'md',trend:'up',showUnit:false,showTitle:false},
+      segs:[{key:'size',label:'Size',options:['sm','md','lg']},
+            {key:'trend',label:'Trend 趨勢',options:['none','up','down'],labels:['無','上升','下降']}],
+      bools:[{key:'showTitle',label:'標題 title'},{key:'showUnit',label:'單位 unit'}],
+      boolLabel:'顯示欄位',
+      render:st=>{const box=ce('div','pr-live-box');box.appendChild(prMetricEl(st.size,{trend:st.trend==='none'?null:st.trend,unit:st.showUnit,title:st.showTitle}));return box;},
+      note:'數值 metric：基底大數字（<code>tabular-nums</code>）；<b>標題／單位／趨勢</b>可各自開關組合——趨勢選「無」即隱藏，上升綁 <code>--ok</code>、下降綁 <code>--i-danger</code>（icon 重用 IC_TRENDING）。',
+      free:()=>[prMetricEl('md',{}),prMetricEl('md',{trend:'up'}),prMetricEl('md',{unit:true}),prMetricEl('md',{title:true}),prMetricEl('md',{title:true,unit:true,trend:'up'})]
     });
   };
   function buildPrice(view){
-    const body=viewScaffold(view,{eyebrow:'L3 Component · Price',title:'Price 價格',
-      lede:'商品／服務金額與 dashboard 數值顯示，分 <b>兩大類</b>：<b>價格 price</b> 4 型態（<b>normal 一般</b>、<b>discount 折扣</b>、<b>sale 特價</b>、<b>free 免費</b>）與 <b>數值 metric</b> 4 型態（<b>plain 純數字</b>、<b>delta 趨勢</b>、<b>unit 單位</b>、<b>label 標題</b>），共用 <b>3 尺寸</b>（<b>(4 + 4) × 3 = 24</b>）。discount 用 <code>&lt;s&gt;</code> 包原價、free 容器綁 <code>aria-label</code>；metric 數字一律 <code>tabular-nums</code>，delta 趨勢色走 <code>--ok</code>／<code>--i-danger</code>。',
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Number',title:'Number 數值',
+      lede:'各種數字呈現,分 <b>兩大類</b>:<b>價格 price</b> 4 型態(<b>normal 一般</b>、<b>discount 折扣</b>、<b>sale 特價</b>、<b>free 免費</b>)與 <b>儀表數值 metric</b>(dashboard KPI)——基底大數字,另可各自開關 <b>標題 title</b>／<b>單位 unit</b>／<b>趨勢 trend</b> 任意組合。共用 <b>3 尺寸</b>。discount 用 <code>&lt;s&gt;</code> 包原價、free 容器綁 <code>aria-label</code>;metric 數字一律 <code>tabular-nums</code>,趨勢色走 <code>--ok</code>／<code>--i-danger</code>。',
       specRows:[['axes','<code>kind(price | metric) × variant × size</code>'],['formula','<code>(4 + 4) × 3 = 24</code>'],['token-policy','<code>semantic.text.* / semantic.feedback.* / --ok / --i-danger</code>'],['a11y','<code>&lt;s&gt; 原價 · aria-label · delta 報讀升降</code>']]});
     const VZ={normal:['一般','normal'],discount:['折扣','discount'],sale:['特價','sale'],free:['免費','free']};
     const SZN={sm:['小','sm'],md:['標準','md'],lg:['大','lg']};
@@ -3206,15 +3209,16 @@ function skelMedia(anim){
     });
     cs.appendChild(grid);
     /* 數值 metric：dashboard KPI 靜態矩陣（不進 dial，避免動到既有 price 軸結構） */
-    const ms=section(body,'數值 Metric 儀表數字','dashboard KPI 數字呈現：plain 純數字／delta 數字＋趨勢／unit 數字＋單位／label 標題＋數字；尺寸沿用 sm／md／lg，數字一律 tabular-nums 對齊。delta 格並列展示上升（--ok 正向綠）／下降（--i-danger）兩態。');
-    const MZ={plain:['純數字','plain'],delta:['趨勢','delta'],unit:['單位','unit'],label:['標題','label']};
+    const ms=section(body,'數值 Metric 儀表數字','dashboard KPI 數字呈現：純數字／＋趨勢／＋單位／＋標題（下方各為單一欄位示意，實際可任意組合，見 Live）；尺寸沿用 sm／md／lg，數字一律 tabular-nums 對齊。趨勢格並列展示上升（--ok 正向綠）／下降（--i-danger）兩態。');
+    const MZ={plain:['純數字','plain'],delta:['＋趨勢','trend'],unit:['＋單位','unit'],label:['＋標題','title']};
+    const MFEAT={plain:{},unit:{unit:true},label:{title:true}}; // 各列對應的單一欄位開關
     const mp=panelsIn(ms);
-    mp.appendChild(matrixPanel({badge:'metric × size',name:'Metric × Size（4 型態 × 3 尺寸）',
+    mp.appendChild(matrixPanel({badge:'metric × size',name:'Metric × Size（欄位示意 × 3 尺寸；實際可任意組合）',
       rows:['plain','delta','unit','label'],cols:['sm','md','lg'],
       rowLab:v=>labHTML(MZ[v][0],MZ[v][1]),
       colLab:s=>labHTML(SZN[s][0]+'尺寸',SZN[s][1]),
-      cell:(v,s)=>{ if(v!=='delta')return prMetricEl(v,s);
-        const w=ce('div','pr-mstack');w.append(prMetricEl(v,s,{trend:'up'}),prMetricEl(v,s,{trend:'down'}));return w; },
+      cell:(v,s)=>{ if(v!=='delta')return prMetricEl(s,MFEAT[v]);
+        const w=ce('div','pr-mstack');w.append(prMetricEl(s,{trend:'up'}),prMetricEl(s,{trend:'down'}));return w; },
       mincol:170}));
     const sl=section(body,'實際互動 Live','上段切價格 variant／size、下段切數值 metric／trend／size，各自附 quick row 並排對照。');
     LIVE.price(sl);
@@ -4642,15 +4646,22 @@ function skelMedia(anim){
   /* 型態 3：FAB 浮動主鈕（accent 圓形＋＋圖示）；expanded=展開子項清單 */
   function floFab(o){o=o||{};
     const wrap=ce('div','flo-float flo-fabwrap');        // 直向堆疊：子項在上、主鈕在下
-    if(o.expanded){
-      // 子項＝單顆白底 library 按鈕（icon＋文字同在一顆、整顆可點），不再拆成「灰底文字 pill＋圓鈕」
+    const kids=[];
+    // 子項＝單顆白底 library 按鈕（icon＋文字同在一顆、整顆可點）；interactive 時先建好、預設隱藏，點主鈕再展開
+    if(o.expanded||o.interactive){
       FLO_FAB_CHILD.forEach(c=>{
         const b=floBtn('flo-fab-child-btn sz-m',c.label,c.icon);
-        wrap.appendChild(b);
+        if(o.interactive&&!o.expanded)b.style.display='none';
+        wrap.appendChild(b);kids.push(b);
       });
     }
-    const main=floBtn('v-solid i-primary flo-fab icon-only',null,FLO_ICON_PLUS);
+    const main=floBtn('v-solid i-primary flo-fab icon-only'+(o.interactive?' live':''),null,FLO_ICON_PLUS);
     main.setAttribute('aria-label','新增');
+    if(o.interactive){                                   // 點主鈕即時展開／收合子項（＋ 旋轉成 ×）
+      let open=!!o.expanded;
+      main.classList.toggle('is-open',open);main.setAttribute('aria-expanded',open);
+      main.onclick=()=>{open=!open;kids.forEach(k=>k.style.display=open?'':'none');main.classList.toggle('is-open',open);main.setAttribute('aria-expanded',open);};
+    }
     wrap.appendChild(main);
     return wrap;
   }
@@ -4724,11 +4735,11 @@ function skelMedia(anim){
       ],
       boolLabel:'Content',
       render:st=>{
-        // bools 依 variant 生效：selection 看 more、fab 看 expanded、toolbar 兩者皆略
-        const o={count:3,more:st.variant==='selection'&&st.more,expanded:st.variant==='fab'&&st.expanded,tall:true};
+        // bools 依 variant 生效：selection 看 more、fab 看 expanded（設初始展開狀態，仍可點主鈕切換）、toolbar 兩者皆略
+        const o={count:3,more:st.variant==='selection'&&st.more,expanded:st.variant==='fab'&&st.expanded,interactive:st.variant==='fab',tall:true};
         return floStage(st.variant,st.position,o);
       },
-      note:'浮動列以 <b>absolute</b> 疊在假內容區上：Position 決定落在<b>底部置中</b>或<b>底部靠右</b>。選取列勾「更多動作」多出匯出／封存；浮動鈕勾「展開子項」向上展開三顆小 FAB；工具列不受勾選影響。'
+      note:'浮動列以 <b>absolute</b> 疊在假內容區上：Position 決定落在<b>底部置中</b>或<b>底部靠右</b>。選取列勾「更多動作」多出匯出／封存；<b>浮動鈕可直接點主鈕展開／收合子項</b>（＋ 旋轉成 ×），「展開子項」勾選則設定初始狀態；工具列不受勾選影響。'
     });
   }
 
@@ -5114,8 +5125,12 @@ function skelMedia(anim){
 
   /* ===== 檢視切換 ===== */
   let current='summary';
+  /* URL hash 記住當前檢視：重新整理／深連結會停在原元件頁，不跳回匯出需求 */
+  function hashId(){const h=decodeURIComponent(location.hash.replace(/^#/,''));if(h==='summary')return 'summary';
+    const ids=NAV.flatMap(g=>g.items).map(x=>x.id);return ids.includes(h)?h:null;}
   function renderView(id){
     current=id;const view=document.getElementById('view');
+    if(hashId()!==id)location.hash=id; // 寫入 hash 供重整後還原
     const item=NAV.flatMap(g=>g.items).find(x=>x.id===id);
     if(id==='summary'){renderSummary(view);}
     else if(id==='button'){view.innerHTML=buttonViewHTML();renderSpecStrip();renderAxes();renderMatrix();renderSizes();renderBooleans();renderCount();renderLive();}
@@ -5128,7 +5143,8 @@ function skelMedia(anim){
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
     const pin=document.createElement('button');pin.className='nav-item nav-pin';pin.dataset.id='summary';pin.setAttribute('aria-current',current==='summary');
     pin.innerHTML=`<span>📋 匯出需求</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
-    NAV.forEach((g,gi)=>{const grp=document.createElement('div');grp.className='nav-group'+(gi>0?' collapsed':'');
+    NAV.forEach((g,gi)=>{const hasCur=g.items.some(it=>it.id===current); // 只展開「當前檢視所在」的群組，其餘（含 Basic）預設收合
+      const grp=document.createElement('div');grp.className='nav-group'+(hasCur?'':' collapsed');
       const head=document.createElement('button');head.className='gh';
       head.innerHTML=`<span class="gh-t">${g.emoji?g.emoji+' ':''}${g.group}</span><span class="gh-n">${g.items.length}</span><span class="gh-caret">${ICON_CARET}</span>`;
       head.onclick=()=>grp.classList.toggle('collapsed');
@@ -5149,5 +5165,8 @@ function skelMedia(anim){
     function set(t){document.documentElement.setAttribute('data-theme',t);knob.innerHTML=t==='dark'?MOON:SUN;}
     set('light');btn.onclick=()=>set(cur()==='dark'?'light':'dark');})();
 
-  renderNav();renderView('summary');
+  /* 重整／深連結：從 hash 還原檢視（無效或無 hash → summary），並讓側邊欄展開對應群組 */
+  current=hashId()||'summary';
+  renderNav();renderView(current);
+  window.addEventListener('hashchange',()=>{const id=hashId()||'summary';if(id!==current){current=id;renderNav();renderView(id);}});
 </script>

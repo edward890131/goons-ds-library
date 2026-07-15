@@ -541,3 +541,23 @@ List/List Item、Quantity、Progress 由主流程直接做；Drawer、Floating-l
 - 實際互動區寬度 300→**600px**（list 巢狀群組、list-item 單列、selection Live 一併）。
 
 **驗證**：node --check OK、Playwright 0 console error；RWD 390px 無橫向溢出、progress 漸層四色 render＋l 字級 15/14＋bar 50%＋滑桿在勾選右、floating 子項白底(255,255,255) pill、list 巢狀對齊差 0／寬 600。截圖：mobile 首頁、floating 展開、progress 矩陣、list 巢狀。
+
+---
+
+## 2026-07-15　Price→Number 改名＋metric 可組合 ＋ progress 字級 ＋ FAB 點擊展開 ＋ 檢視記憶
+
+**Price → Number 數值**
+- 頁面／nav／DIAL label 顯示改「Number 數值」（內部 id 仍 `price`、class 仍 `pr-*` 不動，避免連鎖破壞）；eyebrow → `L3 Component · Number`。umbrella 概念：price 與 metric 都是「數值」。
+- **儀表數值 metric 改可組合式**：`prMetricEl(size,o)`（原 `(mvariant,size,opts)` 四選一），基底大數字＋`o.title/o.unit/o.trend` 三者正交、可任意疊加。Live 控制改：Size seg＋Trend seg（無／上升／下降，「無」＝隱藏）＋顯示欄位 checkbox（標題／單位），三者皆可開關；矩陣改「單一欄位示意」列（純數字／＋趨勢／＋單位／＋標題）。
+
+**Progress — m／l 百分比數字放大**
+- `.prg-sz-m .prg-pct` 12→**15px**、`.prg-sz-l .prg-pct` 14→**19px**（s 維持 12）。
+
+**Floating-line — FAB Live 可點擊展開**
+- `floFab` 加 `o.interactive`：子項預建、預設隱藏，**點主鈕即時展開／收合**（＋ 旋轉 45° 成 ×，`.flo-fab.is-open svg`）。Live fab 一律 interactive，「展開子項」勾選改為設定初始狀態。
+
+**檢視記憶（重整不跳回匯出頁）＋ Basic 不預設展開**
+- 加 URL hash 路由：`renderView` 寫 `location.hash`、init 用 `hashId()` 還原（無效／無 hash → summary）、`hashchange` 監聽支援深連結／上一頁。
+- 側邊欄群組改「只展開當前檢視所在群組」（原本 `gi>0` 收合＝Basic 永遠展開）；summary 或其他群組時 Basic 收合。
+
+**驗證**：node --check OK、Playwright 0 console error。Number title/nav=「Number 數值」、metric 三欄位可同時出現（本月營收／8,542 筆／↗+12.5%）、Trend「無」→ 趨勢消失；progress pct s/m/l=12/15/19；FAB 點主鈕 0→3 子項＋is-open、再點→0；重整 #floating-line 停留原頁＋僅 Complex 展開、fresh 載入→summary＋四群全收合。截圖：Number metric 組合。
