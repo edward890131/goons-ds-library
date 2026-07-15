@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Design System Library</title>
 <style>
   :root{
@@ -1088,10 +1089,9 @@
   .lst-item.lst-sum.is-add,.lst-item.lst-sum.is-total{cursor:default;}
   .lst-title.w-strong{font-weight:700;}
   /* ---- 巢狀可展開列：子列內縮 ---- */
-  /* 巢狀子層：內縮的灰底圓角區塊（母列白底、子列灰底成一組）；
-     子列 padding-left 補足「母列 checkbox＋gap」寬度，讓子標題與母標題左緣對齊（母 title=14+16+12=42；子=margin12+pad30=42）*/
-  .lst-subwrap{background:var(--panel-2);border-radius:10px;margin:2px 12px 12px;overflow:hidden;}
-  .lst-subwrap .lst-item{padding-left:30px;}
+  /* 巢狀子層：整塊灰底圓角區塊「左側內縮 checkbox＋gap（cbx.sz-s 16＋gap12=28）」，
+     子列本身維持預設 padding-left:14；故子標題左緣＝28+14=42＝母標題（母 pad14＋cbx16＋gap12=42），內外標題對齊、灰底又明顯內縮 */
+  .lst-subwrap{background:var(--panel-2);border-radius:10px;margin:2px 12px 12px 28px;overflow:hidden;}
   .lst-subwrap .lst-item:hover:not(.is-disabled):not(.is-selected){background:var(--panel-3);}
   /* ---- 矩陣不適用格（error 為選項卡專屬） ---- */
   .lst-na{font-size:12px;color:var(--faint);padding:8px 0;}
@@ -1121,7 +1121,7 @@
   .lst-sel-grid{display:grid;grid-template-columns:repeat(2,minmax(240px,1fr));gap:14px;max-width:760px;}
   .lst-sel-cap{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);align-self:end;}
   .lst-sel-expdemo{margin-top:18px;max-width:420px;}
-  .lst-sel-live{display:flex;flex-direction:column;gap:12px;width:100%;max-width:460px;}
+  .lst-sel-live{display:flex;flex-direction:column;gap:12px;width:600px;max-width:100%;}
 
 /* ===== collapse (Complex) ===== */
 /* ==================== collapse 摺疊 / 手風琴 ==================== */
@@ -1405,12 +1405,12 @@
   .flo-fabwrap{flex-direction:column;align-items:flex-end;gap:12px;}
   .flo-fab.btn{border-radius:999px;width:52px;height:52px;padding:0;box-shadow:0 10px 26px rgba(0,0,0,.24);}
   .flo-fab.btn svg{width:24px;height:24px;}
-  /* FAB 展開的子項：小圓鈕 + 文字標籤膠囊 */
-  .flo-fab-child{display:flex;align-items:center;gap:10px;justify-content:flex-end;}
-  .flo-fab-lb{font-size:12px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line);
-    padding:4px 10px;border-radius:8px;box-shadow:0 3px 10px rgba(0,0,0,.12);white-space:nowrap;}
-  .flo-fab-mini.btn{border-radius:999px;width:40px;height:40px;padding:0;box-shadow:0 6px 16px rgba(0,0,0,.16);}
-  .flo-fab-mini.btn svg{width:20px;height:20px;}
+  /* FAB 展開的子項：單顆白底膠囊按鈕（icon＋文字整顆可點）；白底＋外框＋陰影，明顯浮於灰底之上 */
+  .flo-fab-child-btn.btn{align-self:flex-end;border-radius:999px;background:var(--panel);color:var(--ink);
+    border:1px solid var(--line);box-shadow:0 6px 16px rgba(0,0,0,.14);font-weight:600;}
+  .flo-fab-child-btn.btn:hover{background:var(--panel-2);border-color:var(--line-strong);}
+  .flo-fab-child-btn.btn:active{background:var(--panel-3);transform:translateY(1px);}
+  .flo-fab-child-btn.btn svg{color:var(--muted);}
 
   /* 型態細節區塊：三型態並排說明 */
   .flo-detail{display:flex;flex-wrap:wrap;gap:22px;}
@@ -1502,6 +1502,9 @@
   .prg-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:12px;}
   .prg-cap{font-size:13px;color:var(--muted);}
   .prg-pct{font-size:12px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;}
+  /* 粗（l）尺寸：標題與百分比字級一併放大 */
+  .prg-sz-l .prg-cap{font-size:15px;}
+  .prg-sz-l .prg-pct{font-size:14px;}
   .prg-track{width:100%;background:var(--panel-3);border-radius:999px;overflow:hidden;}
   .prg-sz-s .prg-track{height:4px;} .prg-sz-m .prg-track{height:8px;} .prg-sz-l .prg-track{height:12px;}
   .prg-fill{height:100%;border-radius:999px;transition:width .3s ease;}
@@ -1509,13 +1512,21 @@
   .prg-fill.i-success{background:var(--ok);}
   .prg-fill.i-warning{background:var(--warn);}
   .prg-fill.i-danger{background:var(--i-danger);}
-  .prg-fill.is-indet{width:40%;animation:prg-indet 1.2s ease-in-out infinite;}
-  @keyframes prg-indet{0%{margin-left:-40%;}100%{margin-left:100%;}}
+  /* 漸層填充：每種語意色各自 base→淺色的專屬漸層 */
+  .prg-fill.is-grad.i-primary{background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 42%,#fff));}
+  .prg-fill.is-grad.i-success{background:linear-gradient(90deg,var(--ok),color-mix(in srgb,var(--ok) 42%,#fff));}
+  .prg-fill.is-grad.i-warning{background:linear-gradient(90deg,var(--warn),color-mix(in srgb,var(--warn) 42%,#fff));}
+  .prg-fill.is-grad.i-danger{background:linear-gradient(90deg,var(--i-danger),color-mix(in srgb,var(--i-danger) 42%,#fff));}
   .prg-intentrow{display:flex;flex-direction:column;gap:16px;max-width:340px;}
   .prg-intentcell{display:flex;flex-direction:column;gap:6px;}
   .prg-intentcap{font-family:var(--font-mono);font-size:11px;color:var(--faint);}
-  .prg-live-box{display:flex;flex-direction:column;gap:16px;padding:24px 20px;max-width:360px;}
-  .prg-range{width:100%;accent-color:var(--accent);cursor:pointer;}
+  /* Live：進度條固定為互動區 50% 寬（stage 置中） */
+  .prg-live-box{width:50%;min-width:260px;}
+  .prg-live-box .prg{max-width:none;width:100%;}
+  /* 勾選項與滑桿同列，滑桿坐在勾選項右邊 */
+  .prg-checks{align-items:center;}
+  .prg-checks .prg-range{flex:1 1 180px;min-width:150px;}
+  .prg-range{accent-color:var(--accent);cursor:pointer;}
 </style>
 
 <div class="shell" id="shell">
@@ -1679,7 +1690,7 @@
     'floating-line':{label:'Floating Line 浮動列',order:['variant','position'],axes:{variant:['selection','toolbar','fab'],position:['bottom-center','bottom-right']},zh:{variant:{selection:'選取列',toolbar:'工具列',fab:'浮動鈕'},position:{'bottom-center':'底部置中','bottom-right':'底部靠右'},axisName:{variant:'Variant 型態',position:'Position 位置'}}},
     step:{label:'Step 步驟指示器',order:['orientation','variant'],axes:{orientation:['horizontal','vertical'],variant:['numbered','dotted','icon']},zh:{orientation:{horizontal:'水平',vertical:'垂直'},variant:{numbered:'編號',dotted:'圓點',icon:'圖示'},axisName:{orientation:'Orientation 方向',variant:'Variant 樣式'}}},
     quantity:{label:'Quantity 商品計數',order:['variant','size'],axes:{variant:['outline','pill','plain'],size:['s','m','l']},zh:{variant:{outline:'外框',pill:'膠囊',plain:'極簡'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
-    progress:{label:'Progress 進度條',order:['variant','size'],axes:{variant:['bar','label','indeterminate'],size:['s','m','l']},zh:{variant:{bar:'基本',label:'帶百分比',indeterminate:'不確定'},size:{s:'細 s',m:'標準 m',l:'粗 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}}
+    progress:{label:'Progress 進度條',order:['variant','size'],axes:{variant:['bar','label','gradient'],size:['s','m','l']},zh:{variant:{bar:'基本',label:'帶百分比',gradient:'漸層'},size:{s:'細 s',m:'標準 m',l:'粗 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}}
   
   };
   const CHOICE={};
@@ -3917,7 +3928,7 @@ function skelMedia(anim){
             else{row.classList.toggle('is-selected');}
           });
         }
-        const box=ce('div','lst-solo');box.style.width='300px';box.appendChild(row);return box; // Live 固定寬 300px
+        const box=ce('div','lst-solo');box.style.width='600px';box.style.maxWidth='100%';box.appendChild(row);return box; // Live 固定寬 600px
       },
       note:'每個開關都對應一個 slot：<b>Leading</b>（無／圖示／勾選框）、<b>Trailing</b> 可複選（tag／info／meta／金額／動作鈕／caret）。<b>hover</b> 滑鼠移上去即見、<b>disabled</b> 停用整列；點勾選框 leading 切換勾選並轉已選（已選僅淡藍底、無左側色條）。'
     });
@@ -3992,7 +4003,7 @@ function skelMedia(anim){
       render:st=>{const g=lstGroup([
         lstNested({title:'王小明',meta:'2 項',open:st.open,checked:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
         lstNested({title:'陳美華',meta:'2 項',open:st.open,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
-      ],{divider:st.divider});g.style.width='300px';return g;}, // Live 固定寬 300px
+      ],{divider:st.divider});g.style.width='600px';g.style.maxWidth='100%';return g;}, // Live 固定寬 600px
       note:'點母列展開／收合子列（子列為內縮灰底區塊），點左側勾選框只切換勾選。每個開關都對應樣式：<b>divider</b> 加分隔線、<b>預設展開子列</b> 切子列初始狀態。'
     });
     // 選項卡
@@ -4632,11 +4643,10 @@ function skelMedia(anim){
   function floFab(o){o=o||{};
     const wrap=ce('div','flo-float flo-fabwrap');        // 直向堆疊：子項在上、主鈕在下
     if(o.expanded){
+      // 子項＝單顆白底 library 按鈕（icon＋文字同在一顆、整顆可點），不再拆成「灰底文字 pill＋圓鈕」
       FLO_FAB_CHILD.forEach(c=>{
-        const row=ce('div','flo-fab-child');
-        const lb=ce('span','flo-fab-lb');lb.textContent=c.label;
-        const mini=floBtn('v-solid i-secondary flo-fab-mini icon-only',null,c.icon);
-        row.append(lb,mini);wrap.appendChild(row);
+        const b=floBtn('flo-fab-child-btn sz-m',c.label,c.icon);
+        wrap.appendChild(b);
       });
     }
     const main=floBtn('v-solid i-primary flo-fab icon-only',null,FLO_ICON_PLUS);
@@ -4926,33 +4936,35 @@ function skelMedia(anim){
   }
 
   /* ==================== Progress 進度條 ==================== */
-  /* 進度條：variant（bar 基本／label 帶百分比／indeterminate 不確定）× size（細/標準/粗）；o.value 0–100、o.intent 語意色 */
+  /* 進度條：variant（bar 基本／label 帶百分比／gradient 漸層）× size（細/標準/粗）；o.value 0–100、o.intent 語意色
+     label／gradient 亦可用 o.label / o.gradient 旗標獨立疊加（Live 用），彼此正交 */
   function prgEl(variant,size,o){
     o=o||{};
     const intent=o.intent||'primary';
     const val=(o.value!=null)?o.value:60;
+    const showLabel=(o.label!=null)?o.label:(variant==='label');
+    const gradient=(o.gradient!=null)?o.gradient:(variant==='gradient');
     const wrap=ce('div','prg prg-sz-'+size);
     wrap.setAttribute('role','progressbar');
-    if(variant!=='indeterminate'){wrap.setAttribute('aria-valuenow',val);wrap.setAttribute('aria-valuemin','0');wrap.setAttribute('aria-valuemax','100');}
-    if(variant==='label'){
+    wrap.setAttribute('aria-valuenow',val);wrap.setAttribute('aria-valuemin','0');wrap.setAttribute('aria-valuemax','100');
+    if(showLabel){
       const lab=ce('div','prg-label');
       const t=ce('span','prg-cap');t.textContent=o.cap||'上傳進度';
       const pct=ce('span','prg-pct');pct.textContent=val+'%';
       lab.append(t,pct);wrap.appendChild(lab);
     }
     const track=ce('div','prg-track');
-    const fill=ce('div','prg-fill i-'+intent);
-    if(variant==='indeterminate')fill.classList.add('is-indet');
-    else fill.style.width=val+'%';
+    const fill=ce('div','prg-fill i-'+intent+(gradient?' is-grad':''));
+    fill.style.width=val+'%';
     track.appendChild(fill);wrap.appendChild(track);
     return wrap;
   }
   function buildProgress(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Progress',title:'Progress 進度條',
-      lede:'線性<b>進度指示</b>：track 底軌 ＋ fill 填充（依 value 0–100% 撐開）。三種 variant（<b>基本</b>／<b>帶百分比</b>／<b>不確定</b> animated）× 三尺寸（細／標準／粗）。語意色 primary／success／warning／danger 綁 semantic token。',
+      lede:'線性<b>進度指示</b>：track 底軌 ＋ fill 填充（依 value 0–100% 撐開）。三種 variant（<b>基本</b>／<b>帶百分比</b>／<b>漸層</b>）× 三尺寸（細／標準／粗）。語意色 primary／success／warning／danger 綁 semantic token；漸層版每種語意色各有對應的深淺漸層。',
       specRows:[['axes','<code>variant × size</code>'],['formula','<code>3 × 3 = 9</code>'],['token-policy','<code>--accent / --ok / --warn / --i-danger</code>'],['a11y','<code>role=progressbar</code>']]});
     const axes=DIAL_SPECS.progress.axes, zh=DIAL_SPECS.progress.zh, active=CHOICE.progress.active;
-    const VN={bar:['基本','bar'],label:['帶百分比','label'],indeterminate:['不確定','indeterminate']};
+    const VN={bar:['基本','bar'],label:['帶百分比','label'],gradient:['漸層','gradient']};
     const SZN={s:['細','s'],m:['標準','m'],l:['粗','l']};
     let p;
     function renderM(){ if(!p)return; p.innerHTML='';
@@ -4964,7 +4976,7 @@ function skelMedia(anim){
         colLab:s=>labHTML(SZN[s][0],SZN[s][1]),
         cell:(v,s)=>prgEl(v,s,{value:60}),mincol:210})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Variant × Size 矩陣','列＝三型態、欄＝三尺寸；基本＝純填充、帶百分比＝上方標題＋%、不確定＝無定值的循環動畫。');
+    const sec=section(body,'Variant × Size 矩陣','列＝三型態、欄＝三尺寸；基本＝純填充、帶百分比＝上方標題＋%、漸層＝填充帶深淺漸層。粗（l）尺寸標題與百分比字級一併放大。');
     p=panelsIn(sec);renderM();
     const cs=section(body,'語意色 Intent','進度色依情境語意：primary 一般／success 完成／warning 注意／danger 錯誤，全綁 semantic token。');
     const crow=ce('div','prg-intentrow');
@@ -4975,26 +4987,40 @@ function skelMedia(anim){
       crow.appendChild(cell);
     });
     cs.appendChild(crow);
-    const sl=section(body,'實際互動 Live','拖動下方滑桿調整進度，切 size／intent、勾 label（標題＋%）／indeterminate（無定值循環動畫）。');
-    mountLive(sl,{
-      initial:{size:'m',intent:'primary',label:true,indeterminate:false,value:60},
-      segs:[{key:'size',label:'Size',options:['s','m','l']},
-            {key:'intent',label:'Intent',options:['primary','success','warning','danger'],labels:['一般','完成','注意','錯誤']}],
-      bools:[{key:'label',label:'label 標題＋%'},{key:'indeterminate',label:'indeterminate 不確定'}],
-      boolLabel:'Content',
-      render:st=>{
-        const box=ce('div','prg-live-box');
-        const variant=st.indeterminate?'indeterminate':(st.label?'label':'bar');
-        box.appendChild(prgEl(variant,st.size,{value:st.value,intent:st.intent,cap:'上傳進度'}));
-        if(!st.indeterminate){
-          const rng=document.createElement('input');rng.type='range';rng.min=0;rng.max=100;rng.value=st.value;rng.className='prg-range';
-          rng.oninput=()=>{st.value=+rng.value;const fill=box.querySelector('.prg-fill');if(fill)fill.style.width=rng.value+'%';const pct=box.querySelector('.prg-pct');if(pct)pct.textContent=rng.value+'%';const pb=box.querySelector('.prg');if(pb)pb.setAttribute('aria-valuenow',rng.value);};
-          box.appendChild(rng);
-        }
-        return box;
-      },
-      note:'value 0–100 由下方滑桿控制；勾 indeterminate 改跑循環動畫（無定值）、滑桿隱藏。intent 切換填充語意色。'
-    });
+    const sl=section(body,'實際互動 Live','切 size／intent，勾 label（標題＋%）／gradient（漸層填充）；滑桿就在勾選項右側即時調整進度。進度條長度為區域的 50%。');
+    // 自訂 Live（非 mountLive）：滑桿要跟勾選項同列，故手刻控制列＝seg×2 ＋（勾選項＋滑桿同一 ctl）
+    const st={size:'m',intent:'primary',label:true,gradient:false,value:60};
+    const wrap=ce('div','livewrap');
+    const ctlRow=ce('div','ctl-row');
+    const stage=ce('div','live-stage');
+    function draw(){stage.innerHTML='';const box=ce('div','prg-live-box');
+      box.appendChild(prgEl('bar',st.size,{value:st.value,intent:st.intent,label:st.label,gradient:st.gradient,cap:'上傳進度'}));
+      stage.appendChild(box);}
+    // seg 控制（比照 mountLive 樣式）
+    function prgSeg(key,label,opts,labels){
+      const c=ce('div','ctl');c.innerHTML=`<span class="lab">${label}</span>`;
+      const seg=ce('div','seg');
+      opts.forEach((o,i)=>{const b=document.createElement('button');b.textContent=labels?labels[i]:o;
+        b.setAttribute('aria-pressed',st[key]===o);
+        b.onclick=()=>{st[key]=o;[...seg.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');draw();};
+        seg.appendChild(b);});
+      c.appendChild(seg);return c;}
+    ctlRow.appendChild(prgSeg('size','Size',['s','m','l']));
+    ctlRow.appendChild(prgSeg('intent','Intent',['primary','success','warning','danger'],['一般','完成','注意','錯誤']));
+    // 勾選項 ＋ 滑桿同一組（滑桿坐在勾選項右邊）
+    const cc=ce('div','ctl');cc.innerHTML='<span class="lab">Content</span>';
+    const checks=ce('div','checks prg-checks');
+    [['label','label 標題＋%'],['gradient','gradient 漸層']].forEach(([k,lb])=>{
+      const l=ce('label','chk');const i=document.createElement('input');i.type='checkbox';i.checked=!!st[k];
+      i.onchange=()=>{st[k]=i.checked;draw();};l.append(i,document.createTextNode(lb));checks.appendChild(l);});
+    const rng=document.createElement('input');rng.type='range';rng.min=0;rng.max=100;rng.value=st.value;rng.className='prg-range';
+    rng.oninput=()=>{st.value=+rng.value;const fill=stage.querySelector('.prg-fill');if(fill)fill.style.width=rng.value+'%';const pct=stage.querySelector('.prg-pct');if(pct)pct.textContent=rng.value+'%';const pb=stage.querySelector('.prg');if(pb)pb.setAttribute('aria-valuenow',rng.value);};
+    checks.appendChild(rng);
+    cc.appendChild(checks);ctlRow.appendChild(cc);
+    wrap.appendChild(ctlRow);wrap.appendChild(stage);
+    const note=ce('p','live-note');note.innerHTML='value 0–100 由勾選項右側滑桿控制；<b>label</b> 顯示標題＋%、<b>gradient</b> 換漸層填充（隨 intent 變色）、<b>intent</b> 切換語意色。進度條寬度固定為互動區的 50%。';
+    wrap.appendChild(note);
+    sl.appendChild(wrap);draw();
   }
 
   const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep,quantity:buildQuantity,progress:buildProgress};

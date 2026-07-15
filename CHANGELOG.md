@@ -515,3 +515,29 @@ List/List Item、Quantity、Progress 由主流程直接做；Drawer、Floating-l
 
 **註冊**：NAV／DIAL_SPECS／BUILD／DIAL_PAGE 加 quantity、progress；Complex 群 10→**12**。
 **驗證**：node --check OK、Playwright 0 console error；list 寬 300／巢狀對齊差 0、drawer 分隔線 298/300、floating-line selection 10px flex、quantity 用 .btn 原子、progress success 綠(46,158,107)＋四色語意；quantity／progress／floating-line 截圖確認。
+
+---
+
+## 2026-07-15　RWD 修正 ＋ Floating-line/Progress/List 再修
+
+手機開網址顯示電腦版縮放、floating 子項灰底不明顯、progress 缺漸層、list 巢狀仍未內縮 → 一次修。全部由主流程直接做（無 agent）。
+
+**RWD（全域）**
+- 根因：`<head>` 缺 `<meta name="viewport">`，手機 Safari 以 ~980px 桌面寬渲染 → `@media(max-width:900px)` 從不觸發，看到的是桌面版縮放。
+- 修法：補 `<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">`。既有響應式殼（漢堡＋抽屜側欄＋scrim＋窄螢幕自動收）本就完整，加一行即生效。
+- 驗證：390px 下 `docScrollW==viewportW`（無橫向捲）、漢堡 display:flex、側欄 translateX(-300) 收起；progress／list／匯出頁橫向溢出皆 0。
+
+**Floating-line — FAB 展開子項**
+- 「勾選坐進按鈕點擊」＋「白底 library 樣式」：原本「灰底文字 pill ＋ 圓形 mini 鈕」兩件拆開 → 合成**單顆白底膠囊按鈕**（icon＋文字整顆可點，`.flo-fab-child-btn`）。白底＋1px 外框＋陰影，明顯浮於灰底。移除 `.flo-fab-lb`／`.flo-fab-mini`。
+
+**Progress**
+- **移除 indeterminate**（不確定循環動畫）variant 與相關 CSS/keyframes。
+- **新增 gradient 漸層** variant：每語意色各自 `base→淺色` 專屬漸層（`color-mix`），矩陣一列、Live 一個勾選項；prgEl 重構成 label／gradient 可用旗標獨立疊加。
+- **粗(l) 尺寸**標題與百分比字級一併放大（cap 13→15、pct 12→14）。
+- **Live 進度條寬度固定為互動區 50%**（實測 452/903＝0.50）；**滑桿移到勾選項右側**同一列（改自訂 Live 手刻控制列，非 mountLive）。
+
+**List／List Item**
+- 巢狀**再修內縮**：改由**整塊灰底 `.lst-subwrap` margin-left:28px**（＝母列 checkbox.sz-s 16＋gap 12）內縮，子列還原預設 padding；子標題左緣＝28+14=42＝母標題（pad14＋cbx16＋gap12），**實測對齊差 0**、灰底又明顯內縮。（先前假設 checkbox 20px 算成 32→差 4px，改 28 修正。）
+- 實際互動區寬度 300→**600px**（list 巢狀群組、list-item 單列、selection Live 一併）。
+
+**驗證**：node --check OK、Playwright 0 console error；RWD 390px 無橫向溢出、progress 漸層四色 render＋l 字級 15/14＋bar 50%＋滑桿在勾選右、floating 子項白底(255,255,255) pill、list 巢狀對齊差 0／寬 600。截圖：mobile 首頁、floating 展開、progress 矩陣、list 巢狀。
