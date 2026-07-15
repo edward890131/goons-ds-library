@@ -326,3 +326,20 @@ Yuu 發現 price 的 SALE 是價格 agent 自製的 `.pr-badge`（沒用 DS Tag 
 - 尺寸類 class（sz-s/m/l）跨元件共用會撞（按鈕 padding 洩漏到 checkbox）→ 命名或在 base 重置 padding/box-sizing。
 - **頂層 `const` 陣列/物件引用「定義在更後面」的 `const` 會 TDZ 崩整份 script**：icon 的 `const IC_LIBRARY=[...ICON_SPARK...]` 在載入時求值，但 `ICON_SPARK`（給 summary 用、定義在檔案較後）當下還在 TDZ → `ReferenceError: Cannot access 'ICON_SPARK' before initialization`，整個 `<script>` 中斷。平行產碼的元件被「插在 BUILD 前」，很容易跨過某些後定義的常數。修法：把這種 top-level 資料改成**延遲函式**（`function icLibrary(){return [...]}`，render 時才求值），或確保被引用的常數定義在前。整合後**務必開 console 看有沒有 error**（node --check 抓不到 TDZ，只有執行時才爆）。
 - **`flex-direction:column` 的高瘦卡片巢在別的 flex/grid 容器內，auto min-height 會被算成單列高、內容溢出**（實測 action-menu 面板 `offsetHeight=32/40` 但 `scrollHeight=151`）。`align-self`／`flex:none`／改父層 `align-items`／改順流 都無效，**只有撐 `min-height:max-content` 有效**。此坑**會同時出現在矩陣（`.mcell` 內）與 Live（`.am-live-wrap` flex 容器內）兩處** —— 一開始只 scoped `.mcell` 修矩陣，Live 仍壞；正解是把 `min-height:max-content` 加在 **base `.am-panel`**（一次涵蓋所有掛載位置）。凡「容器裡放 flex-column 卡片」的元件都要在該卡片 base 補這行。（另：Live 的浮出面板也從 `position:absolute` 改順流排在 trigger 下方，框才會跟著長高、開合時 stage 130↔295 伸縮。）
+
+## 2026-07-15　Complex 群序上移 + Complex 9 顆全數建置（平行 agent）
+
+- **群序調整**：把 **Complex 移到 Card 之上** → 側邊欄群序＝**Basic → Complex → Card → Table & Chart**（積木 → 結構/覆蓋 → 內容卡 → 資料）。
+- **Complex 9 顆一次建完**（開 9 個並行 agent、各回傳 namespace 過的 `buildXxx`＋CSS＋store 片段，主控端序列整合）：
+  - **header**（`hdr-`）：layout(logo-nav/logo-search/centered) × density(comfortable/compact)＝3×2。矩陣每格一整條頁首 bar（logo＋導覽/搜尋＋登入 CTA＋鈴鐺＋頭像）、行動版收合列、Live。自訂 icon `HDR_IC_BELL/LIST`。
+  - **footer**（`ftr-`）：variant(rich/simple/minimal)，勾選幾個就渲染幾段完整頁尾。rich＝品牌＋4 欄連結＋電子報訂閱＋社群＋語言 pill。自訂 6 社群/品牌 icon。Live。
+  - **section-head**（`sch-`）：align(left/center) × size(m/l)。矩陣＋5 種內容組合（eyebrow/計數 badge/分隔線/filter 群/麵包屑 eyebrow）＋Live。重用 Button/Tag/ICON_ARROW，無自訂 icon。
+  - **list**（`lst-`）：variant(simple/detailed/avatar) × state(default/hover/selected/disabled)。矩陣＋整組列表（可多選＋分隔線＋動作鈕）＋Live。重用 `.cbx`/Button/ICON_*。自訂 `LST_IC_CHEVRON`。
+  - **collapse**（`cps-`）：variant(bordered/filled/plain) × state(collapsed/expanded/hover/disabled)。矩陣＋真互動手風琴（單開）＋Live（multiple 切多開）。caret 用 ICON_CARET rotate 180。自訂 `CPS_ICON_QUESTION`。
+  - **modal**（`mdl-`）：variant(dialog/confirm/form) × size(s/m/l)。矩陣（縮小靜態卡）＋浮層結構示意＋Live（**overlay `position:absolute` 限縮在 stage 內、不遮全頁**，× / 取消 / 點遮罩可關）。重用 Button（含 i-danger 刪除）/field。自訂 `MDL_ICON_WARNING`。
+  - **drawer**（`drw-`）：side(left/right) × size(s/m/l)。矩陣（裝置框內滑入抽屜＋backdrop）＋內容結構＋Live（stage 內滑入動畫、close/backdrop 可關）。backdrop 用 `color-mix` 從 token 混。無自訂 icon。
+  - **floating-line**（`flo-`）：variant(selection/toolbar/fab) × position(bottom-center/bottom-right)。矩陣（假內容區浮動列）＋型態細節＋Live。selection pill 用 `--ink`底/`--canvas`字（自動反相）。自訂 `FLO_ICON_PLUS/TRASH`。
+  - **step**（`stp-`）：orientation(horizontal/vertical) × variant(numbered/dotted/icon)。矩陣（4 步混合狀態 stepper）＋單一 step 狀態列（done/current/todo/error/disabled）＋Live（上一步/下一步互動）。自訂 `STP_ICON_WARN`。
+- **驗證**：整合後 `node --check` 過；Playwright 逐頁 `renderView` 9 頁全渲染、**0 console error**；匯出總覽頁 27 卡（18 舊＋9 新）正常；modal Live overlay 實測 `position:absolute` 限縮 stage、側邊欄仍可見。
+- **NAV 狀態**：9 顆全設 `st:'ready'`。**Complex 群 9/9 建置完成**。
+- **整合手法沿用**：9 agent 各寫 7 個分離純文字檔（css/icons.js/build.js/dialspec/dialpage/buildmap/live）避開 JSON escape；主控端用 `integrate.js` 依 8 個錨點序列插入（CSS 進 `</style>` 前、buildFn 進 `const BUILD=` 前、dialspec 進 DIAL_SPECS、dialpage/buildmap/NAV ready flag）。事前掃描跨檔命名衝突＋未定義 token（皆 0）。
