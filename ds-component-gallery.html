@@ -914,6 +914,8 @@
   .hdr-cap{font-family:var(--font-mono);font-size:11px;color:var(--faint);letter-spacing:.05em;}
   .hdr-cap b{color:var(--muted);font-weight:600;}
   .hdr-live-box{width:100%;}
+  /* 行動版以 375px 手機框示意 */
+  .hdr-phone{max-width:375px;width:100%;}
 
 /* ===== footer (Complex) ===== */
 /* ==================== FOOTER 頁尾 ==================== */
@@ -958,7 +960,7 @@
   .ftr-minirow .ftr-copy{margin-right:4px;}
   .ftr-mininav{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 18px;}
   /* 行動版：限寬手機框，內容單欄堆疊（container-based，不靠 viewport media query）*/
-  .ftr-phone{max-width:390px;width:100%;}
+  .ftr-phone{max-width:375px;width:100%;}
   .ftr-foot.ftr-mobile{padding:24px 20px 18px;}
   .ftr-mobile .ftr-main{flex-direction:column;gap:26px;}
   .ftr-mobile .ftr-brand{max-width:none;}
@@ -3124,7 +3126,7 @@ function skelMedia(anim){
       bar.appendChild(hdrLogo());
       bar.appendChild(ce('div','hdr-spacer'));
       bar.appendChild(hdrActions({bell:o.bell,avatar:o.avatar,login:o.login,badge:o.badge}));
-      return bar;
+      const frame=ce('div','hdr-phone');frame.appendChild(bar);return frame; // 行動版以 375px 手機框示意
     }
     bar.appendChild(hdrLogo());
     if(o.nav!==false)bar.appendChild(hdrNav());
