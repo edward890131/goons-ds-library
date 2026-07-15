@@ -377,3 +377,11 @@ Yuu 檢查 Button 發現兩缺口：
 - CSS 移除自製的 `.hdr-avatar{background/color/...}` 與 `:hover` ring，只留 `.hdr-avatar.btn{border-radius:50%}` 把 32px 方鈕覆蓋成圓形；底色/文字色/尺寸/hover 全部繼承 Button v-soft（`--tint`/`--fg`，hover→`--tint2`）。
 - 掃描確認：其餘 tint 背景（menu active、list selected、tab/toggle on、action-menu focus 等）都是**元件內部狀態色**、非獨立 soft 按鈕，維持原樣不動；複合元件內沒有其他自製 soft 鈕。
 - 驗證：`node --check` 過、Playwright 0 console error；avatar tag=BUTTON、class 含 `btn v-soft`、圓形 radius 50%、bg=`rgba(51,88,212,.1)`、hover→`rgba(51,88,212,.2)`、文字「楊」，外觀與改前一致但多了真實 hover。
+
+## 2026-07-15　統一 gear icon：舊 ICON_GEAR → 新版 settings（IC_SETTINGS）
+
+Yuu 發現 tab／menu 等元件仍用「已移除的舊 gear」。查出檔內有兩顆 gear：舊 `ICON_GEAR`（line 1983，被 6 顆元件共用）與 icon library 重建後的新版 `IC_SETTINGS`（Phosphor regular，兩者 path 微異，`107.6`→`107.21`）。
+- **做法**：把 `ICON_GEAR` 的 svg 內容替換成 `IC_SETTINGS` 的 glyph（保留 const 名，單一 literal 替換）。**不直接 `const ICON_GEAR=IC_SETTINGS`**，因 `TAB_ICONS`／`MN_ICONS` 等 top-level const 在 IC_SETTINGS 定義之前求值、會 TDZ。改一處即讓所有共用處同步。
+- **波及並全部更新**：tab（TAB_ICONS）、menu（MN_ICONS）、list（LST_LEAD_ICONS＋動作鈕）、drawer（DRW_NAV「系統設定」）、floating-line（FLO_TOOLS）、step（STP_ICONS＋「完成設定」）共 6 顆。
+- **驗證**：`node --check` 過；`ICON_GEAR===IC_SETTINGS` glyph；Playwright renderView 6 顆全渲染新版 gear（尾段特徵 `199.87` 有、舊 `199.9` 無）、0 console error。
+- **新規則 memory**：`feedback_ds_crosscomponent_confirm` — 改動會牽動其他元件/頁面時，先回報波及清單並問 Yuu 要不要一併統一調整。
