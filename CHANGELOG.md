@@ -486,3 +486,7 @@ List Item／List 由主流程直接改；Collapse／Modal／Drawer 開 3 個 fab
 ## 2026-07-15　Modal popup 按鈕排列改四選一
 
 依 Yuu：popup footer 按鈕排列從「並排／垂直」二選一，擴為 **並排／垂直／單顆主按鈕／單顆次按鈕** 四選一（`mdlPopFoot` 的 `lay.arrange`：row／stack／primary／secondary；單顆走 `.stack` 全寬）。矩陣 popup 欄向、Live「按鈕排列」seg、mdlCard 參數（`stack`→`arrange`）同步。文字按鈕仍為獨立 boolean。驗證：`node --check` OK、Playwright 逐一切換確認 並排=次+主、垂直=主/次堆疊、單顆主=solid、單顆次=outline。
+
+## 2026-07-15　Modal 標準/大版統一內容（只差寬度）
+
+依 Yuu：regular 與 larger 應只差寬度。移除 larger 專屬的兩個示範輸入框（收件人姓名／配送備註），並把 `MDL_CONTENT.modal.larger` 內容改成與 regular 完全一致（標題／副標題／footer 皆同）。兩版現在只差 max-width（regular 800px、larger ≤1224px）。`.mdl-fields` CSS 保留但已無引用。驗證：node --check OK、Playwright 兩版標題／段落數／輸入框數一致、寬度 regular<larger。

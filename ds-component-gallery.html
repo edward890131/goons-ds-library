@@ -4125,9 +4125,9 @@ function skelMedia(anim){
         note:'備註：已完成的訂單紀錄不會一併刪除。',remember:'不再顯示此提醒',
         primary:{label:'刪除',cls:'i-danger'},secondary:'取消',text:'瞭解更多'},
     },
-    modal:{
+    modal:{ // regular／larger 內容一致，只差寬度（regular 800px、larger ≤1224px）
       regular:{title:'服務條款更新',sub:'2026-07-15 版本更新',cancel:'取消',confirm:'同意並繼續'},
-      larger:{title:'訂單明細',sub:'訂單編號 #2026-0715-042',cancel:'取消',confirm:'確認'},
+      larger:{title:'服務條款更新',sub:'2026-07-15 版本更新',cancel:'取消',confirm:'同意並繼續'},
     },
     /* modal content 段落池：long 時重複鋪長，示範內容溢出出現卷軸 */
     paras:[
@@ -4224,15 +4224,6 @@ function skelMedia(anim){
     const ct=ce('div','mdl-content'+(o.clip?' mdl-clip':''));
     const paras=o.long?MDL_CONTENT.paras.concat(MDL_CONTENT.paras):MDL_CONTENT.paras.slice(0,2); // long＝鋪長示範卷軸
     paras.forEach(x=>{const d=ce('p','mdl-desc');d.textContent=x;ct.appendChild(d);});
-    if(v==='larger'){                                     // larger 示範內容可承載表單：重用既有 field 原子
-      const fs=ce('div','mdl-fields');
-      [{ph:'請輸入收件人姓名'},{ph:'請輸入配送備註'}].forEach(f=>{
-        const field=ce('div','field v-outline');
-        const inp=document.createElement('input');inp.className='bare';inp.placeholder=f.ph;
-        field.appendChild(inp);fs.appendChild(field);
-      });
-      ct.appendChild(fs);
-    }
     card.appendChild(ct);
     if(o.footer!==false)card.appendChild(mdlModalFoot(c,o.live));
     return card;
