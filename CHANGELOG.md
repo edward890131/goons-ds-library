@@ -362,3 +362,10 @@ Yuu 發現 price 的 SALE 是價格 agent 自製的 `.pr-badge`（沒用 DS Tag 
 - **修 icon btn 沒 hover**：Button 元件把真實 `:hover`/`:active` 用 `.live` class 把關（矩陣格子用 `.st-hover`/`.st-pressed` 假狀態、不吃真 hover）。header 的鈴鐺／漢堡／登入鈕原本漏了 `.live` → 全補上（`btn v-text i-secondary sz-s icon-only live` 等），實測 hover 後背景轉 `--i-sec-tint`（`rgba(90,100,116,.1)`）。頭像加 `:hover` inset ring。**釐清**：無底色無外框的純 icon btn 樣式本來就有（`v-text`＋`icon-only`），只是要 `.live` 才有真實 hover。
 - **memory**：`feedback_ds_atomic_reuse` 補記「重用 .btn 的互動實例必須加 .live 才吃 hover」。
 - 驗證：`node --check` 過、Playwright 0 console error、2 條堆疊 bar、7 顆按鈕全帶 live、`.v-text.live:hover` 規則存在、實測 hover 背景變色。
+
+## 2026-07-15　Button 補完：新增 soft 淺色變體 + Live 加 icon-only 開關
+
+Yuu 檢查 Button 發現兩缺口：
+- **Live 沒有 icon-only 選項**：Button 元件本來就支援 icon-only（`mkBtn` 有 `iconOnly`、下方「Content 內容軸」靜態區也展示 `show-label=false (icon-only)`），只是**實際互動 Live 的 Content 勾選漏了**。已補：button 頁 renderLive 的 checks 加 `['iconOnly','icon only']`、stage mkBtn 傳 `iconOnly`、`live` 物件加 `iconOnly:false`；registry `LIVE.button` 的 bools/render 同步加（summary 展開頁也吃到）。
+- **缺 soft 淺色變體**：Button 只有 solid/outline/text，沒有 avatar 那種「淡底填色＋彩色字」的 soft 樣式。已新增 **`v-soft`**：CSS `.v-soft{background:var(--tint);color:var(--fg);border-color:transparent}` + hover/pressed/live 用 `--tint2`；`AXES.variant`＝`['solid','soft','outline','text']`（矩陣/變數篩選器/summary 自動長出 soft 欄，button 全展 3→**4 variant**，FULL 108→**144**、公式 `4×3×4×3`）；`ZH.variant` 加 `soft:'柔色'`、`VDESC` 加 soft 說明；LIVE.button 與 renderLive 的 free 對照列加 soft、note 更新。
+- **驗證**：`node --check` 過、Playwright 0 console error；矩陣 4 variant panel（實心/柔色/外框/文字）、Live Content 含 icon only（勾選後 stage 按鈕帶 `icon-only`）、soft primary 實測 bg=`rgba(51,88,212,.1)`/color=`rgb(51,88,212)`、公式顯示 144。

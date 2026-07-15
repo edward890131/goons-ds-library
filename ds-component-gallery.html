@@ -203,6 +203,9 @@
   .v-text{background:transparent;color:var(--fg);border-color:transparent;}
   .v-text.st-hover{background:var(--tint);}
   .v-text.st-pressed{background:var(--tint2);transform:translateY(1px);}
+  .v-soft{background:var(--tint);color:var(--fg);border-color:transparent;}
+  .v-soft.st-hover{background:var(--tint2);}
+  .v-soft.st-pressed{background:var(--tint2);transform:translateY(1px);}
   .st-disabled{opacity:.42;cursor:not-allowed;transform:none !important;}
   /* live real interaction */
   .v-solid.live:hover:not(:disabled){background:var(--fill-h);border-color:var(--fill-h);}
@@ -211,6 +214,8 @@
   .v-outline.live:active:not(:disabled){background:var(--tint2);transform:translateY(1px);}
   .v-text.live:hover:not(:disabled){background:var(--tint);}
   .v-text.live:active:not(:disabled){background:var(--tint2);transform:translateY(1px);}
+  .v-soft.live:hover:not(:disabled){background:var(--tint2);}
+  .v-soft.live:active:not(:disabled){background:var(--tint2);transform:translateY(1px);}
 
   /* ---------- demo rows ---------- */
   .row-demo{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-wrap:wrap;gap:30px;align-items:flex-end;}
@@ -1431,22 +1436,22 @@
   const STAT={ready:'已定案',partial:'部分'};
 
   /* ===== button 軸定義（與 L3 spec 對齊）===== */
-  const AXES={variant:['solid','outline','text'],intent:['primary','secondary','danger'],state:['default','hover','pressed','disabled'],size:['s','m','l']};
+  const AXES={variant:['solid','soft','outline','text'],intent:['primary','secondary','danger'],state:['default','hover','pressed','disabled'],size:['s','m','l']};
   const ZH={
-    variant:{solid:'實心',outline:'外框',text:'文字'},
+    variant:{solid:'實心',soft:'柔色',outline:'外框',text:'文字'},
     intent:{primary:'主要',secondary:'次要',danger:'危險'},
     state:{default:'預設',hover:'滑過',pressed:'按下',disabled:'停用'},
     size:{s:'小 s',m:'標準 m',l:'大 l'},
     axisName:{variant:'Variant 風格',intent:'Intent 意圖',state:'State 狀態',size:'Size 尺寸'},
   };
   const LABEL={primary:'送出',secondary:'取消',danger:'刪除'};
-  const VDESC={solid:'最高層級 CTA',outline:'次層級動作',text:'最弱／行內動作'};
-  const FULL=108;
+  const VDESC={solid:'最高層級 CTA',soft:'柔色次要強調',outline:'次層級動作',text:'最弱／行內動作'};
+  const FULL=144;
   const ICON_PENCIL='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"/></svg>';
   const ICON_ARROW='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></svg>';
 
   const active={}; for(const k in AXES) active[k]=new Set(AXES[k]);
-  const live={variant:'solid',intent:'primary',size:'m',lead:false,trail:false,disabled:false};
+  const live={variant:'solid',intent:'primary',size:'m',lead:false,trail:false,iconOnly:false,disabled:false};
 
   /* ===== 中央複雜度 store：各元件轉盤的選擇集中在此、跨切頁持久，供「複雜度確認」總覽彙整 ===== */
   const DIAL_SPECS={
@@ -1546,7 +1551,7 @@
       <div class="livewrap">
         <div class="ctl-row" id="liveCtl"></div>
         <div class="live-stage" id="liveStage"></div>
-        <p class="live-note">↓ 這排直接用滑鼠試 hover / 按下（solid・outline・text，皆 primary）</p>
+        <p class="live-note">↓ 這排直接用滑鼠試 hover / 按下（solid・soft・outline・text，皆 primary）</p>
         <div class="live-free" id="liveFree"></div>
       </div></section>
     <section class="block"><h2>Size 尺寸軸</h2>
@@ -1559,7 +1564,7 @@
   }
 
   function renderSpecStrip(){
-    const rows=[['axes','<code>variant × intent × state × size</code>'],['formula','<code>3 × 3 × 4 × 3 = 108</code> 全展'],
+    const rows=[['axes','<code>variant × intent × state × size</code>'],['formula','<code>4 × 3 × 4 × 3 = 144</code> 全展'],
       ['token-policy','<code>semantic.action.*</code>（禁 primitive）'],['content boolean','show-label / leading / trailing icon']];
     document.getElementById('specStrip').innerHTML=rows.map(([k,v])=>`<div class="cell"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
   }
@@ -1607,12 +1612,12 @@
     groups.forEach(([key,lab,opts])=>{const c=document.createElement('div');c.className='ctl';c.innerHTML=`<span class="lab">${lab}</span>`;c.appendChild(seg(key,opts));ctl.appendChild(c);});
     const c=document.createElement('div');c.className='ctl';c.innerHTML=`<span class="lab">Content</span>`;
     const checks=document.createElement('div');checks.className='checks';
-    [['lead','leading icon'],['trail','trailing icon'],['disabled','disabled']].forEach(([key,lab])=>{const l=document.createElement('label');l.className='chk';const i=document.createElement('input');i.type='checkbox';i.checked=live[key];i.onchange=()=>{live[key]=i.checked;renderLive();};l.append(i,document.createTextNode(lab));checks.appendChild(l);});
+    [['lead','leading icon'],['trail','trailing icon'],['iconOnly','icon only'],['disabled','disabled']].forEach(([key,lab])=>{const l=document.createElement('label');l.className='chk';const i=document.createElement('input');i.type='checkbox';i.checked=live[key];i.onchange=()=>{live[key]=i.checked;renderLive();};l.append(i,document.createTextNode(lab));checks.appendChild(l);});
     c.appendChild(checks);ctl.appendChild(c);
     const stage=document.getElementById('liveStage');stage.innerHTML='';
-    stage.appendChild(mkBtn({variant:live.variant,intent:live.intent,size:live.size,lead:live.lead,trail:live.trail,disabled:live.disabled,isLive:true}));
+    stage.appendChild(mkBtn({variant:live.variant,intent:live.intent,size:live.size,lead:live.lead,trail:live.trail,iconOnly:live.iconOnly,disabled:live.disabled,isLive:true}));
     const free=document.getElementById('liveFree');free.innerHTML='';
-    ['solid','outline','text'].forEach(v=>free.appendChild(mkBtn({variant:v,intent:'primary',size:'m',isLive:true})));
+    ['solid','soft','outline','text'].forEach(v=>free.appendChild(mkBtn({variant:v,intent:'primary',size:'m',isLive:true})));
   }
 
   /* ===== 共用建構器（給 button 以外的元件）===== */
@@ -1707,10 +1712,10 @@
   LIVE.button=(host)=>mountLive(host,{
     initial:{variant:'solid',intent:'primary',size:'m',lead:false,trail:false,disabled:false},
     segs:[{key:'variant',label:'Variant',options:AXES.variant},{key:'intent',label:'Intent',options:AXES.intent},{key:'size',label:'Size',options:AXES.size}],
-    bools:[{key:'lead',label:'leading icon'},{key:'trail',label:'trailing icon'},{key:'disabled',label:'disabled'}],
-    render:st=>mkBtn({variant:st.variant,intent:st.intent,size:st.size,lead:st.lead,trail:st.trail,disabled:st.disabled,isLive:true}),
-    note:'↓ solid / outline / text 快速對照',
-    free:()=>['solid','outline','text'].map(v=>mkBtn({variant:v,intent:'primary',size:'m',isLive:true}))
+    bools:[{key:'lead',label:'leading icon'},{key:'trail',label:'trailing icon'},{key:'iconOnly',label:'icon only'},{key:'disabled',label:'disabled'}],
+    render:st=>mkBtn({variant:st.variant,intent:st.intent,size:st.size,lead:st.lead,trail:st.trail,iconOnly:st.iconOnly,disabled:st.disabled,isLive:true}),
+    note:'↓ solid / soft / outline / text 快速對照',
+    free:()=>['solid','soft','outline','text'].map(v=>mkBtn({variant:v,intent:'primary',size:'m',isLive:true}))
   });
   LIVE.input=(host)=>mountLive(host,{
     initial:{variant:'outline',label:true,required:false,hint:false,lead:false,eye:false},
