@@ -919,44 +919,37 @@
 /* ==================== FOOTER 頁尾 ==================== */
   /* 整條頁尾容器：整頁寬版、頂部一條分隔線、走 token 深淺自適應 */
   .ftr-foot{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-    padding:36px 32px 22px;color:var(--muted);font-family:var(--font-sans);}
+    padding:36px 32px 22px;color:var(--muted);font-family:var(--font-sans);overflow:hidden;}
   .ftr-foot + .ftr-foot{margin-top:22px;}
-
-  /* 品牌區（logo + 簡介）*/
-  .ftr-brand{display:flex;flex-direction:column;gap:12px;max-width:280px;}
-  .ftr-logo{display:inline-flex;align-items:center;gap:9px;color:var(--ink);}
-  .ftr-logomark{display:inline-flex;width:24px;height:24px;color:var(--accent);}
-  .ftr-logotype{font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--ink);}
+  .ftr-foot.ftr-v-simple{padding:26px 32px 20px;}
+  .ftr-foot.ftr-v-minimal{padding:18px 26px;}
+  /* logo：複用 header 的 Goons 官方字標 svg */
+  .ftr-logo{display:inline-flex;align-items:center;color:var(--ink);flex:0 0 auto;}
+  .ftr-logo svg{height:22px;width:auto;display:block;}
+  /* 品牌區：logo + 簡介 + 聯絡資訊 */
+  .ftr-brand{display:flex;flex-direction:column;gap:14px;max-width:300px;}
   .ftr-desc{font-size:13px;line-height:1.6;color:var(--faint);}
-
-  /* rich 主體：品牌 / 連結欄群 / 電子報 三段 */
-  .ftr-main{display:flex;flex-wrap:wrap;gap:40px 56px;justify-content:space-between;}
-  .ftr-cols{display:flex;flex-wrap:wrap;gap:36px 48px;flex:1;min-width:260px;}
-  .ftr-col{display:flex;flex-direction:column;gap:12px;min-width:120px;}
+  .ftr-contact{display:flex;flex-direction:column;gap:8px;}
+  .ftr-contact-row{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted);line-height:1.5;}
+  .ftr-contact-ic{display:inline-flex;width:16px;height:16px;color:var(--faint);flex:0 0 auto;margin-top:1px;}
+  /* rich 主體：品牌左 / 連結欄群靠右 */
+  .ftr-main{display:flex;flex-wrap:wrap;gap:40px 56px;justify-content:space-between;width:100%;}
+  .ftr-cols{display:flex;flex-wrap:wrap;gap:36px 48px;justify-content:flex-end;flex:1;min-width:260px;}
+  .ftr-col{display:flex;flex-direction:column;gap:12px;min-width:110px;}
   .ftr-coltitle{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);}
   .ftr-links{display:flex;flex-direction:column;gap:9px;}
   .ftr-link{font-size:13px;color:var(--muted);text-decoration:none;cursor:pointer;width:fit-content;transition:color .12s;}
   .ftr-link:hover{color:var(--ink);}
-
-  /* 電子報訂閱區 */
-  .ftr-news{display:flex;flex-direction:column;gap:12px;max-width:280px;min-width:240px;}
-  .ftr-newstitle{font-size:13px;font-weight:600;color:var(--ink);}
-  .ftr-newssub{font-size:12px;line-height:1.55;color:var(--faint);}
-  .ftr-newsrow{display:flex;gap:8px;align-items:center;}
-  .ftr-newsrow .field{flex:1;min-width:0;}
-  .ftr-newsrow .btn{flex:0 0 auto;}
-
-  /* 底列：分隔線 + 版權 + 語言 + 社群 */
+  /* 底列：分隔線撐滿寬度（負邊距 breakout）+ 版權左、按鈕右 */
   .ftr-bottom{display:flex;flex-wrap:wrap;align-items:center;gap:16px;
-    margin-top:28px;padding-top:20px;border-top:1px solid var(--line);}
+    margin:28px -32px 0;padding:20px 32px 0;border-top:1px solid var(--line);}
+  .ftr-v-simple .ftr-bottom{margin-top:20px;}
   .ftr-copy{font-size:12px;color:var(--faint);}
   .ftr-botspacer{flex:1;}
-  .ftr-social{display:inline-flex;align-items:center;gap:6px;}
-  .ftr-soc{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
-    border-radius:8px;color:var(--muted);cursor:pointer;background:transparent;border:1px solid transparent;transition:.12s;}
-  .ftr-soc > span{display:inline-flex;width:18px;height:18px;}
-  .ftr-soc:hover{color:var(--ink);background:var(--panel-2);border-color:var(--line);}
-
+  .ftr-actions{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .ftr-social{display:inline-flex;align-items:center;gap:4px;}
+  .ftr-uparrow{display:inline-flex;}
+  .ftr-uparrow svg{width:14px;height:14px;transform:rotate(180deg);}
   /* 語言選擇 pill */
   .ftr-lang{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;
     border-radius:999px;border:1px solid var(--line);background:var(--panel-2);
@@ -964,15 +957,11 @@
   .ftr-lang:hover{border-color:var(--muted);color:var(--ink);}
   .ftr-lang .ftr-langglobe{display:inline-flex;width:15px;height:15px;color:var(--faint);}
   .ftr-lang .ftr-langcaret{display:inline-flex;width:13px;height:13px;color:var(--faint);}
-
-  /* simple 單列：品牌左、連結右、版權下方 */
-  .ftr-foot.ftr-v-simple{padding:26px 32px 20px;}
-  .ftr-simplerow{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px;}
-  .ftr-nav{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 22px;}
-
+  /* simple 單列：logo 左、連結右（左右撐滿）*/
+  .ftr-simplerow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 28px;width:100%;}
+  .ftr-nav{display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px 22px;}
   /* minimal 極簡：單行 © + 連結 */
-  .ftr-foot.ftr-v-minimal{padding:18px 26px;}
-  .ftr-minirow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;}
+  .ftr-minirow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px;width:100%;}
   .ftr-minirow .ftr-copy{margin-right:4px;}
   .ftr-mininav{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px 18px;}
 
@@ -2848,8 +2837,9 @@ function skelMedia(anim){
     ['工作 Work',[['folder',IC_FOLDER],['file',IC_FILE],['calendar',IC_CALENDAR],['clock',IC_CLOCK],['edit',IC_EDIT],['note',IC_NOTE],['briefcase',IC_BRIEFCASE],['paperclip',IC_PAPERCLIP],['chart-bar',IC_CHART_BAR],['pie',IC_PIE]]],
     ['資料操作 Data',[['mail',IC_MAIL],['download',IC_DOWNLOAD],['upload',IC_UPLOAD],['trash',IC_TRASH],['eye',IC_EYE],['tag',IC_TAG],['trending',IC_TRENDING],['logout',IC_LOGOUT]]],
     ['購物 Shopping',[['cart',IC_CART],['bag',IC_BAG],['card',IC_CARD],['money',IC_MONEY],['wallet',IC_WALLET],['receipt',IC_RECEIPT],['store',IC_STORE],['truck',IC_TRUCK],['percent',IC_PERCENT],['gift',IC_GIFT],['bookmark',IC_BOOKMARK]]],
-    ['社群溝通 Social',[['chat',IC_CHAT],['share',IC_SHARE],['thumbs-up',IC_THUMBSUP],['send',IC_SEND],['heart',IC_HEART],['star',IC_STAR],['user',IC_USER],['users',IC_USERS],['camera',IC_CAMERA]]],
+    ['社群溝通 Social',[['chat',IC_CHAT],['share',IC_SHARE],['thumbs-up',IC_THUMBSUP],['send',IC_SEND],['heart',IC_HEART],['star',IC_STAR],['user',IC_USER],['users',IC_USERS],['camera',IC_CAMERA],['phone',IC_PHONE]]],
     ['旅遊生活 Travel & Life',[['airplane',IC_AIRPLANE],['suitcase',IC_SUITCASE],['map',IC_MAP],['globe',IC_GLOBE],['bed',IC_BED],['location',IC_LOCATION],['coffee',IC_COFFEE],['sun',IC_SUN],['music',IC_MUSIC],['food',IC_FOOD]]],
+    ['品牌社群 Brand',[['twitter',FTR_IC_TWITTER],['github',FTR_IC_GITHUB],['linkedin',FTR_IC_LINKEDIN],['instagram',FTR_IC_INSTAGRAM]]],
   ];}
   /* Live 可切換的示意 icon 集 */
   const IC_LIVE_SET={'dashboard':IC_DASHBOARD,'chart-bar':IC_CHART_BAR,'bell':IC_BELL,'user':IC_USER,'settings':IC_SETTINGS,'heart':IC_HEART,'star':IC_STAR,'calendar':IC_CALENDAR};
@@ -2885,7 +2875,7 @@ function skelMedia(anim){
     p=panelsIn(sec);renderM();
 
     /* Icon Library：陳列本 DS 可用的 Phosphor icon 子集 */
-    const lib=section(body,'Icon Library','本 DS 採用的 Phosphor icon 子集共 <b>60 顆</b>，依常見產品功能分 6 類（通用介面／工作／資料操作／購物／社群溝通／旅遊生活），涵蓋旅遊、生活、工作、購物、社群等場景。單一 weight、viewBox 0 0 256 256、fill=currentColor；實際專案由 Phosphor 全庫按需匯入。');
+    const lib=section(body,'Icon Library','本 DS 採用的 Phosphor icon 子集共 <b>65 顆</b>：產品功能 icon 依場景分 6 類（通用介面／工作／資料操作／購物／社群溝通／旅遊生活，涵蓋旅遊、生活、工作、購物、社群），另含<b>品牌社群</b> 4 顆（Twitter／GitHub／LinkedIn／Instagram）。單一 weight、viewBox 0 0 256 256、fill=currentColor；實際專案由 Phosphor 全庫按需匯入。');
     icLibrary().forEach(([gname,items])=>{
       const g=ce('div','ic-lib-group');
       const cap=ce('div','ic-lib-cap');cap.textContent=gname+' · '+items.length;g.appendChild(cap);
@@ -3186,94 +3176,96 @@ function skelMedia(anim){
   const FTR_IC_GLOBE='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24h0A104,104,0,1,0,232,128,104.12,104.12,0,0,0,128,24Zm88,104a87.61,87.61,0,0,1-3.33,24H174.16a157.44,157.44,0,0,0,0-48h38.51A87.61,87.61,0,0,1,216,128ZM102,168H154a115.11,115.11,0,0,1-26,45A115.27,115.27,0,0,1,102,168Zm-3.9-16a140.84,140.84,0,0,1,0-48h59.88a140.84,140.84,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.84a157.44,157.44,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128ZM154,88H102a115.11,115.11,0,0,1,26-45A115.27,115.27,0,0,1,154,88Zm52.33,0H170.71a135.28,135.28,0,0,0-22.3-45.6A88.29,88.29,0,0,1,206.37,88ZM107.59,42.4A135.28,135.28,0,0,0,85.29,88H49.63A88.29,88.29,0,0,1,107.59,42.4ZM49.63,168H85.29a135.28,135.28,0,0,0,22.3,45.6A88.29,88.29,0,0,1,49.63,168Zm98.78,45.6a135.28,135.28,0,0,0,22.3-45.6h35.66A88.29,88.29,0,0,1,148.41,213.6Z"/></svg>';
   /* 品牌 logo mark：Phosphor cube-focus 風格線稿 */
   const FTR_IC_LOGO='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.65a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32l80.34,44-29.77,16.3-80.35-44ZM128,120,47.66,76l33.9-18.56,80.34,44ZM40,90l80,43.78v85.79L40,175.82Zm176,85.78h0l-80,43.79V133.82l32-17.51V152a8,8,0,0,0,16,0V107.55L216,90v85.77Z"/></svg>';
+  const IC_PHONE='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16,16,0,0,0,1.32-15.06l0-.12L97.54,33.64a16,16,0,0,0-16.62-9.52A56.26,56.26,0,0,0,32,80c0,79.4,64.6,144,144,144a56.26,56.26,0,0,0,55.88-48.92A16,16,0,0,0,222.37,158.46ZM176,208A128.14,128.14,0,0,1,48,80,40.2,40.2,0,0,1,82.87,40a.61.61,0,0,0,0,.12l21,47L83.2,111.86a6.13,6.13,0,0,0-.57.77,16,16,0,0,0-1,15.7c9.06,18.53,27.73,37.06,46.46,46.11a16,16,0,0,0,15.75-1.14,8.44,8.44,0,0,0,.74-.56L168.89,152l47,21.05h0s.08,0,.11,0A40.21,40.21,0,0,1,176,208Z"/></svg>'; // 聯絡資訊 / 社群溝通用
 
 /* footer build */
 /* ==================== footer 頁尾 ==================== */
   /* ---- FOOTER 頁尾（builders 提升頂層，頁面與 Live 共用同一組零件）---- */
 
-  /* 連結欄群資料：產品 / 資源 / 公司 / 法務 */
+  /* 連結欄群資料 */
   const FTR_COLS=[
     {title:'產品 Product',links:['元件庫','設計 Token','頁面模板','更新日誌']},
     {title:'資源 Resources',links:['開發文件','API 參考','教學指南','社群論壇']},
     {title:'公司 Company',links:['關於我們','人才招募','設計部落格','聯絡我們']},
     {title:'法務 Legal',links:['服務條款','隱私政策','Cookie 設定']},
   ];
-  /* 社群清單：名稱 + icon（供 aria-label / title 使用）*/
   const FTR_SOCIALS=[['Twitter',FTR_IC_TWITTER],['GitHub',FTR_IC_GITHUB],['LinkedIn',FTR_IC_LINKEDIN],['Instagram',FTR_IC_INSTAGRAM]];
 
-  /* 品牌 logo（mark + 字標）*/
-  function ftrLogo(){
-    const w=ce('div','ftr-logo');
-    w.innerHTML=`<span class="ftr-logomark">${FTR_IC_LOGO}</span><span class="ftr-logotype">Goons Design</span>`;
-    return w;
+  /* 品牌 logo：複用 header 的 Goons 官方字標 svg */
+  function ftrLogo(){const w=ce('div','ftr-logo');w.innerHTML=HDR_LOGO;w.setAttribute('aria-label','Goons Design');return w;}
+  /* 聯絡資訊：地址／信箱／電話（重用 library icon）*/
+  function ftrContact(){
+    const c=ce('div','ftr-contact');
+    [[IC_LOCATION,'台北市信義區設計路 100 號 8 樓'],[IC_MAIL,'hello@goonsdesign.co'],[IC_PHONE,'+886 2 2345 6789']].forEach(([ic,txt])=>{
+      const r=ce('div','ftr-contact-row');
+      const i=ce('span','ftr-contact-ic');i.innerHTML=ic;
+      const t=document.createElement('span');t.textContent=txt;
+      r.append(i,t);c.appendChild(r);
+    });
+    return c;
   }
-  /* 品牌區：logo + 一句簡介 */
+  /* 品牌區：logo + 簡介 + 聯絡 */
   function ftrBrand(){
     const b=ce('div','ftr-brand');
     b.appendChild(ftrLogo());
-    const d=ce('p','ftr-desc');
-    d.textContent='果思設計 — 專注資料與操作型產品的介面設計，把複雜系統變得直覺好用。';
+    const d=ce('p','ftr-desc');d.textContent='果思設計 — 專注資料與操作型產品的介面設計，把複雜系統變得直覺好用。';
     b.appendChild(d);
+    b.appendChild(ftrContact());
     return b;
   }
-  /* 單一連結欄：標題 + 數個連結 */
+  /* 單一連結欄 */
   function ftrLinkCol(col){
     const c=ce('div','ftr-col');
     const t=ce('div','ftr-coltitle');t.textContent=col.title;
     const ls=ce('div','ftr-links');
     col.links.forEach(lb=>{const a=ce('a','ftr-link');a.textContent=lb;ls.appendChild(a);});
-    c.append(t,ls);
-    return c;
+    c.append(t,ls);return c;
   }
-  /* 電子報訂閱區：重用 field v-outline + 訂閱按鈕（btn v-solid i-primary sz-s）*/
-  function ftrNews(){
-    const n=ce('div','ftr-news');
-    const t=ce('div','ftr-newstitle');t.textContent='訂閱電子報';
-    const s=ce('p','ftr-newssub');s.textContent='每月一封，掌握新元件與設計系統的最新動態。';
-    const row=ce('div','ftr-newsrow');
-    const field=ce('div','field v-outline');
-    const inp=document.createElement('input');inp.className='bare';inp.type='email';inp.placeholder='輸入你的 Email';
-    field.appendChild(inp);
-    const btn=document.createElement('button');btn.className='btn v-solid i-primary sz-s';btn.textContent='訂閱';
-    row.append(field,btn);
-    n.append(t,s,row);
-    return n;
-  }
-  /* 社群 icon 列 */
+  /* 社群 icon 列：複用 library Button（v-text icon-only）*/
   function ftrSocial(){
     const w=ce('div','ftr-social');
     FTR_SOCIALS.forEach(([name,ic])=>{
-      const a=ce('a','ftr-soc');a.setAttribute('aria-label',name);a.title=name;
-      a.innerHTML=`<span>${ic}</span>`;
-      w.appendChild(a);
+      const b=document.createElement('button');b.className='btn v-text i-secondary sz-s icon-only live';
+      b.setAttribute('aria-label',name);b.title=name;b.innerHTML=ic;
+      w.appendChild(b);
     });
     return w;
   }
-  /* 語言選擇 pill：globe + 語言 + caret */
+  /* 回到頂部：複用 library Button（v-outline）+ 上箭頭 */
+  function ftrBackTop(){
+    const b=document.createElement('button');b.className='btn v-outline i-secondary sz-s live';
+    const ic=ce('span','ftr-uparrow');ic.innerHTML=ICON_CARET;
+    b.appendChild(ic);b.appendChild(document.createTextNode('回到頂部'));
+    b.setAttribute('aria-label','回到頂部');return b;
+  }
+  /* 語言選擇 pill */
   function ftrLang(){
     const p=document.createElement('button');p.className='ftr-lang';
     p.innerHTML=`<span class="ftr-langglobe">${FTR_IC_GLOBE}</span><span>繁體中文</span><span class="ftr-langcaret">${ICON_CARET}</span>`;
     return p;
   }
-  /* 內嵌連結列（simple / minimal 用）*/
+  /* 內嵌連結列（simple / minimal）*/
   function ftrNav(cls,labels){
     const w=ce('div',cls);
     labels.forEach(lb=>{const a=ce('a','ftr-link');a.textContent=lb;w.appendChild(a);});
     return w;
   }
-  /* 底列：版權 + 語言 pill + 社群（rich / simple 共用）*/
+  /* 底列：分隔線撐滿寬 + 版權左、按鈕右（社群／語言／回到頂部）*/
   function ftrBottom(o){
     o=o||{};
     const b=ce('div','ftr-bottom');
     const c=ce('div','ftr-copy');c.textContent='© 2026 果思設計 Goons Design. 版權所有。';
     b.appendChild(c);
     b.appendChild(ce('div','ftr-botspacer'));
-    if(o.language)b.appendChild(ftrLang());
-    if(o.social)b.appendChild(ftrSocial());
+    const acts=ce('div','ftr-actions');
+    if(o.social)acts.appendChild(ftrSocial());
+    if(o.language)acts.appendChild(ftrLang());
+    if(o.backTop)acts.appendChild(ftrBackTop());
+    if(acts.children.length)b.appendChild(acts);
     return b;
   }
 
-  /* 整條頁尾：variant 決定版型；o.newsletter/social/language 控制附加區塊 */
+  /* 整條頁尾 */
   function ftrFooter(variant,o){
     o=o||{};
     const foot=ce('footer','ftr-foot ftr-v-'+variant);
@@ -3283,24 +3275,24 @@ function skelMedia(anim){
       const cols=ce('div','ftr-cols');
       FTR_COLS.forEach(col=>cols.appendChild(ftrLinkCol(col)));
       main.appendChild(cols);
-      if(o.newsletter)main.appendChild(ftrNews());
       foot.appendChild(main);
-      foot.appendChild(ftrBottom({social:o.social,language:o.language}));
+      foot.appendChild(ftrBottom({social:o.social,language:o.language,backTop:o.backTop}));
     }else if(variant==='simple'){
       const row=ce('div','ftr-simplerow');
       row.appendChild(ftrLogo());
-      row.appendChild(ce('div','ftr-botspacer'));
       row.appendChild(ftrNav('ftr-nav',['產品','資源','定價','關於','聯絡我們']));
       foot.appendChild(row);
-      foot.appendChild(ftrBottom({social:o.social,language:o.language}));
-    }else{ // minimal 極簡
+      foot.appendChild(ftrBottom({social:o.social,language:o.language,backTop:o.backTop}));
+    }else{ // minimal
       const row=ce('div','ftr-minirow');
       const c=ce('div','ftr-copy');c.textContent='© 2026 果思設計 Goons Design.';
       row.appendChild(c);
       row.appendChild(ftrNav('ftr-mininav',['服務條款','隱私政策','聯絡我們']));
-      if(o.language||o.social)row.appendChild(ce('div','ftr-botspacer'));
-      if(o.language)row.appendChild(ftrLang());
-      if(o.social)row.appendChild(ftrSocial());
+      const acts=ce('div','ftr-actions');
+      if(o.social)acts.appendChild(ftrSocial());
+      if(o.language)acts.appendChild(ftrLang());
+      if(o.backTop)acts.appendChild(ftrBackTop());
+      if(acts.children.length){row.appendChild(ce('div','ftr-botspacer'));row.appendChild(acts);}
       foot.appendChild(row);
     }
     return foot;
@@ -3308,33 +3300,33 @@ function skelMedia(anim){
 
   function buildFooter(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Footer',title:'Footer 頁尾',
-      lede:'網站／應用最底部的<b>整條寬版</b>導航與資訊區塊：<b>rich 多欄</b>含品牌簡介、連結欄群、電子報訂閱與底部版權；<b>simple 單列</b>把品牌與連結收成一行；<b>minimal 極簡</b>只留一行版權與少數連結。因頁尾為整條寬版、非等寬格狀元件，這裡以「每個勾選的 variant 一段完整頁尾」呈現，不走矩陣。',
-      specRows:[['axes','<code>variant</code>'],['formula','<code>rich · simple · minimal</code>'],['token-policy','<code>semantic.surface.* / *.link.*</code>'],['features','newsletter / social / language']]});
-    const axes=DIAL_SPECS.footer.axes, zh=DIAL_SPECS.footer.zh, active=CHOICE.footer.active; // 接中央 store
+      lede:'網站／應用最底部的<b>整條寬版</b>導航與資訊區塊：<b>rich 多欄</b>含品牌簡介、地址／信箱／電話聯絡資訊、連結欄群（靠右對齊）與底部版權；<b>simple 單列</b>把 logo 與連結左右撐滿；<b>minimal 極簡</b>只留一行版權與少數連結。底列分隔線撐滿寬度、版權（左）與按鈕（右）左右對齊。因頁尾為整條寬版，這裡以「每個勾選的 variant 一段完整頁尾」呈現，不走矩陣。',
+      specRows:[['axes','<code>variant</code>'],['formula','<code>rich · simple · minimal</code>'],['atoms','Button · Icon Button · Search'],['features','social / language / back-to-top']]});
+    const axes=DIAL_SPECS.footer.axes, zh=DIAL_SPECS.footer.zh, active=CHOICE.footer.active;
     const VSUB={
-      rich:'左品牌簡介 ＋ 中間連結欄群（產品／資源／公司／法務）＋ 右電子報訂閱；底列一條分隔線接版權、語言 pill 與社群 icon 列。',
-      simple:'單一橫列：左品牌、右連結列；下方版權列帶語言與社群。',
-      minimal:'一行搞定：© 版權 + 幾個必要連結（＋選配語言／社群）。'
+      rich:'左品牌（logo＋簡介＋地址／信箱／電話）＋ 右側連結欄群（產品／資源／公司／法務，靠右對齊）；底列一條撐滿寬度的分隔線接版權（左）與社群／語言／回到頂部按鈕（右）。',
+      simple:'單一橫列：左 logo、右連結列（左右撐滿）；下方分隔線＋版權與按鈕列。',
+      minimal:'一行搞定：© 版權 + 幾個必要連結（＋選配社群／語言／回到頂部）。'
     };
     let holder;
     function renderM(){ if(!holder)return; holder.innerHTML='';
-      const vs=axes.variant.filter(v=>active.variant.has(v)); // 只顯示勾選到的 variant
+      const vs=axes.variant.filter(v=>active.variant.has(v));
       vs.forEach(v=>{
         const sec=section(holder,zh.variant[v]+'　·　'+v,VSUB[v]);
-        sec.appendChild(ftrFooter(v,{newsletter:true,social:true,language:true}));
+        sec.appendChild(ftrFooter(v,{social:true,language:true,backTop:true}));
       });
     }
     mountDial(body,{axes,zh,active,onRender:renderM});
     holder=ce('div','ftr-holder');body.appendChild(holder);renderM();
 
-    const sl=section(body,'實際互動 Live','切 variant（多欄／單列／極簡），勾選是否顯示電子報、社群 icon 與語言選擇 pill，下面即時預覽整條頁尾。');
+    const sl=section(body,'實際互動 Live','切 variant（多欄／單列／極簡），勾選社群 icon、語言 pill 與回到頂部按鈕，下面即時預覽整條頁尾。');
     mountLive(sl,{
-      initial:{variant:'rich',newsletter:true,social:true,language:false},
+      initial:{variant:'rich',social:true,language:true,backTop:true},
       segs:[{key:'variant',label:'Variant',options:['rich','simple','minimal'],labels:['多欄 rich','單列 simple','極簡 minimal']}],
-      bools:[{key:'newsletter',label:'newsletter 電子報'},{key:'social',label:'social 社群'},{key:'language',label:'language 語言'}],
+      bools:[{key:'social',label:'social 社群'},{key:'language',label:'language 語言'},{key:'backTop',label:'back-to-top 回到頂部'}],
       boolLabel:'Content',
-      render:st=>ftrFooter(st.variant,{newsletter:st.newsletter,social:st.social,language:st.language}),
-      note:'<b>rich</b> 勾 newsletter 顯示右側電子報訂閱區；<b>social</b> 控制底部社群 icon 列；<b>language</b> 控制語言選擇 pill。<b>minimal</b> 型態不含電子報。'
+      render:st=>ftrFooter(st.variant,{social:st.social,language:st.language,backTop:st.backTop}),
+      note:'<b>社群 icon 與回到頂部皆為 library Button 元件實例</b>；社群 icon 已收進 Icon Library「品牌社群」分類。內部無自製按鈕。'
     });
   }
 
