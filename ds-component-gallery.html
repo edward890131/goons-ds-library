@@ -1088,9 +1088,10 @@
   .lst-item.lst-sum.is-add,.lst-item.lst-sum.is-total{cursor:default;}
   .lst-title.w-strong{font-weight:700;}
   /* ---- 巢狀可展開列：子列內縮 ---- */
-  /* 巢狀子層：內縮的灰底圓角區塊（母列白底、子列灰底成一組） */
+  /* 巢狀子層：內縮的灰底圓角區塊（母列白底、子列灰底成一組）；
+     子列 padding-left 補足「母列 checkbox＋gap」寬度，讓子標題與母標題左緣對齊（母 title=14+16+12=42；子=margin12+pad30=42）*/
   .lst-subwrap{background:var(--panel-2);border-radius:10px;margin:2px 12px 12px;overflow:hidden;}
-  .lst-subwrap .lst-item{padding-left:18px;}
+  .lst-subwrap .lst-item{padding-left:30px;}
   .lst-subwrap .lst-item:hover:not(.is-disabled):not(.is-selected){background:var(--panel-3);}
   /* ---- 矩陣不適用格（error 為選項卡專屬） ---- */
   .lst-na{font-size:12px;color:var(--faint);padding:8px 0;}
@@ -1308,6 +1309,7 @@
   /* 抽屜面板：與 Live 浮動樣式一致、縮放到小框（四邊內縮 9px、圓角＋陰影、高度＝框高 − 18px），
      面板 overflow:hidden 讓圓角正確裁切內容，寬度依 size */
   .drw-panel{position:absolute;top:9px;bottom:9px;height:calc(100% - 18px);background:var(--panel);
+    padding:0;/* 同 Live：歸零裸 .sz-* 撞名漏進來的 padding，讓 .drw-phead 分隔線填滿面板寬 */
     display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:9px;
     box-shadow:0 5px 16px color-mix(in srgb,var(--ink) 26%,transparent);}
   .drw-panel.side-left{left:9px;} .drw-panel.side-right{right:9px;}
@@ -1359,6 +1361,7 @@
   /* 浮動式面板：距舞台四邊內縮 24px（top/bottom 撐出高度＝舞台高−48px），
      圓角＋陰影呈漂浮感；面板本體 overflow:hidden 讓圓角裁切，內容溢出由 .drw-nav 內部捲動 */
   .drw-live-panel{position:absolute;top:24px;bottom:24px;height:calc(100% - 48px);max-width:calc(82% - 24px);background:var(--panel);
+    padding:0;/* 面板掛 sz-* 會撞到 Button 裸 .sz-* 的 padding，明確歸零讓 .drw-head 分隔線填滿面板寬 */
     display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:14px;
     box-shadow:0 12px 40px color-mix(in srgb,var(--ink) 30%,transparent);
     transition:transform .3s cubic-bezier(.4,0,.2,1);}
@@ -1371,7 +1374,9 @@
 /* ===== floating-line (Complex) ===== */
 /* ==================== floating-line 浮動列 ==================== */
   /* 假內容舞台：浮動列漂浮其上的相對定位容器 */
-  .flo-stage{position:relative;min-height:150px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;padding:16px;}
+  .flo-stage{position:relative;width:100%;min-height:150px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;padding:16px;}
+  /* tall 內容舞台（Live）：加高，FAB 展開子項才不會被裁切 */
+  .flo-stage.flo-tall{min-height:242px;}
   .flo-fake{display:flex;flex-direction:column;gap:11px;pointer-events:none;}
   .flo-line{height:9px;border-radius:5px;background:var(--line);}
   .flo-fake .flo-blk{height:34px;border-radius:8px;background:var(--line);opacity:.6;}
@@ -1381,9 +1386,9 @@
   .flo-float.flo-pos-bottom-center{left:50%;transform:translateX(-50%);bottom:14px;}
   .flo-float.flo-pos-bottom-right{right:14px;bottom:14px;}
 
-  /* 1) 選取列：深色 pill，計數 + 動作鈕 */
-  .flo-select{gap:14px;background:var(--ink);color:var(--canvas);padding:7px 8px 7px 18px;border-radius:999px;
-    box-shadow:0 10px 28px rgba(0,0,0,.30);}
+  /* 1) 選取列：深色小圓角橫條，計數 + 動作鈕（inline-flex 垂直置中、按鈕等高） */
+  .flo-select{display:inline-flex;align-items:center;gap:12px;background:var(--ink);color:var(--canvas);
+    padding:8px 10px 8px 16px;border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.30);}
   .flo-select .flo-count{font-size:13px;font-weight:600;white-space:nowrap;letter-spacing:.01em;}
   .flo-select .flo-count b{font-weight:700;}
   .flo-select .flo-actions{display:flex;align-items:center;gap:6px;}
@@ -1392,7 +1397,7 @@
   .flo-select .btn.v-text.i-secondary:hover{background:rgba(255,255,255,.14);}
 
   /* 2) 工具列：白底圓角陰影，icon-only 工具鈕 + 分隔線分組 */
-  .flo-toolbar{gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px 6px;
+  .flo-toolbar{display:inline-flex;align-items:center;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:5px 6px;
     box-shadow:0 8px 24px rgba(0,0,0,.14);}
   .flo-tdiv{width:1px;align-self:stretch;margin:5px 5px;background:var(--line);}
 
@@ -1410,6 +1415,8 @@
   /* 型態細節區塊：三型態並排說明 */
   .flo-detail{display:flex;flex-wrap:wrap;gap:22px;}
   .flo-dcol{flex:1 1 260px;min-width:260px;display:flex;flex-direction:column;gap:12px;}
+  /* 選取列含完整批次動作較寬：獨佔一整列避免擠壓 */
+  .flo-dcol.flo-wide{flex:1 1 100%;min-width:100%;}
   .flo-dcap{font-family:var(--font-mono);font-size:11px;color:var(--faint);letter-spacing:.05em;}
   .flo-dcap b{color:var(--muted);font-weight:600;}
   .flo-dbox{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius);
@@ -1467,6 +1474,48 @@
   .stp-live-wrap{display:flex;flex-direction:column;gap:20px;width:100%;}
   .stp-live-stage{display:flex;}
   .stp-live-ctl{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* ===== quantity 商品計數（qty-）＝＋／− Button 原子 ＋ 中間數值，容器依 variant 改外觀 ===== */
+  .qty{display:inline-flex;align-items:stretch;font-family:var(--font-sans);}
+  .qty .qty-val{min-width:2.4em;padding:0 6px;display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .qty-sz-s .qty-val{font-size:13px;min-width:2em;} .qty-sz-l .qty-val{font-size:17px;}
+  /* 外框：整體一個 bordered 容器，內部按鈕去框、數值兩側分隔線 */
+  .qty-v-outline{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  .qty-v-outline .btn{border:0;border-radius:0;background:transparent;}
+  .qty-v-outline .btn:hover:not(:disabled){background:var(--panel-2);}
+  .qty-v-outline .qty-val{border-left:1px solid var(--line);border-right:1px solid var(--line);}
+  /* 膠囊：全圓角容器 */
+  .qty-v-pill{border:1px solid var(--line);border-radius:999px;overflow:hidden;}
+  .qty-v-pill .btn{border:0;border-radius:0;background:transparent;}
+  .qty-v-pill .btn:hover:not(:disabled){background:var(--panel-2);}
+  /* 極簡：無外容器，＋／− 為圓形獨立鈕 */
+  .qty-v-plain{gap:4px;align-items:center;}
+  .qty-v-plain .btn{border-radius:50%;}
+  .qty.is-disabled{opacity:.5;pointer-events:none;}
+  .qty-staterow{display:flex;flex-wrap:wrap;gap:26px;}
+  .qty-statecell{display:flex;flex-direction:column;gap:8px;}
+  .qty-statecap{font-family:var(--font-mono);font-size:11px;color:var(--faint);}
+  .qty-live-box{display:flex;align-items:center;justify-content:center;padding:26px 20px;min-height:74px;}
+
+  /* ===== progress 進度條（prg-）＝ track 底軌 ＋ fill 填充（依 value 撐開） ===== */
+  .prg{display:block;width:100%;max-width:320px;font-family:var(--font-sans);}
+  .prg-label{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;gap:12px;}
+  .prg-cap{font-size:13px;color:var(--muted);}
+  .prg-pct{font-size:12px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums;}
+  .prg-track{width:100%;background:var(--panel-3);border-radius:999px;overflow:hidden;}
+  .prg-sz-s .prg-track{height:4px;} .prg-sz-m .prg-track{height:8px;} .prg-sz-l .prg-track{height:12px;}
+  .prg-fill{height:100%;border-radius:999px;transition:width .3s ease;}
+  .prg-fill.i-primary{background:var(--accent);}
+  .prg-fill.i-success{background:var(--ok);}
+  .prg-fill.i-warning{background:var(--warn);}
+  .prg-fill.i-danger{background:var(--i-danger);}
+  .prg-fill.is-indet{width:40%;animation:prg-indet 1.2s ease-in-out infinite;}
+  @keyframes prg-indet{0%{margin-left:-40%;}100%{margin-left:100%;}}
+  .prg-intentrow{display:flex;flex-direction:column;gap:16px;max-width:340px;}
+  .prg-intentcell{display:flex;flex-direction:column;gap:6px;}
+  .prg-intentcap{font-family:var(--font-mono);font-size:11px;color:var(--faint);}
+  .prg-live-box{display:flex;flex-direction:column;gap:16px;padding:24px 20px;max-width:360px;}
+  .prg-range{width:100%;accent-color:var(--accent);cursor:pointer;}
 </style>
 
 <div class="shell" id="shell">
@@ -1528,6 +1577,9 @@
       {id:'floating-line',name:'Floating Line 浮動列',st:'ready'},
       /* 流程 */
       {id:'step',name:'Step 步驟',st:'ready'},
+      /* 電商／狀態 */
+      {id:'quantity',name:'Quantity 商品計數',st:'ready'},
+      {id:'progress',name:'Progress 進度條',st:'ready'},
     ]},
     {group:'Card 卡片',emoji:'🗂️',items:[
       {id:'card',name:'Card 卡片'},
@@ -1625,7 +1677,9 @@
     modal:{label:'Modal 對話框',order:['kind','variant'],axes:{kind:['popup','modal'],variant:['normal','illustration','regular','larger']},zh:{axisName:{kind:'Kind 大小',variant:'Variant 型態'},kind:{popup:'小彈窗 popup',modal:'大視窗 modal'},variant:{normal:'一般 popup',illustration:'警示 popup',regular:'標準 modal',larger:'大版 modal'}}},
     drawer:{label:'Drawer 抽屜',order:['side','size'],axes:{side:['left','right'],size:['s','m','l']},zh:{side:{left:'左側',right:'右側'},size:{s:'窄 s',m:'標準 m',l:'寬 l'},axisName:{side:'Side 方向',size:'Size 尺寸'}}},
     'floating-line':{label:'Floating Line 浮動列',order:['variant','position'],axes:{variant:['selection','toolbar','fab'],position:['bottom-center','bottom-right']},zh:{variant:{selection:'選取列',toolbar:'工具列',fab:'浮動鈕'},position:{'bottom-center':'底部置中','bottom-right':'底部靠右'},axisName:{variant:'Variant 型態',position:'Position 位置'}}},
-    step:{label:'Step 步驟指示器',order:['orientation','variant'],axes:{orientation:['horizontal','vertical'],variant:['numbered','dotted','icon']},zh:{orientation:{horizontal:'水平',vertical:'垂直'},variant:{numbered:'編號',dotted:'圓點',icon:'圖示'},axisName:{orientation:'Orientation 方向',variant:'Variant 樣式'}}}
+    step:{label:'Step 步驟指示器',order:['orientation','variant'],axes:{orientation:['horizontal','vertical'],variant:['numbered','dotted','icon']},zh:{orientation:{horizontal:'水平',vertical:'垂直'},variant:{numbered:'編號',dotted:'圓點',icon:'圖示'},axisName:{orientation:'Orientation 方向',variant:'Variant 樣式'}}},
+    quantity:{label:'Quantity 商品計數',order:['variant','size'],axes:{variant:['outline','pill','plain'],size:['s','m','l']},zh:{variant:{outline:'外框',pill:'膠囊',plain:'極簡'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
+    progress:{label:'Progress 進度條',order:['variant','size'],axes:{variant:['bar','label','indeterminate'],size:['s','m','l']},zh:{variant:{bar:'基本',label:'帶百分比',indeterminate:'不確定'},size:{s:'細 s',m:'標準 m',l:'粗 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}}
   
   };
   const CHOICE={};
@@ -3863,7 +3917,7 @@ function skelMedia(anim){
             else{row.classList.toggle('is-selected');}
           });
         }
-        const box=ce('div','lst-solo');box.appendChild(row);return box;
+        const box=ce('div','lst-solo');box.style.width='300px';box.appendChild(row);return box; // Live 固定寬 300px
       },
       note:'每個開關都對應一個 slot：<b>Leading</b>（無／圖示／勾選框）、<b>Trailing</b> 可複選（tag／info／meta／金額／動作鈕／caret）。<b>hover</b> 滑鼠移上去即見、<b>disabled</b> 停用整列；點勾選框 leading 切換勾選並轉已選（已選僅淡藍底、無左側色條）。'
     });
@@ -3935,10 +3989,10 @@ function skelMedia(anim){
       segs:[],
       bools:[{key:'divider',label:'divider 分隔線'},{key:'open',label:'預設展開子列'}],
       boolLabel:'Content',
-      render:st=>lstGroup([
+      render:st=>{const g=lstGroup([
         lstNested({title:'王小明',meta:'2 項',open:st.open,checked:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
         lstNested({title:'陳美華',meta:'2 項',open:st.open,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
-      ],{divider:st.divider}),
+      ],{divider:st.divider});g.style.width='300px';return g;}, // Live 固定寬 300px
       note:'點母列展開／收合子列（子列為內縮灰底區塊），點左側勾選框只切換勾選。每個開關都對應樣式：<b>divider</b> 加分隔線、<b>預設展開子列</b> 切子列初始狀態。'
     });
     // 選項卡
@@ -4593,7 +4647,7 @@ function skelMedia(anim){
 
   /* 舞台：假內容區 + 依 variant/position 疊上浮動列 */
   function floStage(variant,position,o){o=o||{};
-    const st=ce('div','flo-stage');
+    const st=ce('div','flo-stage'+(o.tall?' flo-tall':''));   // tall 時加高舞台，容納 FAB 展開子項
     st.appendChild(floFake({tall:o.tall}));
     let float;
     if(variant==='fab'){float=floFab(o);}               // fab 自帶 flo-float wrap
@@ -4621,7 +4675,7 @@ function skelMedia(anim){
         rows:vs,cols:ps,
         rowLab:v=>labHTML(VN[v][0],VN[v][1]),
         colLab:c=>labHTML(PN[c][0],PN[c][1]),
-        cell:(v,c)=>floStage(v,c,{expanded:false}),mincol:320})); }
+        cell:(v,c)=>floStage(v,c,{expanded:false}),mincol:360})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'Variant × Position 矩陣','列＝三種型態、欄＝兩種底部位置；每格是一塊假內容區，浮動列以 absolute 疊在指定角落（bottom-center 置中、bottom-right 靠右）。');
     p=panelsIn(sec);renderM();
@@ -4629,8 +4683,8 @@ function skelMedia(anim){
     // ---- 型態細節 ----
     const ds=section(body,'型態細節 Variant details','三種型態各自的內容組成：選取列的計數＋批次動作、工具列的分組、FAB 的展開子項。');
     const det=ce('div','flo-detail');
-    // selection 細節
-    const c1=ce('div','flo-dcol');
+    // selection 細節（完整批次動作較寬 → 獨佔一列）
+    const c1=ce('div','flo-dcol flo-wide');
     const cap1=ce('div','flo-dcap');cap1.innerHTML='<b>selection 選取列</b> · 計數 + 批次動作（匯出／封存／取消／刪除）';
     const b1=ce('div','flo-dbox');b1.appendChild(floSelectBar({count:3,more:true}));
     c1.append(cap1,b1);
@@ -4799,7 +4853,151 @@ function skelMedia(anim){
     });
   }
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep};
+  /* ==================== Quantity 商品計數 ==================== */
+  /* 計數器：variant 外觀、size 尺寸；state：default／min(−停用)／max(＋停用)／disabled。＋／− 重用 Button 原子（icon-only）*/
+  function qtyEl(variant,size,o){
+    o=o||{};
+    const val=(o.value!=null)?o.value:1;
+    const state=o.state||'default';
+    const el=ce('div','qty qty-v-'+variant+' qty-sz-'+size+(state==='disabled'?' is-disabled':''));
+    const bv=variant==='plain'?'v-outline':'v-outline';                 // 內部 −/＋ 皆用 outline 原子，容器再依 variant 改外觀
+    const minus=ce('button','btn '+bv+' i-secondary sz-'+size+' icon-only'+(o.live?' live':''));
+    minus.innerHTML=ICON_MINUS;minus.setAttribute('aria-label','減少');
+    if(state==='min'||state==='disabled')minus.disabled=true;
+    const num=ce('span','qty-val');num.textContent=val;
+    const plus=ce('button','btn '+bv+' i-secondary sz-'+size+' icon-only'+(o.live?' live':''));
+    plus.innerHTML=IC_PLUS;plus.setAttribute('aria-label','增加');
+    if(state==='max'||state==='disabled')plus.disabled=true;
+    el.append(minus,num,plus);
+    el._parts={minus,num,plus};
+    return el;
+  }
+  function buildQuantity(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Quantity',title:'Quantity 商品計數',
+      lede:'電商常見的<b>數量選擇器</b>：<b>−</b> 減 ／ <b>數值</b> ／ <b>＋</b> 加，用於購物車、商品頁調整購買數量。三種 variant（<b>外框</b>／<b>膠囊</b>／<b>極簡</b>）× 三尺寸；達下限時 <b>−</b> 停用、達上限時 <b>＋</b> 停用。＋／− 重用 Button 原子（icon-only）。',
+      specRows:[['axes','<code>variant × size</code>'],['formula','<code>3 × 3 = 9</code>'],['token-policy','<code>semantic.*.control.*</code>'],['a11y','<code>aria-label 減少／增加</code>']]});
+    const axes=DIAL_SPECS.quantity.axes, zh=DIAL_SPECS.quantity.zh, active=CHOICE.quantity.active;
+    const VN={outline:['外框','outline'],pill:['膠囊','pill'],plain:['極簡','plain']};
+    const SZN={s:['小','s'],m:['標準','m'],l:['大','l']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.size.filter(v=>active.size.has(v));
+      p.appendChild(matrixPanel({badge:'quantity',name:'Variant × Size（三型態 × 三尺寸）',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(SZN[s][0]+'尺寸',SZN[s][1]),
+        cell:(v,s)=>qtyEl(v,s,{value:1}),mincol:170})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Size 矩陣','列＝三型態（外框／膠囊／極簡）、欄＝三尺寸；＋／− 為 Button 原子（icon-only），容器依 variant 改外觀。');
+    p=panelsIn(sec);renderM();
+    const stt=section(body,'狀態 States','預設／達下限（− 停用）／達上限（＋ 停用）／整體停用。');
+    const srow=ce('div','qty-staterow');
+    [['default','預設',3],['min','達下限',1],['max','達上限',99],['disabled','停用',3]].forEach(([s,lbl,v])=>{
+      const cell=ce('div','qty-statecell');
+      const cap=ce('div','qty-statecap');cap.textContent=lbl;
+      cell.append(cap,qtyEl('outline','m',{value:v,state:s}));
+      srow.appendChild(cell);
+    });
+    stt.appendChild(srow);
+    const sl=section(body,'實際互動 Live','點 ＋／− 調整數量（範圍 1–10），到邊界對應鈕自動停用；切 variant／size、勾 disabled。');
+    mountLive(sl,{
+      initial:{variant:'outline',size:'m',disabled:false},
+      segs:[{key:'variant',label:'Variant',options:['outline','pill','plain'],labels:['外框','膠囊','極簡']},
+            {key:'size',label:'Size',options:['s','m','l']}],
+      bools:[{key:'disabled',label:'disabled 停用'}],
+      boolLabel:'State',
+      render:st=>{
+        let v=1;const MIN=1,MAX=10;
+        const wrap=ce('div','qty-live-box');
+        function mk(){wrap.innerHTML='';
+          const state=st.disabled?'disabled':(v<=MIN?'min':v>=MAX?'max':'default');
+          const el=qtyEl(st.variant,st.size,{value:v,state:state,live:true});
+          if(!st.disabled){
+            el._parts.minus.onclick=()=>{if(v>MIN){v--;mk();}};
+            el._parts.plus.onclick=()=>{if(v<MAX){v++;mk();}};
+          }
+          wrap.appendChild(el);
+        }
+        mk();return wrap;
+      },
+      note:'數量範圍 1–10；到下限 − 停用、到上限 ＋ 停用。＋／− 為 Button 原子（icon-only、live 開啟真互動）。'
+    });
+  }
+
+  /* ==================== Progress 進度條 ==================== */
+  /* 進度條：variant（bar 基本／label 帶百分比／indeterminate 不確定）× size（細/標準/粗）；o.value 0–100、o.intent 語意色 */
+  function prgEl(variant,size,o){
+    o=o||{};
+    const intent=o.intent||'primary';
+    const val=(o.value!=null)?o.value:60;
+    const wrap=ce('div','prg prg-sz-'+size);
+    wrap.setAttribute('role','progressbar');
+    if(variant!=='indeterminate'){wrap.setAttribute('aria-valuenow',val);wrap.setAttribute('aria-valuemin','0');wrap.setAttribute('aria-valuemax','100');}
+    if(variant==='label'){
+      const lab=ce('div','prg-label');
+      const t=ce('span','prg-cap');t.textContent=o.cap||'上傳進度';
+      const pct=ce('span','prg-pct');pct.textContent=val+'%';
+      lab.append(t,pct);wrap.appendChild(lab);
+    }
+    const track=ce('div','prg-track');
+    const fill=ce('div','prg-fill i-'+intent);
+    if(variant==='indeterminate')fill.classList.add('is-indet');
+    else fill.style.width=val+'%';
+    track.appendChild(fill);wrap.appendChild(track);
+    return wrap;
+  }
+  function buildProgress(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Progress',title:'Progress 進度條',
+      lede:'線性<b>進度指示</b>：track 底軌 ＋ fill 填充（依 value 0–100% 撐開）。三種 variant（<b>基本</b>／<b>帶百分比</b>／<b>不確定</b> animated）× 三尺寸（細／標準／粗）。語意色 primary／success／warning／danger 綁 semantic token。',
+      specRows:[['axes','<code>variant × size</code>'],['formula','<code>3 × 3 = 9</code>'],['token-policy','<code>--accent / --ok / --warn / --i-danger</code>'],['a11y','<code>role=progressbar</code>']]});
+    const axes=DIAL_SPECS.progress.axes, zh=DIAL_SPECS.progress.zh, active=CHOICE.progress.active;
+    const VN={bar:['基本','bar'],label:['帶百分比','label'],indeterminate:['不確定','indeterminate']};
+    const SZN={s:['細','s'],m:['標準','m'],l:['粗','l']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.size.filter(v=>active.size.has(v));
+      p.appendChild(matrixPanel({badge:'progress',name:'Variant × Size（三型態 × 三尺寸）',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(SZN[s][0],SZN[s][1]),
+        cell:(v,s)=>prgEl(v,s,{value:60}),mincol:210})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Size 矩陣','列＝三型態、欄＝三尺寸；基本＝純填充、帶百分比＝上方標題＋%、不確定＝無定值的循環動畫。');
+    p=panelsIn(sec);renderM();
+    const cs=section(body,'語意色 Intent','進度色依情境語意：primary 一般／success 完成／warning 注意／danger 錯誤，全綁 semantic token。');
+    const crow=ce('div','prg-intentrow');
+    [['primary','一般 primary',72],['success','完成 success',100],['warning','注意 warning',45],['danger','錯誤 danger',30]].forEach(([it,lbl,v])=>{
+      const cell=ce('div','prg-intentcell');
+      const cap=ce('div','prg-intentcap');cap.textContent=lbl;
+      cell.append(cap,prgEl('bar','m',{value:v,intent:it}));
+      crow.appendChild(cell);
+    });
+    cs.appendChild(crow);
+    const sl=section(body,'實際互動 Live','拖動下方滑桿調整進度，切 size／intent、勾 label（標題＋%）／indeterminate（無定值循環動畫）。');
+    mountLive(sl,{
+      initial:{size:'m',intent:'primary',label:true,indeterminate:false,value:60},
+      segs:[{key:'size',label:'Size',options:['s','m','l']},
+            {key:'intent',label:'Intent',options:['primary','success','warning','danger'],labels:['一般','完成','注意','錯誤']}],
+      bools:[{key:'label',label:'label 標題＋%'},{key:'indeterminate',label:'indeterminate 不確定'}],
+      boolLabel:'Content',
+      render:st=>{
+        const box=ce('div','prg-live-box');
+        const variant=st.indeterminate?'indeterminate':(st.label?'label':'bar');
+        box.appendChild(prgEl(variant,st.size,{value:st.value,intent:st.intent,cap:'上傳進度'}));
+        if(!st.indeterminate){
+          const rng=document.createElement('input');rng.type='range';rng.min=0;rng.max=100;rng.value=st.value;rng.className='prg-range';
+          rng.oninput=()=>{st.value=+rng.value;const fill=box.querySelector('.prg-fill');if(fill)fill.style.width=rng.value+'%';const pct=box.querySelector('.prg-pct');if(pct)pct.textContent=rng.value+'%';const pb=box.querySelector('.prg');if(pb)pb.setAttribute('aria-valuenow',rng.value);};
+          box.appendChild(rng);
+        }
+        return box;
+      },
+      note:'value 0–100 由下方滑桿控制；勾 indeterminate 改跑循環動畫（無定值）、滑桿隱藏。intent 切換填充語意色。'
+    });
+  }
+
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep,quantity:buildQuantity,progress:buildProgress};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -4823,7 +5021,9 @@ function skelMedia(anim){
     modal:'modal',
     drawer:'drawer',
     'floating-line':'floating-line',
-    step:'step'
+    step:'step',
+    quantity:'quantity',
+    progress:'progress'
   }; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){

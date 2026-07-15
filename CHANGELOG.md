@@ -490,3 +490,28 @@ List Item／List 由主流程直接改；Collapse／Modal／Drawer 開 3 個 fab
 ## 2026-07-15　Modal 標準/大版統一內容（只差寬度）
 
 依 Yuu：regular 與 larger 應只差寬度。移除 larger 專屬的兩個示範輸入框（收件人姓名／配送備註），並把 `MDL_CONTENT.modal.larger` 內容改成與 regular 完全一致（標題／副標題／footer 皆同）。兩版現在只差 max-width（regular 800px、larger ≤1224px）。`.mdl-fields` CSS 保留但已無引用。驗證：node --check OK、Playwright 兩版標題／段落數／輸入框數一致、寬度 regular<larger。
+
+## 2026-07-15　List 對齊/寬度 ＋ Drawer/Floating-line 修 ＋ 新增 Quantity/Progress
+
+List/List Item、Quantity、Progress 由主流程直接做；Drawer、Floating-line 開 fable agent 修。
+
+**List／List Item**
+- 實際互動區寬度統一 **300px**（list 巢狀群組、list-item 單列）。
+- 巢狀子列 padding-left 18→**30px**，補足「母列 checkbox(16)＋gap(12)」寬度，讓子標題與母標題**左緣對齊**（實測差 0）。
+
+**Drawer**（agent）
+- header 分隔線內縮根因＝面板 `sz-s/m/l` class **撞到 Button 裸 `.sz-*` padding 規則**（padding 漏進面板）。修法：`.drw-live-panel`／`.drw-panel` 補 `padding:0`。Live headW 298／panelW 300、矩陣 6 格同修，分隔線填滿寬度。
+- ⚠️ agent 提醒：`.am-panel.sz-*` 等其他掛 `sz-*` 的非按鈕元素可能有同樣 padding 漏染——待 Yuu 決定是否統一處理。
+
+**Floating-line**（agent）
+- 矩陣爆版根因＝`.flo-stage` 在 flex 置中格內 intrinsic 寬度趨近 0、`.flo-toolbar`/`.flo-select` 缺 `display:flex` → 直立堆疊。修法：`.flo-stage` 加 `width:100%`、toolbar/select 補 inline-flex、mincol 320→360。
+- selection 爆版：圓角 999px→**10px**、padding 調整、按鈕統一 `.btn sz-s` 等高、細節欄改整列寬。FAB 展開加 `.flo-tall` 防裁切。
+
+**新增 Quantity 商品計數**（Complex）
+- 電商數量選擇器 −／值／＋，variant 外框／膠囊／極簡 × s/m/l；狀態 default／min(−停用)／max(＋停用)／disabled；＋／− 重用 Button 原子（icon-only）。Live 範圍 1–10 邊界自動停用。
+
+**新增 Progress 進度條**（Complex）
+- 線性進度 track＋fill，variant 基本／帶百分比／不確定(animated) × 細/標準/粗；語意色 primary(--accent)／success(--ok)／warning(--warn)／danger(--i-danger)。Live 滑桿控 0–100%。
+
+**註冊**：NAV／DIAL_SPECS／BUILD／DIAL_PAGE 加 quantity、progress；Complex 群 10→**12**。
+**驗證**：node --check OK、Playwright 0 console error；list 寬 300／巢狀對齊差 0、drawer 分隔線 298/300、floating-line selection 10px flex、quantity 用 .btn 原子、progress success 綠(46,158,107)＋四色語意；quantity／progress／floating-line 截圖確認。
