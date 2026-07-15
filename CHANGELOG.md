@@ -309,6 +309,14 @@ Yuu 發現 price 的 SALE 是價格 agent 自製的 `.pr-badge`（沒用 DS Tag 
 - **改名**：各元件頁的可收合「**複雜度轉盤**」→「**變數篩選器**」（6 處：mountDial 標題、button 頁硬寫標題、summary lede 引用、3 處註解）。**匯出總覽頁「複雜度確認」不動**（不同東西）。
 - **Complex 群組重排**：原 15 顆順序無規律，改依**心智模型 5 群**（維持扁平側邊欄、相鄰即群、與 Basic 一致，NAV 內加群註解）：① 版面結構 header／footer／section-head ② 內容容器 card／list／collapse ③ 內容卡片 product-card／category-tile／article-card／announcement ④ 覆蓋／浮動 modal／drawer／floating-line ⑤ 流程／時間 step／calendar。敘事：頁面骨架 → 裝內容的容器 → 特定內容卡 → 浮在上層的覆蓋層 → 流程與時間。summary 卡片依 NAV 順序、自動跟進。
 
+## 2026-07-15　新增「Card 卡片」群 + calendar 移入 Table & Chart
+
+側邊欄從 3 大組 → **4 大組**（共 36 項不變）：
+- **新增「Card 卡片」群**（🗂️，放 Basic 之後、Complex 之前）：把 `card` 與內容卡 `product-card／category-tile／article-card／announcement-item` 從 Complex 抽出獨立成群（5 項）。
+- **calendar 移入 Table & Chart**（放末尾、跟 schedule-chart 同屬時間類）。
+- **Complex 瘦身為 9 項**：header／footer／section-head（版面結構）、list／collapse（容器）、modal／drawer／floating-line（覆蓋/浮動）、step（流程）。
+- 群順序＝Basic → Card → Complex → Table & Chart（積木 → 內容卡 → 結構/覆蓋 → 資料）。summary 卡片依 NAV 順序自動跟進（Card/Complex/T&C 尚未建、暫不進總覽）。
+
 ## 已知踩坑（避免重犯）
 - summary 卡片要「接進匯出需求頁」＝該元件必須進 `DIAL_SPECS`（給軸/計數）＋ 有頂層 `LIVE[id]`（給展開的實際操作）。自包含頁若 Live builder nested 在 buildFn 內，summary 首次載入時 `LIVE[id]` 還沒定義 → 必須把 builder 提升頂層再註冊。
 - 平行建「同一個 self-contained 單檔」的多個頁面：不要讓多 agent 同時寫檔（會衝突）。正解＝平行「設計+產碼」（各回傳 namespace 過的 `buildXxx`+CSS 字串）、主控端序列整合。CSS class 一律加元件前綴防撞。
