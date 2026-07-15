@@ -882,11 +882,9 @@
   /* 整條頁首 bar：面板底 + 描邊 + 圓角；compact 收縮高度與間距 */
   .hdr-bar{display:flex;align-items:center;gap:20px;height:60px;padding:0 20px;width:100%;box-sizing:border-box;
     background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);}
-  .hdr-bar.hdr-compact{height:48px;gap:12px;padding:0 14px;}
   /* logo：複用 topbar 的 Goons 官方字標 svg */
   .hdr-logo{display:inline-flex;align-items:center;flex:0 0 auto;color:var(--ink);}
   .hdr-logo svg{height:22px;width:auto;display:block;}
-  .hdr-compact .hdr-logo svg{height:18px;}
   /* 導覽：複用 Menu 元件（.mn-bar / .mn-item），在 header 內去除容器外框、貼齊排列 */
   .hdr-nav-slot{display:flex;align-items:center;min-width:0;}
   .hdr-nav-slot .mn-bar{border:0;background:transparent;border-radius:0;padding:0;gap:2px;}
@@ -895,18 +893,16 @@
   /* 搜尋框：複用 Search／Input 元件（.field v-outline）*/
   .hdr-search{flex:0 1 340px;min-width:140px;}
   .hdr-search .field{width:100%;display:flex;}
-  .hdr-compact .hdr-search{flex-basis:280px;}
   /* 右側 actions：鈴鐺 → 頭像 → 登入（登入鈕在頭像右側）*/
   .hdr-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto;}
-  .hdr-compact .hdr-actions{gap:7px;}
   .hdr-bell{position:relative;display:inline-flex;}
   .hdr-badge{position:absolute;top:5px;right:5px;width:8px;height:8px;border-radius:50%;
     background:var(--i-danger);border:2px solid var(--panel);box-sizing:content-box;pointer-events:none;}
   .hdr-avatar{width:32px;height:32px;border-radius:50%;flex:0 0 auto;cursor:pointer;
     display:inline-flex;align-items:center;justify-content:center;
     background:var(--i-primary-tint);color:var(--i-primary);
-    font-family:var(--font-sans);font-weight:600;font-size:13px;}
-  .hdr-compact .hdr-avatar{width:28px;height:28px;font-size:12px;}
+    font-family:var(--font-sans);font-weight:600;font-size:13px;transition:box-shadow .13s;}
+  .hdr-avatar:hover{box-shadow:inset 0 0 0 2px var(--i-primary);}
   /* 陳列：上下堆疊的整條 bar（不再用擠壓的 2D 矩陣）*/
   .hdr-stack{display:flex;flex-direction:column;gap:22px;}
   .hdr-row{display:flex;flex-direction:column;gap:8px;}
@@ -1504,7 +1500,7 @@
     image:{label:'Image 圖片',order:['variant','state','size','ratio'],
       axes:{variant:['rectangular','rounded','circular'],state:['default','loading','error'],size:['s','m','l','xl'],ratio:['4:3','16:9','2:1','1:1']},
       zh:{axisName:{variant:'Shape 形狀',state:'State 狀態',size:'Size 尺寸',ratio:'Ratio 比例'},variant:{rectangular:'矩形',rounded:'圓角',circular:'圓形'},state:{default:'正常',loading:'載入中',error:'錯誤'},size:{s:'小 s',m:'中 m',l:'大 l',xl:'特大 xl'},ratio:{'4:3':'4:3','16:9':'16:9','2:1':'2:1','1:1':'1:1'}}},
-    header:{label:'Header 頁首',order:['device','density'],axes:{device:['desktop','mobile'],density:['comfortable','compact']},zh:{device:{desktop:'電腦版',mobile:'行動版'},density:{comfortable:'寬鬆',compact:'緊湊'},axisName:{device:'Device 裝置',density:'Density 密度'}}},
+    header:{label:'Header 頁首',order:['device'],axes:{device:['desktop','mobile']},zh:{device:{desktop:'電腦版',mobile:'行動版'},axisName:{device:'Device 裝置'}}},
     footer:{label:'Footer 頁尾',order:['variant'],axes:{variant:['rich','simple','minimal']},zh:{variant:{rich:'多欄',simple:'單列',minimal:'極簡'},axisName:{variant:'Variant 型態'}}},
     'section-head':{label:'Section Head 區段標題',order:['align','size'],axes:{align:['left','center'],size:['m','l']},zh:{align:{left:'靠左',center:'置中'},size:{m:'標準 m',l:'大 l'},axisName:{align:'Align 對齊',size:'Size 尺寸'}}},
     list:{label:'List 列表',order:['variant','state'],axes:{variant:['simple','detailed','avatar'],state:['default','hover','selected','disabled']},zh:{variant:{simple:'單行',detailed:'雙行',avatar:'頭像'},state:{default:'預設',hover:'滑過',selected:'已選',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
@@ -3077,26 +3073,26 @@ function skelMedia(anim){
     f.innerHTML=`<span style="display:inline-flex;width:17px;height:17px;color:var(--muted)">${ICON_SEARCH}</span>`;
     const inp=document.createElement('input');inp.className='bare';inp.placeholder='搜尋產品、文件…';
     f.appendChild(inp);w.appendChild(f);return w;}
-  /* 漢堡鈕：複用 Button 元件（icon-only icon btn）*/
-  function hdrBurger(){const b=document.createElement('button');b.className='btn v-text i-secondary sz-s icon-only';
+  /* 漢堡鈕：複用 Button 元件（無底色無外框 icon btn＝v-text icon-only；.live 才吃真實 hover）*/
+  function hdrBurger(){const b=document.createElement('button');b.className='btn v-text i-secondary sz-s icon-only live';
     b.setAttribute('aria-label','選單');b.innerHTML=HDR_IC_LIST;return b;}
-  /* 鈴鐺鈕：複用 Button 元件（icon-only）+ 未讀紅點 */
+  /* 鈴鐺鈕：複用 Button 元件（v-text icon-only live）+ 未讀紅點 */
   function hdrBell(badge){const wrap=ce('div','hdr-bell');
-    const b=document.createElement('button');b.className='btn v-text i-secondary sz-s icon-only';
+    const b=document.createElement('button');b.className='btn v-text i-secondary sz-s icon-only live';
     b.setAttribute('aria-label','通知');b.innerHTML=HDR_IC_BELL;wrap.appendChild(b);
     if(badge)wrap.appendChild(ce('span','hdr-badge'));return wrap;}
   /* 圓形頭像 */
-  function hdrAvatar(){const av=ce('div','hdr-avatar');av.textContent='楊';av.setAttribute('aria-label','帳號');return av;}
+  function hdrAvatar(){const av=ce('div','hdr-avatar');av.textContent='楊';av.setAttribute('aria-label','帳號');av.setAttribute('tabindex','0');return av;}
   /* 右側 actions：鈴鐺 → 頭像 → 登入（登入鈕在頭像右側）*/
   function hdrActions(o){o=o||{};
     const a=ce('div','hdr-actions');
     if(o.bell!==false)a.appendChild(hdrBell(o.badge!==false));
     if(o.avatar!==false)a.appendChild(hdrAvatar());
-    if(o.login!==false){const b=document.createElement('button');b.className='btn v-solid i-primary sz-s';b.textContent='登入';a.appendChild(b);}
+    if(o.login!==false){const b=document.createElement('button');b.className='btn v-solid i-primary sz-s live';b.textContent='登入';a.appendChild(b);}
     return a;}
-  /* 完整頁首 bar：device 決定電腦／行動版、density 決定高度；nav 與 search 可同時存在 */
-  function hdrBar(device,density,o){o=o||{};
-    const bar=ce('div','hdr-bar'+(density==='compact'?' hdr-compact':''));
+  /* 完整頁首 bar：device 決定電腦／行動版；nav 與 search 可同時存在 */
+  function hdrBar(device,o){o=o||{};
+    const bar=ce('div','hdr-bar');
     if(device==='mobile'){
       if(o.nav!==false)bar.appendChild(hdrBurger());       // 行動版導覽收進漢堡
       bar.appendChild(hdrLogo());
@@ -3116,39 +3112,37 @@ function skelMedia(anim){
     const body=viewScaffold(view,{
       eyebrow:'L3 Component · Header',
       title:'Header 頁首',
-      lede:'應用／網站最上緣的<b>全域導覽列</b>：左側 Goons 品牌字標、<b>導覽（Menu 元件）與搜尋框（Search 元件）可同時並存</b>、右側依序為通知鈴鐺、帳號頭像與登入鈕。以 <b>裝置（電腦版／行動版）× 密度</b> 兩軸展開，行動版導覽收進漢堡鈕。內部 btn／icon btn／menu／search 全部取自本 library、維持原子建構。',
-      specRows:[['axes','<code>device × density</code>'],['formula','<code>2 × 2 = 4</code>'],['atoms','Button · Icon Button · Menu · Search'],['content','logo / nav + search / actions']]
+      lede:'應用／網站最上緣的<b>全域導覽列</b>：左側 Goons 品牌字標、<b>導覽（Menu 元件）與搜尋框（Search 元件）可同時並存</b>、右側依序為通知鈴鐺、帳號頭像與登入鈕。以 <b>裝置（電腦版／行動版）</b> 為軸，行動版導覽收進漢堡鈕。內部 btn／icon btn／menu／search 全部取自本 library、維持原子建構。',
+      specRows:[['axes','<code>device</code>'],['variants','<code>desktop · mobile</code>'],['atoms','Button · Icon Button · Menu · Search'],['content','logo / nav + search / actions']]
     });
     const axes=DIAL_SPECS.header.axes, zh=DIAL_SPECS.header.zh, active=CHOICE.header.active; // 接中央 store
     let p;
     function renderM(){ if(!p)return; p.innerHTML='';
       const devs=axes.device.filter(v=>active.device.has(v));
-      const dens=axes.density.filter(v=>active.density.has(v));
       const stack=ce('div','hdr-stack');
-      devs.forEach(dv=>dens.forEach(dn=>{
+      devs.forEach(dv=>{
         const row=ce('div','hdr-row');
-        const cap=ce('div','hdr-cap');cap.innerHTML=`<b>${zh.device[dv]}</b> · ${zh.density[dn]}　<span style="opacity:.65">${dv} / ${dn}</span>`;
+        const cap=ce('div','hdr-cap');cap.innerHTML=`<b>${zh.device[dv]}</b>　<span style="opacity:.65">${dv}</span>`;
         row.appendChild(cap);
-        row.appendChild(hdrBar(dv,dn,{nav:true,search:true,bell:true,avatar:true,login:true,badge:true}));
+        row.appendChild(hdrBar(dv,{nav:true,search:true,bell:true,avatar:true,login:true,badge:true}));
         stack.appendChild(row);
-      }));
+      });
       p.appendChild(stack);
     }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Device × Density 陳列','整條頁首 bar 上下堆疊呈現（不擠壓）。每條同時含導覽（Menu）與搜尋（Search）；行動版導覽收進漢堡鈕。');
+    const sec=section(body,'Device 陳列','整條頁首 bar 上下堆疊呈現（不擠壓）。每條同時含導覽（Menu）與搜尋（Search）；行動版導覽收進漢堡鈕。');
     const holder=ce('div');sec.appendChild(holder);p=holder;renderM();
 
     // 實際互動 Live
-    const sl=section(body,'實際互動 Live','切換<b>電腦版／行動版</b>與密度，勾選各內容元素即時預覽；導覽與搜尋可同時勾選並存。');
+    const sl=section(body,'實際互動 Live','切換<b>電腦版／行動版</b>，勾選各內容元素即時預覽；導覽與搜尋可同時勾選並存。按鈕／圖示鈕滑過即見 hover。');
     mountLive(sl,{
-      initial:{device:'desktop',density:'comfortable',nav:true,search:true,bell:true,avatar:true,login:true},
-      segs:[{key:'device',label:'Device',options:['desktop','mobile'],labels:['電腦版','行動版']},
-            {key:'density',label:'Density',options:['comfortable','compact'],labels:['寬鬆','緊湊']}],
+      initial:{device:'desktop',nav:true,search:true,bell:true,avatar:true,login:true},
+      segs:[{key:'device',label:'Device',options:['desktop','mobile'],labels:['電腦版','行動版']}],
       bools:[{key:'nav',label:'nav 導覽'},{key:'search',label:'search 搜尋'},{key:'bell',label:'bell 鈴鐺'},{key:'avatar',label:'avatar 頭像'},{key:'login',label:'login 登入鈕'}],
       boolLabel:'Content',
       render:st=>{const box=ce('div','hdr-live-box');
-        box.appendChild(hdrBar(st.device,st.density,{nav:st.nav,search:st.search,bell:st.bell,avatar:st.avatar,login:st.login,badge:st.bell}));return box;},
-      note:'<b>導覽與搜尋可同時並存</b>；行動版（mobile）導覽收進漢堡鈕。內部按鈕／圖示鈕／選單／搜尋框皆為本 library 元件實例。'
+        box.appendChild(hdrBar(st.device,{nav:st.nav,search:st.search,bell:st.bell,avatar:st.avatar,login:st.login,badge:st.bell}));return box;},
+      note:'<b>導覽與搜尋可同時並存</b>；行動版（mobile）導覽收進漢堡鈕。內部按鈕／圖示鈕／選單／搜尋框皆為本 library 元件實例（皆掛 .live 吃真實 hover）。'
     });
   }
 

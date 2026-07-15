@@ -355,3 +355,10 @@ Yuu 發現 price 的 SALE 是價格 agent 自製的 `.pr-badge`（沒用 DS Tag 
 - **原子建構原則**：header 內部零件全部改用 library 既有元件——**導覽＝Menu 元件 `mnBar('horizontal')`**（在 header 內用 `.hdr-nav-slot .mn-bar{border:0;background:transparent;padding:0}` de-chrome）、搜尋＝Search／Input `.field v-outline`、漢堡/鈴鐺＝Button icon-only、登入＝`.btn v-solid i-primary`。specStrip 加 `atoms` 欄標註 Button·Icon Button·Menu·Search。
 - **驗證**：`node --check` 過；Playwright renderView header **0 console error**、4 條上下堆疊 bar、nav 用 `.mn-item`（Menu 元件）、logo svg、nav+search 並存、actions 順序 bell→avatar→login、mobile 有漢堡，全數確認。
 - **新增 feedback memory**：`feedback_ds_atomic_reuse` — 複合元件內部一律取用 library 原子、禁 inline 重畫（Yuu 要求「確保不再犯」）。
+
+## 2026-07-15　Header 微調：移除緊湊密度 + icon btn 補 .live 吃 hover
+
+- **移除「緊湊 compact」**：Header 拿掉 density 軸，DIAL_SPECS.header 改單軸 `device`（desktop／mobile），陳列從 4 條 → 2 條堆疊 bar；Live 移除密度 seg；清掉所有 `.hdr-compact` CSS（0 殘留）。
+- **修 icon btn 沒 hover**：Button 元件把真實 `:hover`/`:active` 用 `.live` class 把關（矩陣格子用 `.st-hover`/`.st-pressed` 假狀態、不吃真 hover）。header 的鈴鐺／漢堡／登入鈕原本漏了 `.live` → 全補上（`btn v-text i-secondary sz-s icon-only live` 等），實測 hover 後背景轉 `--i-sec-tint`（`rgba(90,100,116,.1)`）。頭像加 `:hover` inset ring。**釐清**：無底色無外框的純 icon btn 樣式本來就有（`v-text`＋`icon-only`），只是要 `.live` 才有真實 hover。
+- **memory**：`feedback_ds_atomic_reuse` 補記「重用 .btn 的互動實例必須加 .live 才吃 hover」。
+- 驗證：`node --check` 過、Playwright 0 console error、2 條堆疊 bar、7 顆按鈕全帶 live、`.v-text.live:hover` 規則存在、實測 hover 背景變色。
