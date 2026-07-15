@@ -1039,9 +1039,11 @@
   .lst-item.is-hover,
   .lst-group .lst-item:hover:not(.is-disabled):not(.is-selected),
   .lst-solo .lst-item:hover:not(.is-disabled):not(.is-selected){background:var(--panel-2);}
-  /* selected：左側 accent 色條 ＋ 淡藍底 */
-  .lst-item.is-selected{background:var(--i-primary-tint);box-shadow:inset 3px 0 0 var(--accent);}
+  /* selected：僅淡藍底＋標題轉主色（不加左側色條） */
+  .lst-item.is-selected{background:var(--i-primary-tint);}
   .lst-item.is-selected .lst-title{color:var(--accent);}
+  /* 尾端金額（重用 price 原子，行內縮小尺寸） */
+  .lst-amount{font-size:15px;}
   /* disabled：整列降透明、不可點 */
   .lst-item.is-disabled{opacity:.5;cursor:not-allowed;}
   /* leading：icon 包一層設尺寸色 */
@@ -1086,7 +1088,10 @@
   .lst-item.lst-sum.is-add,.lst-item.lst-sum.is-total{cursor:default;}
   .lst-title.w-strong{font-weight:700;}
   /* ---- 巢狀可展開列：子列內縮 ---- */
-  .lst-subwrap .lst-item{padding-left:44px;}
+  /* 巢狀子層：內縮的灰底圓角區塊（母列白底、子列灰底成一組） */
+  .lst-subwrap{background:var(--panel-2);border-radius:10px;margin:2px 12px 12px;overflow:hidden;}
+  .lst-subwrap .lst-item{padding-left:18px;}
+  .lst-subwrap .lst-item:hover:not(.is-disabled):not(.is-selected){background:var(--panel-3);}
   /* ---- 矩陣不適用格（error 為選項卡專屬） ---- */
   .lst-na{font-size:12px;color:var(--faint);padding:8px 0;}
   /* ---- 選項卡 selection card：整列一張有框卡 ---- */
@@ -1123,6 +1128,8 @@
   .cps-panel{font-family:var(--font-sans);background:var(--panel);overflow:hidden;width:100%;box-sizing:border-box;}
   .cps-head{display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;background:none;border:none;font-family:inherit;color:var(--ink);text-align:left;cursor:default;user-select:none;}
   .cps-head-btn{cursor:pointer;}
+  .cps-head-btn:hover{background:var(--panel-2);}
+  .cps-panel.v-filled .cps-head-btn:hover{background:var(--panel-3);}
   .cps-title{flex:1 1 auto;font-size:15px;font-weight:600;line-height:1.3;color:var(--ink);}
   .cps-lead{display:inline-flex;width:18px;height:18px;flex:0 0 auto;color:var(--muted);}
   .cps-lead svg{width:100%;height:100%;}
@@ -1136,7 +1143,9 @@
   .cps-body-wrap{display:grid;grid-template-rows:0fr;overflow:hidden;transition:grid-template-rows .24s ease;}
   .cps-panel.is-open .cps-body-wrap,.cps-panel.st-expanded .cps-body-wrap{grid-template-rows:1fr;}
   /* body 內容：段落文字；opacity 搭配外層展開動畫做淡入淡出 */
-  .cps-body{padding:0 16px 16px;color:var(--muted);font-size:14px;line-height:1.6;min-height:0;overflow:hidden;opacity:0;transition:opacity .24s ease;}
+  .cps-body{padding:0 16px;color:var(--muted);font-size:14px;line-height:1.6;min-height:0;overflow:hidden;opacity:0;transition:opacity .24s ease;}
+  /* 底部留白改由 ::after 提供：padding-bottom 直接寫在 grid item 上會在收合（0fr）時殘留 16px 高度 */
+  .cps-body::after{content:'';display:block;height:16px;}
   .cps-panel.is-open .cps-body,.cps-panel.st-expanded .cps-body{opacity:1;}
 
   /* ---- variant 風格 ---- */
@@ -1178,10 +1187,11 @@
     background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
     box-shadow:0 12px 34px rgba(0,0,0,.20);overflow:hidden;}
 
-  /* ---- kind=popup：置中小卡（置中標題＋說明＋可選警示圖／備註／記住帳號） ---- */
+  /* ---- kind=popup：置中小卡（置中標題＋說明＋可選 icon／備註／記住帳號） ---- */
   .mdl-kind-popup{width:100%;max-width:360px;}
   .mdl-pop-body{display:flex;flex-direction:column;align-items:center;gap:10px;padding:20px 20px 0;}
-  .mdl-illus{flex:0 0 auto;width:46px;height:46px;color:var(--i-danger);}   /* 頂部紅色警示圓 icon */
+  .mdl-illus{flex:0 0 auto;width:46px;height:46px;color:var(--i-primary);}  /* 頂部圓 icon：一般語意＝主色 */
+  .mdl-illus.is-danger{color:var(--i-danger);}                              /* 警示語意＝紅，差異只在顏色 */
   .mdl-illus svg{width:100%;height:100%;}
   .mdl-pop-title{font-family:var(--font-sans);font-weight:600;font-size:15.5px;color:var(--ink);line-height:1.35;text-align:center;}
   .mdl-desc{margin:0;font-family:var(--font-sans);font-size:13.5px;color:var(--muted);line-height:1.55;}
@@ -1189,8 +1199,10 @@
   .mdl-note{width:100%;font-family:var(--font-sans);font-size:12px;color:var(--faint);line-height:1.5;}
   .mdl-remember{width:100%;display:flex;align-items:center;gap:8px;font-family:var(--font-sans);font-size:13px;color:var(--ink);cursor:pointer;user-select:none;}
   /* popup footer：桌機＝次＋主並排等寬；行動版＝主／次／文字 全寬堆疊 */
-  .mdl-pop-foot{display:flex;gap:10px;padding:16px 20px 20px;}
+  /* popup footer 排列為獨立旗標、不綁裝置：預設並排（次→主等寬）、.stack 垂直堆疊（主→次全寬） */
+  .mdl-pop-foot{display:flex;flex-wrap:wrap;gap:10px;padding:16px 20px 20px;}
   .mdl-pop-foot .btn{flex:1 1 0;justify-content:center;}
+  .mdl-pop-foot .btn.v-text{flex:1 1 100%;}           /* 文字按鈕（第三動作）：獨占一列全寬 */
   .mdl-pop-foot.stack{flex-direction:column;gap:8px;}
   .mdl-pop-foot.stack .btn{flex:0 0 auto;width:100%;}
 
@@ -1270,6 +1282,18 @@
   .mdl-overlay .mdl-card{animation:mdl-pop .16s ease-out;max-height:100%;}
   @keyframes mdl-fade{from{opacity:0;}to{opacity:1;}}
   @keyframes mdl-pop{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;transform:none;}}
+  /* ---- 行動版 bottom sheet：貼齊舞台底部、全寬、上緣圓角（下緣不圓）、最高 95%（示意 95vh）、由下往上滑入 ---- */
+  .mdl-overlay.mdl-sheet-ov{align-items:flex-end;padding:20px 0 0;overflow:hidden;}
+  .mdl-overlay .mdl-card.mdl-sheet{max-width:none;width:100%;max-height:95%;
+    border-radius:14px 14px 0 0;border-bottom:none;animation:mdl-slideup .22s ease-out;}
+  @keyframes mdl-slideup{from{opacity:0;transform:translateY(100%);}to{opacity:1;transform:none;}}
+  /* 行動版舞台：縮成手機視口寬度置中，讓 Device 軸有可見差異 */
+  .mdl-live-root.vp-mobile{max-width:400px;margin:0 auto;min-height:460px;}
+  /* Live 兩段分區（popup／modal 各一段，控制項不共用） */
+  .mdl-live-block{margin-bottom:22px;}
+  .mdl-live-block:last-child{margin-bottom:0;}
+  .mdl-live-cap{font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;color:var(--muted);margin:0 0 10px;}
+  .mdl-live-cap b{font-weight:600;}
 
 /* ===== drawer (Complex) ===== */
 /* ==================== drawer 抽屜 ==================== */
@@ -1281,11 +1305,12 @@
   .drw-fbar.lead{height:11px;width:38%;background:var(--line-strong);opacity:.55;}
   /* backdrop 遮罩：由 --ink 混出半透明，深淺色都能區隔背景 */
   .drw-backdrop{position:absolute;inset:0;background:color-mix(in srgb,var(--ink) 42%,transparent);}
-  /* 抽屜面板：貼齊指定邊、寬度依 size */
-  .drw-panel{position:absolute;top:0;bottom:0;background:var(--panel);display:flex;flex-direction:column;
-    box-shadow:0 0 22px color-mix(in srgb,var(--ink) 24%,transparent);}
-  .drw-panel.side-left{left:0;border-right:1px solid var(--line);}
-  .drw-panel.side-right{right:0;border-left:1px solid var(--line);}
+  /* 抽屜面板：與 Live 浮動樣式一致、縮放到小框（四邊內縮 9px、圓角＋陰影、高度＝框高 − 18px），
+     面板 overflow:hidden 讓圓角正確裁切內容，寬度依 size */
+  .drw-panel{position:absolute;top:9px;bottom:9px;height:calc(100% - 18px);background:var(--panel);
+    display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line);border-radius:9px;
+    box-shadow:0 5px 16px color-mix(in srgb,var(--ink) 26%,transparent);}
+  .drw-panel.side-left{left:9px;} .drw-panel.side-right{right:9px;}
   .drw-panel.sz-s{width:42%;} .drw-panel.sz-m{width:54%;} .drw-panel.sz-l{width:68%;}
   .drw-phead{display:flex;align-items:center;justify-content:space-between;gap:6px;
     padding:8px 8px 8px 11px;border-bottom:1px solid var(--line);}
@@ -1597,7 +1622,7 @@
     list:{label:'List 列表',order:['variant','state'],axes:{variant:['nested','selection'],state:['default','hover','selected','error','disabled']},zh:{variant:{nested:'雙欄／巢狀',selection:'選項卡'},state:{default:'預設',hover:'滑過',selected:'已選',error:'錯誤',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
     'list-item':{label:'List Item 資訊列',order:['leading','state'],axes:{leading:['checkbox','icon','none'],state:['default','hover','selected','disabled']},zh:{leading:{checkbox:'勾選框',icon:'圖示',none:'無'},state:{default:'預設',hover:'滑過',selected:'已選',disabled:'停用'},axisName:{leading:'Leading 前置',state:'State 狀態'}}},
     collapse:{label:'Collapse 摺疊',order:['variant','state'],axes:{variant:['bordered','filled','plain'],state:['collapsed','expanded','hover','disabled']},zh:{variant:{bordered:'外框',filled:'填色',plain:'極簡'},state:{collapsed:'收合',expanded:'展開',hover:'滑過',disabled:'停用'},axisName:{variant:'Variant 風格',state:'State 狀態'}}},
-    modal:{label:'Modal 對話框',order:['kind','variant'],axes:{kind:['popup','modal'],variant:['normal','illustration','regular','larger']},zh:{axisName:{kind:'Kind 大小',variant:'Variant 型態'},kind:{popup:'小彈窗 popup',modal:'大視窗 modal'},variant:{normal:'一般 popup',illustration:'警示圖 popup',regular:'標準 modal',larger:'大版 modal'}}},
+    modal:{label:'Modal 對話框',order:['kind','variant'],axes:{kind:['popup','modal'],variant:['normal','illustration','regular','larger']},zh:{axisName:{kind:'Kind 大小',variant:'Variant 型態'},kind:{popup:'小彈窗 popup',modal:'大視窗 modal'},variant:{normal:'一般 popup',illustration:'警示 popup',regular:'標準 modal',larger:'大版 modal'}}},
     drawer:{label:'Drawer 抽屜',order:['side','size'],axes:{side:['left','right'],size:['s','m','l']},zh:{side:{left:'左側',right:'右側'},size:{s:'窄 s',m:'標準 m',l:'寬 l'},axisName:{side:'Side 方向',size:'Size 尺寸'}}},
     'floating-line':{label:'Floating Line 浮動列',order:['variant','position'],axes:{variant:['selection','toolbar','fab'],position:['bottom-center','bottom-right']},zh:{variant:{selection:'選取列',toolbar:'工具列',fab:'浮動鈕'},position:{'bottom-center':'底部置中','bottom-right':'底部靠右'},axisName:{variant:'Variant 型態',position:'Position 位置'}}},
     step:{label:'Step 步驟指示器',order:['orientation','variant'],axes:{orientation:['horizontal','vertical'],variant:['numbered','dotted','icon']},zh:{orientation:{horizontal:'水平',vertical:'垂直'},variant:{numbered:'編號',dotted:'圓點',icon:'圖示'},axisName:{orientation:'Orientation 方向',variant:'Variant 樣式'}}}
@@ -3623,7 +3648,8 @@ function skelMedia(anim){
     if(o.tag){const t=ce('div','tg v-soft c-round i-brand st-default');t.innerHTML='<span>'+o.tag+'</span>';tr.appendChild(t);has=true;} // 重用 Tag 原子
     if(o.info){const ic=ce('span','lst-info');ic.innerHTML=NT_IC_INFO;tr.appendChild(ic);has=true;} // 重用 notification info 圓標
     if(o.meta){const m=ce('span','lst-meta');m.textContent=o.meta;tr.appendChild(m);has=true;}
-    if(o.action){const b=ce('button','btn v-text i-secondary sz-s icon-only');b.setAttribute('aria-label','更多動作');b.innerHTML=ICON_GEAR;tr.appendChild(b);has=true;} // 重用 Button 原子
+    if(o.amount){const p=ce('span','pr-price pr-sz-sm lst-amount');p.innerHTML='<span class="pr-cur">NT$</span><span class="pr-amt">'+o.amount+'</span>';tr.appendChild(p);has=true;} // 重用 Price 原子顯示金額
+    if(o.action){const b=ce('button','btn v-text i-primary sz-s');b.innerHTML='<span>'+(typeof o.action==='string'?o.action:'動作')+'</span>';tr.appendChild(b);has=true;} // 文字按鈕（重用 Button 原子）
     if(o.caret){const c=ce('span','lst-caret');c.innerHTML=LST_IC_CHEVRON;tr.appendChild(c);has=true;}
     if(o.selCheck){tr.appendChild(lstCbx(true,state));has=true;} // 已選指示：右側補已勾選 checkbox（非 checkbox-leading 時）
     if(has)it.appendChild(tr);
@@ -3747,12 +3773,12 @@ function skelMedia(anim){
     return wrap;
   }
 
-  /* List Item 專用矩陣格：leading（勾選框／圖示／無）× state；已選一律出現已勾選 checkbox */
+  /* List Item 專用矩陣格：leading（勾選框／圖示／無）× state；已選狀態僅勾選框 leading 適用（其餘不適用） */
   function lstiCell(leading,state){
+    if(state==='selected'&&leading!=='checkbox'){const na=ce('div','lst-na');na.textContent='—（需勾選框）';return na;}
     const o={title:'資訊列標題',tag:'標籤',caret:true};
     if(leading==='checkbox'){o.checkbox=true;o.checked=(state==='selected');}
     else if(leading==='icon'){o.leadIcon=IC_GLOBE;}
-    if(state==='selected'&&leading!=='checkbox')o.selCheck=true; // 非 checkbox-leading 的已選 → 右側補已勾選框
     const wrap=ce('div','lst-solo');wrap.appendChild(lstRowBasic(state,o));
     return wrap;
   }
@@ -3790,58 +3816,62 @@ function skelMedia(anim){
     p=panelsIn(sec);renderM();
 
     // ---- Slot 組合：左右欄位自由組合 ----
-    const bs=section(body,'Slot 組合 · 左右欄位','左 leading（無／圖示／勾選框）＋ 中 title（可加副描述）＋ 右 trailing 標準化：tag（重用 Tag）／info icon／meta 文字／動作鈕（重用 Button）／caret，依資訊密度自由組合。');
+    const bs=section(body,'Slot 組合 · 左右欄位','左 leading（無／圖示／勾選框）＋ 中 title（可加副描述）＋ 右 trailing 標準化：tag（重用 Tag）／info icon／meta 文字／金額（重用 Price）／動作鈕（文字按鈕，重用 Button）／caret，依資訊密度自由組合。');
     const bwrap=ce('div','lst-group-demo');
     bwrap.appendChild(lstGroup([
       lstRowBasic('default',{title:'純標題'}),
       lstRowBasic('default',{title:'標題',desc:'相關的敘述說明'}),
       lstRowBasic('default',{title:'圖示＋標籤',leadIcon:IC_GLOBE,tag:'標籤'}),
       lstRowBasic('default',{title:'勾選框＋尾端資訊',checkbox:true,meta:'小標題'}),
+      lstRowBasic('default',{title:'金額',amount:'1,280'}),
       lstRowBasic('default',{title:'資訊圖示＋箭頭',info:true,caret:true}),
-      lstRowBasic('default',{title:'動作鈕',action:true}),
+      lstRowBasic('default',{title:'動作鈕',action:'編輯'}),
     ],{divider:true}));
     bs.appendChild(bwrap);
 
-    // ---- 實際互動 Live：每個 slot 一個開關，全部對應樣式 ----
-    const sl=section(body,'實際互動 Live','切 Leading（無／圖示／勾選框）與 State（預設／滑過／已選／停用），勾選右側 trailing 各 slot；每個開關都對應一個可見樣式。勾選框 leading 可點切換勾選。');
+    // ---- 實際互動 Live：每個 slot 一個開關，全部對應樣式；hover 為真實滑過、disabled 用勾選（比照其他頁面）----
+    const sl=section(body,'實際互動 Live','切 Leading（無／圖示／勾選框），勾選右側 trailing 各 slot；滑鼠移上去看 hover、勾 disabled 停用、點勾選框 leading 切換勾選並轉已選。每個開關都對應一個可見樣式。');
     mountLive(sl,{
-      initial:{leading:'checkbox',state:'default',desc:false,tag:true,info:false,meta:false,action:false,caret:true},
+      initial:{leading:'checkbox',desc:false,tag:true,info:false,meta:false,amount:false,action:false,caret:true,disabled:false},
       segs:[
         {key:'leading',label:'Leading 前置',options:['none','icon','checkbox'],labels:['無','圖示','勾選框']},
-        {key:'state',label:'State 狀態',options:['default','hover','selected','disabled'],labels:['預設','滑過','已選','停用']},
       ],
       bools:[
         {key:'desc',label:'desc 副描述'},
         {key:'tag',label:'tag 標籤'},
         {key:'info',label:'info 資訊圖示'},
         {key:'meta',label:'meta 尾端文字'},
+        {key:'amount',label:'amount 金額'},
         {key:'action',label:'action 動作鈕'},
         {key:'caret',label:'caret 箭頭'},
+        {key:'disabled',label:'disabled 停用'},
       ],
       boolLabel:'Trailing 組合',
       render:st=>{
+        const state=st.disabled?'disabled':'default';
         const o={title:'資訊列標題',
           desc:st.desc?'相關的敘述說明':null,
           leadIcon:st.leading==='icon'?IC_GLOBE:null,
           checkbox:st.leading==='checkbox',
-          checked:(st.leading==='checkbox'&&st.state==='selected'),
           tag:st.tag?'標籤':null,info:st.info,meta:st.meta?'小標題':null,
-          action:st.action,caret:st.caret};
-        if(st.state==='selected'&&st.leading!=='checkbox')o.selCheck=true; // 已選補右側勾選框
-        const row=lstRowBasic(st.state,o);
-        if(st.leading==='checkbox'&&st.state!=='disabled'){ // 勾選框 leading 可點切換
+          amount:st.amount?'1,280':null,action:st.action,caret:st.caret};
+        const row=lstRowBasic(state,o);
+        if(!st.disabled){ // 可點：checkbox-leading 切勾選＋已選；其餘點列切已選
           row.style.cursor='pointer';
-          row.addEventListener('click',()=>{const cb=row.querySelector('.cbx');if(!cb)return;const on=cb.classList.toggle('st-checked');cb.innerHTML=on?ICON_CHECK:'';});
+          row.addEventListener('click',()=>{
+            if(st.leading==='checkbox'){const cb=row.querySelector('.cbx');if(cb){const on=cb.classList.toggle('st-checked');cb.innerHTML=on?ICON_CHECK:'';row.classList.toggle('is-selected',on);}}
+            else{row.classList.toggle('is-selected');}
+          });
         }
         const box=ce('div','lst-solo');box.appendChild(row);return box;
       },
-      note:'每個開關都對應一個 slot：<b>Leading</b>（無／圖示／勾選框）、<b>Trailing</b> 可複選（tag／info／meta／動作鈕／caret）、<b>State</b> 切 hover／已選／停用。<b>已選</b>狀態一律出現已勾選的 checkbox 當選取指示。'
+      note:'每個開關都對應一個 slot：<b>Leading</b>（無／圖示／勾選框）、<b>Trailing</b> 可複選（tag／info／meta／金額／動作鈕／caret）。<b>hover</b> 滑鼠移上去即見、<b>disabled</b> 停用整列；點勾選框 leading 切換勾選並轉已選（已選僅淡藍底、無左側色條）。'
     });
   }
 
   function buildList(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · List',title:'List 列表',
-      lede:'資料列容器的<b>組合體系</b>，兩大類 variant：<b>雙欄／巢狀 nested</b>（上下兩層——母列＋內縮子列，點母列展開／收合，可套填色卡片底）、<b>選項卡 selection</b>（整列一張有框卡：icon＋主標題＋敘述說明＋右側 checkbox／radio）。單列本身的左右欄位組合請見<b>List Item 資訊列</b>。另含<b>明細／總計列</b>進階組合。nested 走四狀態，selection 多一個 <b>error</b>（紅框＋錯誤訊息）；<b>已選</b>狀態的母列會出現已勾選 checkbox。',
+      lede:'資料列容器的<b>組合體系</b>，兩大類 variant：<b>雙欄／巢狀 nested</b>（上下兩層——白底母列＋<b>內縮灰底</b>子列，點母列展開／收合）、<b>選項卡 selection</b>（整列一張有框卡：icon＋主標題＋敘述說明＋右側 checkbox／radio）。單列本身的左右欄位組合請見<b>List Item 資訊列</b>。另含<b>明細／總計列</b>進階組合。nested 走四狀態，selection 多一個 <b>error</b>（紅框＋錯誤訊息）；<b>已選</b>狀態的母列會出現已勾選 checkbox。',
       specRows:[['axes','<code>variant × state</code>'],['formula','<code>nested 4 ＋ selection 5 = 9</code>'],['token-policy','<code>semantic.*.list.*</code>'],['features','上下巢狀 / 選項卡 / 明細總計']]});
     const axes=DIAL_SPECS.list.axes, zh=DIAL_SPECS.list.zh, active=CHOICE.list.active; // 接中央 store
     const VN={nested:['雙欄／巢狀','nested'],selection:['選項卡','selection']};
@@ -3860,15 +3890,12 @@ function skelMedia(anim){
     p=panelsIn(sec);renderM();
 
     // ---- 雙欄／巢狀 ----
-    const ts=section(body,'雙欄／巢狀 Nested','上下兩層結構：母列（checkbox＋標題＋右側小標題）＋ 內縮子列（標題＋小標題＋caret）；點母列展開／收合，點勾選框只切換勾選、不觸發展開。可套「填色卡片」底。');
+    const ts=section(body,'雙欄／巢狀 Nested','上下兩層結構：白底母列（checkbox＋標題＋右側小標題）＋ 內縮的<b>灰底</b>子列區塊（標題＋小標題＋caret）；點母列展開／收合，點勾選框只切換勾選、不觸發展開。');
     const twrap=ce('div','lst-group-demo');
     twrap.appendChild(lstGroup([
       lstNested({title:'王小明',meta:'3 項',open:true,checked:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'},{title:'子項三',meta:'小標題'}]}),
       lstNested({title:'陳美華',meta:'2 項',children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
     ],{divider:true}));
-    twrap.appendChild(lstGroup([
-      lstNested({title:'填色版母列',meta:'2 項',open:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
-    ],{filled:true}));
     ts.appendChild(twrap);
 
     // ---- 明細/摘要列 ----
@@ -3904,22 +3931,22 @@ function skelMedia(anim){
     // 雙欄／巢狀
     const l1=ce('div','lst-live-block');const c1=ce('div','lst-live-cap');c1.innerHTML='<b>雙欄／巢狀 Nested</b>';l1.appendChild(c1);sl.appendChild(l1);
     mountLive(l1,{
-      initial:{divider:true,filled:false,open:true},
+      initial:{divider:true,open:true},
       segs:[],
-      bools:[{key:'divider',label:'divider 分隔線'},{key:'filled',label:'filled 填色底'},{key:'open',label:'預設展開子列'}],
+      bools:[{key:'divider',label:'divider 分隔線'},{key:'open',label:'預設展開子列'}],
       boolLabel:'Content',
       render:st=>lstGroup([
         lstNested({title:'王小明',meta:'2 項',open:st.open,checked:true,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
         lstNested({title:'陳美華',meta:'2 項',open:st.open,children:[{title:'子項一',meta:'小標題'},{title:'子項二',meta:'小標題'}]}),
-      ],{divider:st.divider,filled:st.filled}),
-      note:'點母列展開／收合子列，點左側勾選框只切換勾選。每個開關都對應樣式：<b>divider</b> 加分隔線、<b>filled</b> 換填色底、<b>預設展開子列</b> 切子列初始狀態。'
+      ],{divider:st.divider}),
+      note:'點母列展開／收合子列（子列為內縮灰底區塊），點左側勾選框只切換勾選。每個開關都對應樣式：<b>divider</b> 加分隔線、<b>預設展開子列</b> 切子列初始狀態。'
     });
     // 選項卡
     const l2=ce('div','lst-live-block');const c2=ce('div','lst-live-cap');c2.innerHTML='<b>選項卡 Selection</b>';l2.appendChild(c2);sl.appendChild(l2);
     mountLive(l2,{
-      initial:{control:'checkbox',expand:false},
+      initial:{control:'checkbox'},
       segs:[{key:'control',label:'Control',options:['checkbox','radio'],labels:['checkbox 多選','radio 單選']}],
-      bools:[{key:'expand',label:'expand 展開下拉'}],
+      bools:[],
       boolLabel:'Content',
       render:st=>{
         const box=ce('div','lst-sel-live');
@@ -3928,7 +3955,7 @@ function skelMedia(anim){
           {title:'進階方案',desc:'完整協作與自動化功能'},
           {title:'企業方案',desc:'客製化部署與專屬支援'},
         ];
-        const cards=data.map((d,i)=>lstSelCard(st.control,i===0?'selected':'default',{title:d.title,desc:d.desc,expand:(st.expand&&i===0)}));
+        const cards=data.map((d,i)=>lstSelCard(st.control,i===0?'selected':'default',{title:d.title,desc:d.desc}));
         cards.forEach(w=>{
           const card=w.querySelector('.lst-sel');
           card.addEventListener('click',e=>{
@@ -3948,7 +3975,7 @@ function skelMedia(anim){
         });
         return box;
       },
-      note:'點整卡選取——<b>radio</b> 為單選互斥、<b>checkbox</b> 為多選 toggle；勾 <b>expand</b> 讓第一張卡展開 inline 下拉（重用 .field）。'
+      note:'點整卡選取——<b>radio</b> 為單選互斥、<b>checkbox</b> 為多選 toggle。（展開帶 inline 下拉的進階版見上方靜態示意區）'
     });
   }
 
@@ -4083,7 +4110,7 @@ function skelMedia(anim){
   }
 
 /* modal icons */
-/* Modal 專用 icon：Phosphor warning-circle（regular）— popup illustration variant 的紅色警示圓 icon */
+/* Modal 專用 icon：Phosphor warning-circle（regular）— popup 可選的頂部圓 icon（一般＝主色、警示＝紅） */
   const MDL_ICON_WARNING='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></svg>';
 
 /* modal build */
@@ -4099,7 +4126,7 @@ function skelMedia(anim){
         primary:{label:'刪除',cls:'i-danger'},secondary:'取消',text:'瞭解更多'},
     },
     modal:{
-      regular:{title:'服務條款更新',sub:'',cancel:'取消',confirm:'同意並繼續'},
+      regular:{title:'服務條款更新',sub:'2026-07-15 版本更新',cancel:'取消',confirm:'同意並繼續'},
       larger:{title:'訂單明細',sub:'訂單編號 #2026-0715-042',cancel:'取消',confirm:'確認'},
     },
     /* modal content 段落池：long 時重複鋪長，示範內容溢出出現卷軸 */
@@ -4112,21 +4139,26 @@ function skelMedia(anim){
     ],
   };
 
-  /* popup footer：桌機＝次＋主並排等寬；行動版＝主／次／文字 全寬堆疊（Figma 定義）。live 時掛 .live 開啟真互動 */
-  function mdlPopFoot(c,device,live,compact){
+  /* popup footer：排列與裝置脫鉤，改由旗標自由組合——
+     lay.stack=false 並排（次→主 等寬）；lay.stack=true 垂直堆疊（主 solid 全寬 → 次 outline 全寬）；
+     lay.text=true 再加一顆 text 按鈕（如「稍後提醒我」）。live 時掛 .live 開啟真互動 */
+  function mdlPopFoot(c,lay,live,compact){
+    lay=lay||{};
     const sz=compact?'sz-s':'sz-m';                       // 矩陣縮小示意用 s、Live 用 m
     const lv=live?' live':'';
-    const foot=ce('div','mdl-pop-foot'+(device==='mobile'?' stack':''));
+    const foot=ce('div','mdl-pop-foot'+(lay.stack?' stack':''));
     const sec=ce('button','btn v-outline i-primary '+sz+lv);      // 次按鈕：primary outline（重用 Button 原子）
     sec.innerHTML='<span>'+c.secondary+'</span>';
     sec.setAttribute('data-mdl-cancel','1');              // Live 用來綁「取消」關閉
     const pri=ce('button','btn v-solid '+c.primary.cls+' '+sz+lv); // 主按鈕：solid（intent 依 variant）
     pri.innerHTML='<span>'+c.primary.label+'</span>';
-    if(device==='mobile'){                                // 行動版：主→次→文字 由上而下全寬堆疊
+    if(lay.stack)foot.append(pri,sec);                    // 垂直堆疊：主在上、次在下，各自全寬
+    else foot.append(sec,pri);                            // 並排：次→主 等寬
+    if(lay.text){                                         // 文字按鈕（第三動作）：永遠獨占一列全寬
       const txt=ce('button','btn v-text i-primary '+sz+lv);
       txt.innerHTML='<span>'+c.text+'</span>';
-      foot.append(pri,sec,txt);
-    }else foot.append(sec,pri);                           // 桌機：次→主 並排
+      foot.appendChild(txt);
+    }
     return foot;
   }
   /* modal footer：右對齊 次按鈕＋確認 */
@@ -4150,17 +4182,17 @@ function skelMedia(anim){
   }
 
   /* 對話框卡片主體。kind=popup|modal；
-     o = {variant, device, closeIcon, description, note, remember, subtitle, long, clip, footer, compact, live} */
+     o = {variant, icon, stack, textBtn, closeIcon, description, note, remember, subtitle, long, clip, footer, compact, live} */
   function mdlCard(kind,o){
     o=o||{};
     const compact=o.compact?' mdl-compact':'';
     if(kind==='popup'){
-      /* ---- popup 置中小卡：置中標題＋說明＋可選警示圖／備註／記住帳號 ---- */
+      /* ---- popup 置中小卡：置中標題＋說明＋可選 icon（顏色依語意）／備註／記住帳號 ---- */
       const v=o.variant==='illustration'?'illustration':'normal';
       const c=MDL_CONTENT.popup[v];
       const card=ce('div','mdl-card mdl-kind-popup'+compact);
       const body=ce('div','mdl-pop-body');
-      if(v==='illustration'){const ic=ce('div','mdl-illus');ic.innerHTML=MDL_ICON_WARNING;body.appendChild(ic);} // 頂部紅色警示圓 icon
+      if(o.icon){const ic=ce('div','mdl-illus'+(v==='illustration'?' is-danger':''));ic.innerHTML=MDL_ICON_WARNING;body.appendChild(ic);} // 頂部圓 icon：可選旗標，顏色依 variant 語意（一般＝主色、警示＝紅）
       const t=ce('div','mdl-pop-title');t.textContent=c.title;body.appendChild(t);
       if(o.description!==false){const d=ce('p','mdl-desc');d.textContent=c.desc;body.appendChild(d);}
       if(o.note){const n=ce('div','mdl-note');n.textContent=c.note;body.appendChild(n);}
@@ -4173,7 +4205,7 @@ function skelMedia(anim){
         body.appendChild(row);
       }
       card.appendChild(body);
-      if(o.footer!==false)card.appendChild(mdlPopFoot(c,o.device||'desktop',o.live,o.compact));
+      if(o.footer!==false)card.appendChild(mdlPopFoot(c,{stack:o.stack,text:o.textBtn},o.live,o.compact));
       return card;
     }
     /* ---- modal 寬版視窗：header（標題＋副標題＋×）＋可捲動 content ＋右對齊 footer ---- */
@@ -4183,7 +4215,7 @@ function skelMedia(anim){
     const head=ce('div','mdl-mhead');
     const ht=ce('div','mdl-mhead-txt');
     const t=ce('div','mdl-title');t.textContent=c.title;ht.appendChild(t);
-    if(o.subtitle!==false&&c.sub){const s=ce('div','mdl-sub');s.textContent=c.sub;ht.appendChild(s);} // larger 才有副標題
+    if(o.subtitle!==false&&c.sub){const s=ce('div','mdl-sub');s.textContent=c.sub;ht.appendChild(s);} // 副標題：regular／larger 各有情境文案，可用旗標關閉
     head.appendChild(ht);
     if(o.closeIcon!==false)head.appendChild(mdlClose(false));   // 右上關閉 ×
     card.appendChild(head);
@@ -4236,10 +4268,10 @@ function skelMedia(anim){
 
   function buildModal(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Modal',title:'Modal 對話框',
-      lede:'覆蓋在頁面之上、需<b>先回應才能繼續</b>的浮層容器：由 <b>backdrop 遮罩</b>＋<b>置中卡片</b>組成。依 Figma 定義分兩種大小——<b>popup 小彈窗</b>（置中小卡：置中標題＋說明＋可選警示圖／備註／記住帳號；footer 桌機並排、行動版全寬堆疊）與 <b>modal 大視窗</b>（header 標題＋副標題＋關閉 ×、可捲動 content、footer 右對齊；regular 桌機標準寬 800px、larger 寬高 auto 上限 1224px）。點 × 或遮罩空白處皆可關閉。',
-      specRows:[['axes','<code>kind × variant</code>'],['formula','<code>popup(2) + modal(2) = 4</code>'],['token-policy','<code>semantic.*.modal.*</code>'],['features','illustration / note / remember / close-icon / subtitle / scroll-content / footer']]});
+      lede:'覆蓋在頁面之上、需<b>先回應才能繼續</b>的浮層容器：由 <b>backdrop 遮罩</b>＋<b>卡片</b>組成。依 Figma 定義分兩種大小——<b>popup 小彈窗</b>（置中小卡：置中標題＋說明＋可選 icon／備註／記住帳號；icon 為可選旗標、<b>顏色依語意</b>：一般＝主色、警示＝紅；footer 排列可自由組合：<b>並排</b>／<b>垂直堆疊</b>，可再加<b>文字按鈕</b>第三動作）與 <b>modal 大視窗</b>（header 標題＋副標題＋關閉 ×、可捲動 content、footer 右對齊；regular 桌機標準寬 800px、larger 寬高 auto 上限 1224px；<b>行動版轉為 bottom sheet</b>：貼齊底部、全寬、上緣圓角、最高約 95vh、由下往上滑入）。點 × 或遮罩空白處皆可關閉。',
+      specRows:[['axes','<code>kind × variant</code>'],['formula','<code>popup(2) + modal(2) = 4</code>'],['token-policy','<code>semantic.*.modal.*</code>'],['features','icon(語意色) / note / remember / 並排·堆疊·文字按鈕 / close-icon / subtitle / scroll-content / footer / bottom-sheet(行動版)']]});
     const axes=DIAL_SPECS.modal.axes, zh=DIAL_SPECS.modal.zh, active=CHOICE.modal.active; // 接中央 store
-    const PV={normal:['一般','normal'],illustration:['警示圖','illustration']};           // popup 的 variant
+    const PV={normal:['一般','normal'],illustration:['警示','illustration']};             // popup 的 variant：語意差異，icon 顏色與主按鈕 intent 隨之變化
     const MV={regular:['標準 800px','regular'],larger:['大版 ≤1224px','larger']};        // modal 的 variant
     let p;
     function renderM(){ if(!p)return; p.innerHTML='';
@@ -4247,11 +4279,11 @@ function skelMedia(anim){
       const pv=['normal','illustration'].filter(v=>active.variant.has(v));
       const mv=['regular','larger'].filter(v=>active.variant.has(v));
       if(ks.includes('popup')&&pv.length){
-        p.appendChild(matrixPanel({badge:'kind · popup',name:'Popup 小彈窗（列＝variant、欄＝footer 排列：桌機並排／行動版全寬堆疊）',
-          rows:pv,cols:['desktop','mobile'],
+        p.appendChild(matrixPanel({badge:'kind · popup',name:'Popup 小彈窗（列＝variant、欄＝按鈕排列：並排／垂直堆疊＋文字按鈕，排列為獨立旗標、不綁裝置）',
+          rows:pv,cols:['row','stack'],
           rowLab:v=>labHTML(PV[v][0],PV[v][1]),
-          colLab:d=>labHTML(d==='desktop'?'桌機／平板':'行動版',d),
-          cell:(v,d)=>mdlCard('popup',{variant:v,device:d,note:v==='illustration',remember:v==='illustration',compact:true}),mincol:250}));
+          colLab:a=>labHTML(a==='row'?'並排按鈕':'垂直堆疊＋文字按鈕',a),
+          cell:(v,a)=>mdlCard('popup',{variant:v,icon:v==='illustration',note:v==='illustration',remember:v==='illustration',stack:a==='stack',textBtn:a==='stack',compact:true}),mincol:250}));
       }
       if(ks.includes('modal')&&mv.length){
         p.appendChild(matrixPanel({badge:'kind · modal',name:'Modal 大視窗（列＝variant、欄＝內容長度：適中／溢出出現卷軸）',
@@ -4263,52 +4295,80 @@ function skelMedia(anim){
       if(!p.children.length){const e=ce('p','sub');e.textContent='目前勾選的 kind 沒有對應的 variant 保留下來，請在篩選器至少各留一個。';p.appendChild(e);}
     }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Kind × Variant 矩陣','variant 依 kind 各取兩種：popup→一般／警示圖、modal→標準／大版，實際共 4 種組合（篩選器的 2×4 為軸值上限）。popup 欄向展示桌機並排與行動版堆疊兩種 footer；modal 欄向展示內容適中與溢出（出現卷軸）。');
+    const sec=section(body,'Kind × Variant 矩陣','variant 依 kind 各取兩種：popup→一般／警示、modal→標準／大版，實際共 4 種組合（篩選器的 2×4 為軸值上限）。popup 欄向展示兩種按鈕排列（並排／垂直堆疊＋文字按鈕；排列為獨立旗標、不綁裝置），警示列的 icon 與主按鈕轉紅、一般列也可帶主色 icon（見 Live）；modal 欄向展示內容適中與溢出（出現卷軸）。');
     p=panelsIn(sec);renderM();
 
     const ls=section(body,'浮層結構','對話框是一個疊在頁面之上的層級：底層頁面內容被 backdrop 遮罩壓暗，卡片置中浮於最上層，點擊遮罩空白處可關閉。');
     ls.appendChild(mdlLayerDemo());
 
-    const sl=section(body,'實際互動 Live','對話框<b>預設就開啟</b>在下方舞台內（遮罩限縮於舞台、不遮全頁）；點 ×、取消或遮罩空白處可關閉，關閉後按「重新開啟對話框」再叫出。切 Kind·Variant／Device、勾內容旗標即時重繪。');
-    mountLive(sl,{
-      initial:{type:'popup-normal',device:'desktop',closeIcon:true,description:true,note:false,remember:true,subtitle:true,long:false,footer:true},
+    const sl=section(body,'實際互動 Live','popup 與 modal 各自一段 playground，控制項只出現對該 kind 有效的選項、每個開關都對應可見差異。對話框<b>預設就開啟</b>在舞台內（遮罩限縮於舞台、不遮全頁）；點 ×、取消或遮罩空白處可關閉，關閉後按「重新開啟對話框」再叫出。');
+
+    /* 共用舞台：root＋重開鈕＋overlay；sheet=true 時（modal 行動版）轉 bottom sheet 版型 */
+    function mdlLiveStage(kind,opts,sheet){
+      const root=ce('div','mdl-live-root'+(sheet?' vp-mobile':''));      // 行動版：舞台縮成手機視口寬
+      const trig=ce('button','btn v-solid i-primary live mdl-reopen');   // 關閉後才現身的重開鈕
+      trig.innerHTML='<span>重新開啟對話框</span>';
+      root.appendChild(trig);
+      let overlay=null;
+      function close(){ if(overlay){overlay.remove();overlay=null;trig.classList.add('show');} }
+      function open(){ if(overlay)return; trig.classList.remove('show');
+        overlay=ce('div','mdl-overlay'+(sheet?' mdl-sheet-ov':''));       // 行動版：內容對齊底部
+        const card=mdlCard(kind,Object.assign({live:true},opts));
+        if(sheet)card.classList.add('mdl-sheet');                         // 行動版：貼底、全寬、上緣圓角、由下滑入
+        overlay.appendChild(card);
+        overlay.addEventListener('click',e=>{ if(e.target===overlay)close(); }); // 點遮罩空白處關閉
+        const x=card.querySelector('.mdl-close'); if(x)x.onclick=close;           // 點 × 關閉（modal）
+        const cc=card.querySelector('[data-mdl-cancel]'); if(cc)cc.onclick=close; // 點「取消／次按鈕」關閉
+        root.appendChild(overlay);
+      }
+      trig.onclick=open;
+      open();                                            // ★ 預設開啟：初始畫面直接看到對話框
+      return root;
+    }
+
+    /* ---- popup 段：只放對 popup 有效的控制項（無空轉開關） ---- */
+    const lp=ce('div','mdl-live-block');
+    const lpc=ce('div','mdl-live-cap');lpc.innerHTML='<b>Popup 小彈窗</b>';lp.appendChild(lpc);
+    sl.appendChild(lp);
+    mountLive(lp,{
+      initial:{variant:'normal',arrange:'row',icon:false,description:true,note:false,remember:true,textBtn:false},
       segs:[
-        {key:'type',label:'Kind · Variant',options:['popup-normal','popup-illustration','modal-regular','modal-larger'],labels:['彈窗·一般','彈窗·警示圖','視窗·標準','視窗·大版']},
-        {key:'device',label:'Device',options:['desktop','mobile'],labels:['桌機','行動版']},
+        {key:'variant',label:'Variant',options:['normal','illustration'],labels:['一般','警示']},
+        {key:'arrange',label:'按鈕排列',options:['row','stack'],labels:['並排按鈕','垂直堆疊']},
       ],
       bools:[
+        {key:'icon',label:'icon 圖示（顏色依 variant）'},
         {key:'description',label:'description 說明'},
-        {key:'note',label:'note 備註（popup）'},
-        {key:'remember',label:'checkbox 記住帳號（popup）'},
-        {key:'closeIcon',label:'close-icon 關閉 ×（modal）'},
-        {key:'subtitle',label:'subtitle 副標題（modal larger）'},
-        {key:'long',label:'長內容卷軸（modal）'},
+        {key:'note',label:'note 備註'},
+        {key:'remember',label:'checkbox 記住帳號'},
+        {key:'textBtn',label:'文字按鈕（第三動作）'},
+      ],
+      boolLabel:'Content',
+      render:st=>mdlLiveStage('popup',{variant:st.variant,icon:st.icon,description:st.description,note:st.note,remember:st.remember,stack:st.arrange==='stack',textBtn:st.textBtn}),
+      note:'排列與裝置脫鉤，可自由組合：<b>並排</b>＝次＋主等寬、<b>垂直堆疊</b>＝主（solid 全寬）→次（outline 全寬），再勾<b>文字按鈕</b>疊出第三動作（如「稍後提醒我」）。<b>icon</b> 是可選旗標、一般版也能開；顏色依 variant 語意——一般＝主色、警示＝紅（警示與一般的差異只在顏色與主按鈕 intent）。↓ 快速對照：同一顆 icon 在兩種語意下的顏色。',
+      free:()=>[mdlCard('popup',{variant:'normal',icon:true,compact:true}),mdlCard('popup',{variant:'illustration',icon:true,note:true,remember:true,compact:true})]
+    });
+
+    /* ---- modal 段：只放對 modal 有效的控制項（含 Device：行動版轉 bottom sheet） ---- */
+    const lm=ce('div','mdl-live-block');
+    const lmc=ce('div','mdl-live-cap');lmc.innerHTML='<b>Modal 大視窗</b>';lm.appendChild(lmc);
+    sl.appendChild(lm);
+    mountLive(lm,{
+      initial:{variant:'regular',device:'desktop',subtitle:true,closeIcon:true,long:false,footer:true},
+      segs:[
+        {key:'variant',label:'Variant',options:['regular','larger'],labels:['標準 800px','大版 ≤1224px']},
+        {key:'device',label:'Device',options:['desktop','mobile'],labels:['桌機（置中）','行動版（bottom sheet）']},
+      ],
+      bools:[
+        {key:'subtitle',label:'subtitle 副標題'},
+        {key:'closeIcon',label:'close-icon 關閉 ×'},
+        {key:'long',label:'長內容卷軸'},
         {key:'footer',label:'footer 動作列'},
       ],
       boolLabel:'Content',
-      render:st=>{
-        const parts=st.type.split('-'),kind=parts[0],variant=parts[1]; // 'popup-normal' → kind／variant
-        const root=ce('div','mdl-live-root');
-        const trig=ce('button','btn v-solid i-primary live mdl-reopen'); // 關閉後才現身的重開鈕
-        trig.innerHTML='<span>重新開啟對話框</span>';
-        root.appendChild(trig);
-        let overlay=null;
-        function close(){ if(overlay){overlay.remove();overlay=null;trig.classList.add('show');} }
-        function open(){ if(overlay)return; trig.classList.remove('show');
-          overlay=ce('div','mdl-overlay');
-          const card=mdlCard(kind,{variant:variant,device:st.device,closeIcon:st.closeIcon,description:st.description,note:st.note,remember:st.remember,subtitle:st.subtitle,long:st.long,footer:st.footer,live:true});
-          overlay.appendChild(card);
-          overlay.addEventListener('click',e=>{ if(e.target===overlay)close(); }); // 點遮罩空白處關閉
-          const x=card.querySelector('.mdl-close'); if(x)x.onclick=close;           // 點 × 關閉（modal）
-          const cc=card.querySelector('[data-mdl-cancel]'); if(cc)cc.onclick=close; // 點「取消／次按鈕」關閉
-          root.appendChild(overlay);
-        }
-        trig.onclick=open;
-        open();                                            // ★ 預設開啟：初始畫面直接看到對話框
-        return root;
-      },
-      note:'↓ popup／modal 快速對照（靜態縮小示意）。popup 沒有 close ×（靠按鈕或遮罩關閉）、modal 沒有備註／記住帳號，勾選只作用在各自 kind；Device 只影響 popup 的 footer 排列。真實規格：modal content max-height 80vh／min-height 30vh，舞台內以縮小高度示意。',
-      free:()=>[mdlCard('popup',{variant:'illustration',note:true,remember:true,compact:true}),mdlCard('modal',{variant:'regular',long:true,clip:true,compact:true})]
+      render:st=>mdlLiveStage('modal',{variant:st.variant,subtitle:st.subtitle,closeIcon:st.closeIcon,long:st.long,footer:st.footer},st.device==='mobile'),
+      note:'<b>Device</b> 會真的改變版型：桌機＝置中卡片；行動版＝<b>bottom sheet</b>——舞台縮成手機視口、面板貼齊底部、全寬、上緣圓角（下緣不圓）、最高約 95%（示意 95vh）、由下往上滑入。真實規格：modal content max-height 80vh／min-height 30vh，舞台內以縮小高度示意。↓ 靜態縮小示意：內容溢出出現卷軸。',
+      free:()=>[mdlCard('modal',{variant:'regular',long:true,clip:true,compact:true})]
     });
   }
 
@@ -4317,8 +4377,12 @@ function skelMedia(anim){
 
 /* drawer build */
 /* ==================== drawer 抽屜 ==================== */
-  /* 真實比例抽屜的導覽項池（body 選單示意用） */
+  /* 真實比例抽屜的導覽項池（矩陣／結構示意用，維持精簡 3 項） */
   const DRW_NAV=[[ICON_HOUSE,'總覽'],[ICON_LIST,'訂單管理'],[ICON_GEAR,'系統設定']];
+  /* Live 專用較長導覽池（9 項）：讓內容超過面板高度，示意 .drw-nav 內部捲動（重用既有 icon，不新畫） */
+  const DRW_NAV_LONG=[[ICON_HOUSE,'總覽'],[ICON_LIST,'訂單管理'],[ICON_SEARCH,'商品搜尋'],
+    [ICON_UPLOAD,'檔案上傳'],[ICON_PENCIL,'內容編輯'],[ICON_CHECK,'審核中心'],
+    [ICON_EYE,'瀏覽紀錄'],[ICON_XCIRCLE,'退貨處理'],[ICON_GEAR,'系統設定']];
 
   /* 關閉 × 按鈕：沿用 ICON_CLOSE */
   function drwCloseBtn(){
@@ -4334,7 +4398,7 @@ function skelMedia(anim){
     it.append(ic,tx);return it;
   }
 
-  /* ---- 矩陣格：小型裝置框，抽屜自 side 滑入、寬度依 size ---- */
+  /* ---- 矩陣格：小型裝置框，抽屜自 side 滑入、寬度依 size；面板採與 Live 一致的浮動內縮樣式 ---- */
   function drwFrame(side,size){
     const fr=ce('div','drw-frame');
     const fake=ce('div','drw-fake');                       // 淡淡的假內容線條
@@ -4391,7 +4455,7 @@ function skelMedia(anim){
 
   function buildDrawer(view){
     const body=viewScaffold(view,{eyebrow:'L3 Component · Drawer',title:'Drawer 抽屜',
-      lede:'從螢幕邊緣滑出的<b>側邊面板</b>，覆蓋在頁面上、以 <b>backdrop</b> 遮罩隔開背景內容；常用於導覽選單、篩選面板或詳情檢視。可從<b>左側</b>或<b>右側</b>滑入，寬度分<b>窄／標準／寬</b>三級。跟置中彈出的 modal、貼齊觸發點的 popover 不同。下方 Live 示範採<b>預設展開</b>、面板<b>浮動內縮 24px</b> 的漂浮樣式。',
+      lede:'從螢幕邊緣滑出的<b>側邊面板</b>，覆蓋在頁面上、以 <b>backdrop</b> 遮罩隔開背景內容；常用於導覽選單、篩選面板或詳情檢視。可從<b>左側</b>或<b>右側</b>滑入，寬度分<b>窄／標準／寬</b>三級。跟置中彈出的 modal、貼齊觸發點的 popover 不同。矩陣與 Live 均採面板<b>浮動內縮</b>的漂浮樣式；Live 示範<b>預設展開</b>，導覽項較多時內容於面板內部捲動。',
       specRows:[['axes','<code>side × size</code>'],['formula','<code>2 × 3 = 6</code>'],['token-policy','<code>semantic.*.drawer.*</code>'],['features','backdrop / header / footer']]});
     const axes=DIAL_SPECS.drawer.axes, zh=DIAL_SPECS.drawer.zh, active=CHOICE.drawer.active; // 接中央 store
     const SIDEN={left:['左側','left'],right:['右側','right']};
@@ -4406,11 +4470,11 @@ function skelMedia(anim){
         colLab:z=>labHTML(SIZEN[z][0]+' '+z,z),
         cell:(s,z)=>drwFrame(s,z),mincol:300})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
-    const sec=section(body,'Side × Size 矩陣','列＝滑入方向、欄＝面板寬度；每格為一個裝置視窗示意，抽屜自邊緣滑入、半透明 backdrop 蓋住其餘內容。');
+    const sec=section(body,'Side × Size 矩陣','列＝滑入方向、欄＝面板寬度；每格為一個裝置視窗示意，抽屜自邊緣滑入、面板浮動內縮並帶圓角陰影，半透明 backdrop 鋪滿整個視窗。');
     p=panelsIn(sec);renderM();
     const sts=section(body,'內容結構','抽屜由三段組成：header（標題 ＋ 關閉）、body（導覽列表）、footer（動作按鈕，可選）。');
     sts.appendChild(drwStructure());
-    const sl=section(body,'實際互動 Live','預設即顯示已開啟的抽屜：面板為浮動式、距舞台上下左右內縮 24px，內容過長時面板內部捲動。點關閉 × 或 backdrop 收回後，再點「開啟抽屜」可重新滑入。切 Side／Size，勾 header／backdrop／footer。');
+    const sl=section(body,'實際互動 Live','預設即顯示已開啟的抽屜：面板為浮動式、距舞台上下左右內縮 24px；導覽列表放入 9 個項目、內容超過面板高度，於面板內部捲動。點關閉 × 或 backdrop 收回後，再點「開啟抽屜」可重新滑入。切 Side／Size，勾 header／backdrop／footer。');
     mountLive(sl,{
       initial:{side:'left',size:'m',header:true,backdrop:true,footer:false},
       segs:[
@@ -4432,8 +4496,8 @@ function skelMedia(anim){
           hd.append(tt,cl);panel.appendChild(hd);
           cl.onclick=close;
         }
-        const nav=ce('div','drw-nav');
-        DRW_NAV.forEach((it,i)=>nav.appendChild(drwNavRow(it[0],it[1],i===0)));
+        const nav=ce('div','drw-nav');   // body：用較長清單讓內容溢出，示意面板內部捲動
+        DRW_NAV_LONG.forEach((it,i)=>nav.appendChild(drwNavRow(it[0],it[1],i===0)));
         panel.appendChild(nav);
         if(st.footer){
           const ft=ce('div','drw-foot');
