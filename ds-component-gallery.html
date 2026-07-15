@@ -751,9 +751,8 @@
 
 /* ===== action-menu (am-) ===== */
 /* ===== Action Menu 動作選單 ===== */
-  .am-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(0,0,0,.16);padding:6px;display:flex;flex-direction:column;gap:2px;}
+  .am-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(0,0,0,.16);padding:6px;display:flex;flex-direction:column;gap:2px;min-height:max-content;} /* min-height:max-content 修正：巢狀 flex column 面板在 grid 格子／flex 容器內會被算成單列高、內容溢出，撐回內容高（矩陣＋Live 兩處通用） */
   .am-panel.sz-s{min-width:132px;} .am-panel.sz-m{min-width:170px;} .am-panel.sz-l{min-width:210px;}
-  .mcell .am-panel{min-height:max-content;} /* 修正：flex column 面板巢在 grid cell 內會被壓成單列高，撐回內容高 */
   .am-item{display:flex;align-items:center;gap:10px;min-width:118px;padding:8px 12px;border-radius:10px;border:1px solid transparent;font-family:var(--font-sans);font-size:14px;line-height:1.2;color:var(--ink);cursor:pointer;user-select:none;white-space:nowrap;}
   .am-item svg{width:16px;height:16px;flex:0 0 auto;color:var(--muted);}
   .am-item .am-lb{flex:1 1 auto;}
@@ -764,8 +763,8 @@
   .am-item.is-danger{color:var(--i-danger);} .am-item.is-danger svg{color:var(--i-danger);}
   .am-item.is-danger.st-hover{background:var(--i-danger-tint);}
   .am-divider{height:1px;background:var(--line);margin:5px 8px;}
-  .am-live-wrap{position:relative;display:inline-block;}
-  .am-live-wrap .am-panel{position:absolute;top:calc(100% + 6px);left:0;z-index:5;}
+  .am-live-wrap{display:inline-flex;flex-direction:column;align-items:flex-start;gap:6px;} /* Live 面板改順流排在 trigger 下方，框會跟著長高、不溢出 */
+  .am-live-wrap .am-panel{position:static;}
   .am-trigger{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;background:var(--i-sec-fill);border:1px solid var(--i-sec-edge);color:var(--i-sec-fg);font-family:var(--font-sans);font-size:14px;cursor:pointer;}
   .am-trigger:hover{background:var(--i-sec-fill-h);}
   .am-trigger .am-tcaret{display:inline-flex;width:14px;height:14px;color:var(--muted);transition:transform .15s ease;}
