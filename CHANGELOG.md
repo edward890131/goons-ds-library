@@ -561,3 +561,19 @@ List/List Item、Quantity、Progress 由主流程直接做；Drawer、Floating-l
 - 側邊欄群組改「只展開當前檢視所在群組」（原本 `gi>0` 收合＝Basic 永遠展開）；summary 或其他群組時 Basic 收合。
 
 **驗證**：node --check OK、Playwright 0 console error。Number title/nav=「Number 數值」、metric 三欄位可同時出現（本月營收／8,542 筆／↗+12.5%）、Trend「無」→ 趨勢消失；progress pct s/m/l=12/15/19；FAB 點主鈕 0→3 子項＋is-open、再點→0；重整 #floating-line 停留原頁＋僅 Complex 展開、fresh 載入→summary＋四群全收合。截圖：Number metric 組合。
+
+---
+
+## 2026-07-15　Card 群 5 顆全建置（fable 平行 agent → 序列整合）
+
+Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、主控序列整合。全部**重用既有原子**（Image／Tag／Price／Button／Icon），namespace 前綴各自獨立。
+
+- **card 基礎卡片**（`crd-`）：variant elevated/outlined/filled × state default/hover/selected/disabled（3×4=12）。slots media/badge/title/desc/actions 可組合；媒體圖=imEl、角標=.tg、動作鈕=.btn。
+- **product-card 商品卡**（`pcd-`）：variant vertical/horizontal/minimal × state default/hover/soldout（3×3=9）。縮圖=imEl、角標/售完標=.tg、價格=prEl(normal/discount)、加入購物車=.btn＋IC_CART、收藏愛心/評分星（新增 PCD_IC_STAR_FILL/PCD_IC_HEART_FILL fill 版）；soldout=grayscale＋覆蓋標＋按鈕停用。
+- **category-tile 分類磚**（`cat-`）：variant icon/image/gradient × state default/hover/active（3×3=9）。icon 磚=既有 Phosphor＋i-primary-tint 圈、image 磚=imEl 鋪底＋暗遮罩、gradient 磚=accent 漸層；count=.tg；含 6 磚 grid 示意。
+- **article-card 文章卡**（`art-`）：variant vertical/horizontal/overlay × state default/hover（3×2=6）。封面=imEl(16:9)、作者頭像=imEl(circular,s)、分類標=.tg、閱讀更多=.btn v-text；overlay=暗漸層白字置底。
+- **announcement-item 公告項**（`anc-`）：variant banner/card/inline × intent info/success/warning/danger（3×4=12）。語意 icon 重用 notification 的 NT_IC_*＋新增 ANC_IC_PROHIBIT(danger)；日期=.tg、動作/關閉=.btn；banner 左色條＋tint 底、card 圓角＋色圈、inline 單行。LIVE['announcement-item'] 有註冊。
+
+**整合手法**：各 agent 寫 `<id>.css`+`<id>.js` 純文字檔（不碰主檔），主控 integrate.js 依錨點插入（CSS 前 `</style>`、JS 前 `const BUILD`），DIAL_SPECS/BUILD/DIAL_PAGE/NAV st 4 處中央註冊由主控做。零 icon/class/fn 命名衝突。
+
+**驗證**：node --check OK、Playwright 0 console error。5 頁矩陣格數對（12/9/9/6/12）＋ Live ＋ 原子重用（product 用 13 個 prEl、article 20 個 imEl 等）；匯出頁列出 5 顆、總數 30/679→**35/727**（+5 元件、+48 變體）；dark mode 卡片底走 --panel(22,26,33) 非白；hash 路由對新元件正常。截圖：5 頁 showcase 全確認。**Card 群完成，剩 Table & Chart（5）未建。**

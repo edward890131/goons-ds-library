@@ -1529,6 +1529,356 @@
   .prg-checks{align-items:center;}
   .prg-checks .prg-range{flex:1 1 180px;min-width:150px;}
   .prg-range{accent-color:var(--accent);cursor:pointer;}
+
+  /* ===== Card group: card ===== */
+/* ==================== Card 基礎卡片（crd- namespace）==================== */
+/* 泛用內容容器卡：media（Image 原子）＋ badge（Tag 原子）＋ title ＋ desc ＋ footer actions（Button 原子）。
+   variant：elevated 浮起（陰影）／outlined 外框（1px --line）／filled 填色（--panel-2 底）。
+   矩陣用靜態 class（is-hover / is-selected / is-disabled）模擬狀態；Live／showcase 加 .live 走真實 :hover。
+   陰影一律用 color-mix(--ink) 調透明度，暗色模式自動跟著加深（比照 modal/drawer 的做法）。 */
+
+.crd{position:relative;display:flex;flex-direction:column;width:100%;max-width:300px;
+  background:var(--panel);border:1px solid transparent;border-radius:var(--radius);overflow:hidden;
+  font-family:var(--font-sans);text-align:left;
+  transition:box-shadow .15s,border-color .15s,background .15s,transform .12s;}
+
+/* ---- variant 三型態 ---- */
+.crd-v-elevated{border-color:transparent;
+  box-shadow:0 1px 3px color-mix(in srgb,var(--ink) 10%,transparent),
+             0 4px 14px color-mix(in srgb,var(--ink) 7%,transparent);}
+.crd-v-outlined{border-color:var(--line);box-shadow:none;}
+.crd-v-filled{background:var(--panel-2);border-color:transparent;box-shadow:none;}
+
+/* ---- state：矩陣靜態模擬 ---- */
+/* hover＝依 variant 各自「加深」：elevated 陰影變深、outlined 邊框轉強、filled 底再深一階 */
+.crd-v-elevated.is-hover{box-shadow:0 3px 8px color-mix(in srgb,var(--ink) 13%,transparent),
+                                    0 10px 26px color-mix(in srgb,var(--ink) 11%,transparent);}
+.crd-v-outlined.is-hover{border-color:var(--line-strong);
+  box-shadow:0 2px 8px color-mix(in srgb,var(--ink) 6%,transparent);}
+.crd-v-filled.is-hover{background:var(--panel-3);}
+/* selected＝accent 邊框（外加 1px ring 增厚）＋ 主色淡藍底，三 variant 一致 */
+.crd.is-selected{border-color:var(--accent);background:var(--i-primary-tint);
+  box-shadow:0 0 0 1px var(--accent) inset;}
+.crd-v-elevated.is-selected{box-shadow:0 0 0 1px var(--accent) inset,
+  0 1px 3px color-mix(in srgb,var(--ink) 10%,transparent),
+  0 4px 14px color-mix(in srgb,var(--ink) 7%,transparent);} /* elevated 選取仍保留浮起陰影 */
+/* disabled＝整卡淡化、不可點（Live 由 JS 同步把內部 .btn 設 disabled） */
+.crd.is-disabled{opacity:.5;cursor:not-allowed;}
+.crd.is-disabled .crd-media .im-img{filter:grayscale(.35);}
+
+/* ---- Live／showcase 真實 hover（.live 才啟用，矩陣靜態格不受影響）---- */
+.crd-v-elevated.live:hover:not(.is-disabled){box-shadow:0 3px 8px color-mix(in srgb,var(--ink) 13%,transparent),
+  0 10px 26px color-mix(in srgb,var(--ink) 11%,transparent);}
+.crd-v-outlined.live:hover:not(.is-disabled){border-color:var(--line-strong);
+  box-shadow:0 2px 8px color-mix(in srgb,var(--ink) 6%,transparent);}
+.crd-v-filled.live:hover:not(.is-disabled):not(.is-selected){background:var(--panel-3);}
+
+/* ---- slots ---- */
+/* media：重用 Image 原子（imEl 16:9），覆寫為滿版寬、貼齊卡片圓角上緣 */
+.crd-media{position:relative;flex:0 0 auto;}
+.crd-media .im-box{display:block;width:100%;height:auto;aspect-ratio:16/9;
+  border:0;border-radius:0;}
+/* badge：重用 Tag 原子（.tg），釘在媒體圖右上角；無媒體圖時釘在卡片右上角 */
+.crd-badge{position:absolute;top:10px;right:10px;z-index:1;}
+.crd-badge .tg{box-shadow:0 1px 4px color-mix(in srgb,var(--ink) 18%,transparent);} /* 壓在照片上補一點分離度 */
+/* body：標題＋描述 */
+.crd-body{display:flex;flex-direction:column;gap:6px;padding:14px 16px 0;}
+.crd-title{font-size:15px;font-weight:650;line-height:1.4;color:var(--ink);}
+.crd-desc{font-size:13px;line-height:1.6;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;} /* 兩行截斷 */
+/* footer actions：重用 Button 原子，主（v-solid i-primary）＋次（v-text i-secondary） */
+.crd-foot{display:flex;align-items:center;gap:8px;padding:12px 16px 14px;margin-top:auto;}
+.crd-body:last-child{padding-bottom:14px;} /* 沒有 footer actions 時，body 自己補底部留白 */
+
+/* ---- 矩陣格內的緊湊版 ---- */
+.crd-mx{max-width:230px;}
+.crd-mx .crd-body{padding:12px 14px 0;gap:4px;}
+.crd-mx .crd-title{font-size:14px;}
+.crd-mx .crd-desc{font-size:12px;}
+.crd-mx .crd-foot{padding:10px 14px 12px;}
+
+/* ---- showcase 三卡並排 ---- */
+.crd-show{display:flex;flex-wrap:wrap;gap:22px;align-items:stretch;}
+.crd-show .demo-item{flex:1 1 240px;max-width:320px;}
+.crd-show .crd{height:100%;}
+
+/* ---- Live 舞台 ---- */
+.crd-live-stage{display:flex;justify-content:flex-start;}
+.crd-live-stage .crd{max-width:320px;min-width:260px;}
+  /* ===== Card group: product-card ===== */
+/* ==================== Product Card 商品卡（pcd- namespace）==================== */
+/* 卡片本體：panel 底 + line 邊框 + radius token；hover 有浮起過渡 */
+.pcd-card{position:relative;display:flex;flex-direction:column;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  font-family:var(--font-sans);text-align:left;max-width:100%;
+  transition:box-shadow .18s,transform .18s,border-color .18s;}
+
+/* --- variant 三型態 --- */
+.pcd-v-vertical{width:216px;}                                   /* 直式：圖上資訊下 */
+.pcd-v-horizontal{flex-direction:row;width:340px;}              /* 橫式：圖左資訊右 */
+.pcd-v-minimal{width:216px;}                                    /* 精簡：無圖純資訊 */
+
+/* --- hover：矩陣用靜態 is-hover、Live/showcase 用真實 :hover（售完不浮起）--- */
+.pcd-card.is-hover,
+.pcd-card.live:hover:not(.is-soldout){
+  box-shadow:0 10px 26px rgba(0,0,0,.13),0 2px 6px rgba(0,0,0,.06);
+  transform:translateY(-3px);border-color:var(--line-strong);}
+
+/* --- 縮圖區：重用 image 原子（.im-box），在 pcd 範圍內改為填滿卡寬 --- */
+.pcd-thumb{position:relative;flex:0 0 auto;min-width:0;}
+.pcd-thumb .im-box{display:block;width:100%;height:auto;border:0;border-radius:0;}
+.pcd-v-horizontal .pcd-thumb{width:120px;align-self:stretch;display:flex;}
+.pcd-v-horizontal .pcd-thumb .im-box{width:100%;height:100%;aspect-ratio:auto;}
+
+/* 左上角角標：重用 .tg 原子，僅負責定位 */
+.pcd-badge{position:absolute;top:10px;left:10px;z-index:2;}
+
+/* 右上角收藏：重用 .btn v-text icon-only 原子，補圓底浮在圖上 */
+.pcd-wish{position:absolute;top:8px;right:8px;z-index:2;
+  background:var(--panel);border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.14);}
+.pcd-wish:hover{background:var(--panel-2);}
+.pcd-wish.is-on{color:var(--i-danger);}                          /* 已收藏：愛心轉紅（fill 版 svg） */
+.pcd-v-minimal .pcd-wish{position:static;box-shadow:none;background:transparent;}
+
+/* --- 售完 soldout：圖轉灰階 + 半透明覆蓋 + 「售完」標（tg 原子） --- */
+.pcd-card.is-soldout .im-img{filter:grayscale(1);opacity:.85;}
+.pcd-card.is-soldout .pcd-badge{filter:grayscale(1);opacity:.65;}
+.pcd-soldout-ov{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--panel) 45%,transparent);}
+.pcd-card.is-soldout .pcd-name,
+.pcd-card.is-soldout .pcd-rating{color:var(--faint);}
+.pcd-card.is-soldout .pr-price{color:var(--muted);}
+.pcd-card.is-soldout .pr-price .pr-cur{color:var(--faint);}
+
+/* --- 資訊區 --- */
+.pcd-info{display:flex;flex-direction:column;gap:8px;padding:12px 14px 14px;flex:1;min-width:0;}
+.pcd-toprow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:22px;} /* minimal 用：角標＋收藏同列 */
+.pcd-name{font-size:14px;font-weight:600;color:var(--ink);line-height:1.4;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* --- 評分星列：warn 黃實星 + faint 空星 + 分數/則數 --- */
+.pcd-rating{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.pcd-stars{display:inline-flex;gap:1px;color:var(--warn);}
+.pcd-stars svg{width:13px;height:13px;display:block;}
+.pcd-stars .pcd-star-empty{color:var(--faint);}
+.pcd-rate-val{font-weight:600;color:var(--ink);}
+.pcd-rate-cnt{color:var(--faint);}
+
+/* --- 價格 + 加入購物車（重用 prEl 與 .btn 原子） --- */
+.pcd-buy{display:flex;flex-direction:column;gap:10px;margin-top:auto;}   /* 貼底：橫式時資訊高度不齊也對齊 */
+.pcd-buy .btn{width:100%;justify-content:center;}
+.pcd-v-horizontal .pcd-buy .btn{width:auto;align-self:flex-start;}
+  /* ===== Card group: category-tile ===== */
+/* ===== category-tile (Card) ===== */
+/* ==================== category-tile 分類磚 ==================== */
+/* 基底磚：panel 底＋細框，橫向 flex（leading 圓圈/圖片 ＋ body ＋ arrow） */
+.cat-tile{position:relative;display:flex;align-items:center;gap:12px;
+  width:100%;min-width:200px;max-width:300px;padding:14px;box-sizing:border-box;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  font-family:var(--font-sans);cursor:pointer;user-select:none;overflow:hidden;text-align:left;
+  transition:border-color .13s,background .13s,transform .13s,box-shadow .13s,filter .13s;}
+.cat-tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* leading 圓圈（icon 磚＝主色淡底；gradient 磚＝半透明白，見下方 variant 覆寫） */
+.cat-circle{flex:0 0 auto;width:44px;height:44px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--i-primary-tint);color:var(--accent);transition:background .13s,color .13s;}
+.cat-circle svg{width:22px;height:22px;}
+
+/* 內容區：分類名／描述（可選）／count 標籤列 */
+.cat-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.cat-name{font-size:14.5px;font-weight:650;color:var(--ink);line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .13s;}
+.cat-desc{font-size:12px;color:var(--muted);line-height:1.4;}
+.cat-meta{display:flex;align-items:center;gap:6px;margin-top:2px;}
+
+/* 右側箭頭（重用 ICON_ARROW；hover 右滑） */
+.cat-arrow{flex:0 0 auto;display:inline-flex;color:var(--faint);transition:color .13s,transform .13s;}
+.cat-arrow svg{width:16px;height:16px;}
+
+/* ---- variant: image 圖片磚 ---- */
+/* Image 原子（.im-box）攤平成滿版背景，內容沉到磚底、疊在遮罩上 */
+.cat-image{min-height:132px;align-items:flex-end;}
+.cat-media{position:absolute;inset:0;z-index:0;}
+.cat-media .im-box{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;border:0;border-radius:0;} /* 蓋掉原子的固定高/圓角，攤平滿版 */
+.cat-media .im-img{width:100%;height:100%;object-fit:cover;}
+/* 底部暗色漸層遮罩：確保白字可讀（overlay 固定暗色、非主題色，明暗模式皆適用） */
+.cat-scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 32%,rgba(0,0,0,.62) 100%);transition:background .13s;}
+.cat-image .cat-body,.cat-image .cat-arrow{position:relative;z-index:2;}
+
+/* ---- variant: gradient 漸層磚 ---- */
+.cat-gradient{border-color:transparent;
+  background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#7B5CFF));} /* #7B5CFF 僅作漸層終點混色基底，實際輸出仍由 --accent 主導、跟著主題切換 */
+.cat-gradient .cat-circle{background:color-mix(in srgb,var(--primary-on) 18%,transparent);color:var(--primary-on);}
+
+/* ---- 媒體底（image / gradient）上的文字與原子覆寫：一律用 --primary-on（on-accent 白） ---- */
+.cat-image .cat-name,.cat-gradient .cat-name{color:var(--primary-on);}
+.cat-image .cat-desc,.cat-gradient .cat-desc{color:color-mix(in srgb,var(--primary-on) 78%,transparent);}
+.cat-image .cat-arrow,.cat-gradient .cat-arrow{color:color-mix(in srgb,var(--primary-on) 85%,transparent);}
+/* count 用的 Tag 原子在暗媒體上改半透明白底，保住對比 */
+.cat-image .tg.v-soft,.cat-gradient .tg.v-soft{
+  background:color-mix(in srgb,var(--primary-on) 22%,transparent);color:var(--primary-on);}
+
+/* ---- state: hover（矩陣靜態 .is-hover ＋ Live 真實 :hover，兩者同步） ---- */
+.cat-tile.is-hover,.cat-tile.live:hover{transform:translateY(-2px);
+  border-color:var(--line-strong);box-shadow:0 6px 18px rgba(0,0,0,.10);}
+.cat-icon.is-hover,.cat-icon.live:hover{background:var(--panel-2);}                       /* icon 磚：底色加深 */
+.cat-icon.is-hover .cat-circle,.cat-icon.live:hover .cat-circle{background:var(--i-primary-tint2);}
+.cat-icon.is-hover .cat-arrow,.cat-icon.live:hover .cat-arrow{color:var(--accent);}
+.cat-image.is-hover .cat-scrim,.cat-image.live:hover .cat-scrim{                          /* image 磚：遮罩整體加深 */
+  background:linear-gradient(180deg,rgba(0,0,0,.10) 0%,rgba(0,0,0,.72) 100%);}
+.cat-gradient.is-hover,.cat-gradient.live:hover{filter:saturate(1.12) brightness(1.06);}  /* gradient 磚：提亮增飽和 */
+.cat-tile.is-hover .cat-arrow,.cat-tile.live:hover .cat-arrow{transform:translateX(2px);}
+
+/* ---- state: active 選中（accent 邊框＋選中感；可與 hover 疊加） ---- */
+.cat-tile.is-active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+.cat-icon.is-active{background:var(--i-primary-tint);}
+.cat-icon.is-active .cat-circle{background:var(--accent);color:var(--primary-on);}        /* 圓圈變實心 accent */
+.cat-icon.is-active .cat-name{color:var(--accent);}
+.cat-gradient.is-active{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent);}       /* 本體即 accent 底 → 用 panel 間隙＋外圈 accent 表達選中 */
+.cat-tile.is-active.is-hover,.cat-tile.is-active.live:hover{transform:translateY(-2px);
+  box-shadow:0 0 0 1px var(--accent),0 6px 18px rgba(0,0,0,.10);}
+.cat-gradient.is-active.is-hover,.cat-gradient.is-active.live:hover{
+  box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent),0 6px 18px rgba(0,0,0,.10);}
+
+/* ---- Showcase / Grid / Live 版位 ---- */
+.cat-row{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch;}
+.cat-row .cat-tile{width:280px;}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.cat-grid .cat-tile{max-width:none;}
+.cat-live{display:flex;justify-content:flex-start;padding:6px 2px;}
+.cat-live .cat-tile{width:280px;}
+  /* ===== Card group: article-card ===== */
+/* ==================== ARTICLE CARD 文章卡（art-）==================== */
+/* 卡片外殼：--panel 底 + --line 邊框 + --radius 圓角；hover 過渡（浮起/陰影/邊框） */
+.art-card{position:relative;display:flex;flex-direction:column;width:100%;max-width:340px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  font-family:var(--font-sans);text-align:left;
+  transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease;}
+.art-card.v-horizontal{flex-direction:row;max-width:560px;}
+.art-card.v-overlay{aspect-ratio:4/3;justify-content:flex-end;}
+.art-card.live{cursor:pointer;}
+
+/* ---- 封面（重用 Image 原子 imEl；此處只做容器級覆寫，不重畫 primitive）---- */
+.art-cover{position:relative;overflow:hidden;flex:0 0 auto;}
+/* 直式：封面滿版寬、高度交給 im-box 的 aspect-ratio（16:9），並去掉原子的邊框/圓角（卡片外殼已收） */
+.art-card .art-cover .im-box{display:block;width:100%;height:auto;border:0;border-radius:0;}
+.art-card .art-cover .im-img{transition:transform .35s ease;}
+/* 橫式：封面靠左固定欄寬、填滿卡片高度 */
+.art-card.v-horizontal .art-cover{width:38%;min-width:120px;}
+.art-card.v-horizontal .art-cover .im-box{height:100%;aspect-ratio:auto;}
+/* 疊字：封面鋪滿整張卡當底圖 */
+.art-card.v-overlay .art-cover{position:absolute;inset:0;}
+.art-card.v-overlay .art-cover .im-box{height:100%;aspect-ratio:auto;}
+/* 疊字暗漸層遮罩：置底文字的可讀性保障 */
+.art-card.v-overlay .art-cover::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.72),transparent 70%);}
+
+/* ---- 內容區 ---- */
+.art-body{display:flex;flex-direction:column;gap:8px;padding:14px 16px 16px;min-width:0;flex:1 1 auto;}
+.art-card.v-overlay .art-body{position:relative;flex:0 0 auto;} /* 疊字：內容壓在遮罩上、貼齊底部 */
+.art-cat{display:flex;}
+.art-title{margin:0;font-size:16px;font-weight:700;line-height:1.45;color:var(--ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  transition:color .15s ease;}
+.art-excerpt{margin:0;font-size:12.5px;line-height:1.7;color:var(--muted);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* ---- 作者列：圓形頭像（imEl circular）＋作者名＋「·」＋日期＋閱讀時間 ---- */
+.art-foot{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:4px;min-width:0;flex-wrap:wrap;}
+.art-author{display:flex;align-items:center;gap:8px;min-width:0;}
+.art-author .im-box{height:24px;width:24px;flex:0 0 auto;} /* 頭像原子縮到 24px（覆寫 im-sz-s 的 40px） */
+.art-author-name{font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap;}
+.art-meta{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--faint);white-space:nowrap;}
+.art-dot{color:var(--faint);}
+/* 閱讀更多列（重用 .btn v-text 原子） */
+.art-more{display:flex;margin-top:2px;margin-left:-8px;}
+
+/* ---- 疊字版文字反白（壓在暗漸層上，白色為影像疊字慣例）---- */
+.art-card.v-overlay .art-title{color:#fff;}
+.art-card.v-overlay .art-excerpt{color:rgba(255,255,255,.82);}
+.art-card.v-overlay .art-author-name{color:#fff;}
+.art-card.v-overlay .art-meta,.art-card.v-overlay .art-dot{color:rgba(255,255,255,.72);}
+.art-card.v-overlay .art-author .im-box{border-color:rgba(255,255,255,.4);}
+
+/* ---- hover：矩陣用靜態 .is-hover 模擬、Live/showcase 用真實 :hover（.live）---- */
+.art-card.is-hover,.art-card.live:hover{transform:translateY(-3px);
+  box-shadow:0 10px 26px rgba(0,0,0,.13);border-color:var(--line-strong);}
+.art-card.is-hover .art-cover .im-img,.art-card.live:hover .art-cover .im-img{transform:scale(1.05);}
+.art-card.is-hover .art-title,.art-card.live:hover .art-title{color:var(--accent);}
+
+/* ---- 矩陣格 / showcase 排版 ---- */
+.art-cell{width:100%;display:flex;justify-content:flex-start;}
+.art-cell .art-card{max-width:100%;}
+.art-showcase{display:flex;flex-wrap:wrap;gap:18px;align-items:stretch;margin-bottom:8px;}
+.art-showcase .art-card{flex:0 1 320px;}
+.art-showcase .art-card.v-horizontal{flex:0 1 520px;}
+  /* ===== Card group: announcement-item ===== */
+/* ==========================================================================
+   ANNOUNCEMENT-ITEM 公告項（anc- namespace）
+   variant：banner 橫幅 / card 卡片 / inline 行內 × intent：info / success / warning / danger
+   全部走 token；intent 色透過 --anc-c / --anc-tint / --anc-tint2 三個區域變數分發
+   ========================================================================== */
+
+/* ---- intent 色票：綁定既有語意 token，嚴禁 hard-code ---- */
+.anc-i-info{--anc-c:var(--accent);--anc-tint:var(--i-primary-tint);--anc-tint2:var(--i-primary-tint2);}
+.anc-i-success{--anc-c:var(--ok);--anc-tint:var(--ok-tint);--anc-tint2:color-mix(in srgb,var(--ok) 22%,transparent);}
+.anc-i-warning{--anc-c:var(--warn);--anc-tint:color-mix(in srgb,var(--warn) 13%,transparent);--anc-tint2:color-mix(in srgb,var(--warn) 24%,transparent);}
+.anc-i-danger{--anc-c:var(--i-danger);--anc-tint:var(--i-danger-tint);--anc-tint2:var(--i-danger-tint2);}
+
+/* ---- 共同骨架 ---- */
+.anc-item{position:relative;display:flex;gap:12px;align-items:flex-start;width:100%;max-width:520px;
+  font-family:var(--font-sans);text-align:left;box-sizing:border-box;}
+.anc-body{flex:1 1 auto;min-width:0;}
+.anc-head{display:flex;align-items:center;gap:7px;min-width:0;}
+.anc-title{font-size:14px;font-weight:600;line-height:1.35;color:var(--ink);overflow:hidden;text-overflow:ellipsis;}
+.anc-desc{font-size:13px;line-height:1.5;color:var(--muted);margin-top:3px;word-break:break-word;}
+.anc-meta{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.anc-meta .btn.sz-s{height:26px;padding:0 8px;} /* 查看詳情文字鈕在 meta 內壓低一點 */
+
+/* 未讀圓點：綁 intent 色 */
+.anc-dot{flex:0 0 auto;width:7px;height:7px;border-radius:999px;background:var(--anc-c);}
+
+/* leading icon：intent 色圈（banner / card 用） */
+.anc-ico{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  width:32px;height:32px;border-radius:999px;background:var(--anc-tint);color:var(--anc-c);}
+.anc-ico svg{width:18px;height:18px;display:block;}
+
+/* 右上關閉 ×（重用 .btn icon-only，這裡只補對齊） */
+.anc-close-slot{flex:0 0 auto;margin-left:auto;display:inline-flex;}
+.anc-close-slot .btn.icon-only.sz-s{width:26px;height:26px;border-radius:8px;}
+.anc-close-slot .btn svg{width:14px;height:14px;}
+
+/* ---- variant：banner 橫幅（整條寬、左 3px intent 色條 + intent tint 淡底）---- */
+.anc-v-banner{padding:12px 14px 12px 16px;border-radius:10px;background:var(--anc-tint);
+  border:1px solid transparent;border-left:3px solid var(--anc-c);}
+
+/* ---- variant：card 卡片（獨立圓角卡、panel 底、左 intent 圈）---- */
+.anc-v-card{padding:14px 16px;border-radius:var(--radius);background:var(--panel);
+  border:1px solid var(--line);box-shadow:0 1px 2px rgba(18,24,38,.05);}
+
+/* ---- variant：inline 行內（精簡單行：icon + 標題 + 日期）---- */
+.anc-v-inline{align-items:center;padding:7px 12px;border-radius:10px;background:var(--panel);
+  border:1px solid var(--line);}
+.anc-v-inline .anc-ico{width:auto;height:auto;background:transparent;border-radius:0;} /* 行內不畫色圈、icon 直上 intent 色 */
+.anc-v-inline .anc-ico svg{width:16px;height:16px;}
+.anc-v-inline .anc-body{display:flex;flex-direction:row;align-items:center;gap:10px;}
+.anc-v-inline .anc-title{font-size:13px;white-space:nowrap;}
+.anc-v-inline .anc-meta{margin-top:0;margin-left:auto;flex-wrap:nowrap;}
+
+/* ---- hover：矩陣用靜態 class 模擬、Live（.anc-live）用真實 :hover，兩套同步 ---- */
+.anc-v-banner.is-hover,.anc-v-banner.anc-live:hover{background:var(--anc-tint2);}
+.anc-v-card.is-hover,.anc-v-card.anc-live:hover{border-color:var(--line-strong);
+  box-shadow:0 4px 14px rgba(18,24,38,.10);transform:translateY(-1px);}
+.anc-v-card.anc-live{transition:box-shadow .16s ease,transform .16s ease,border-color .16s ease;}
+.anc-v-inline.is-hover,.anc-v-inline.anc-live:hover{background:var(--panel-2);border-color:var(--line-strong);}
+
+/* ---- 陳列容器 ---- */
+.anc-stack{display:flex;flex-direction:column;gap:10px;max-width:560px;}          /* banner 四 intent 直向堆疊 */
+.anc-showgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;} /* card 四 intent 一組 */
+.anc-live-box{display:flex;justify-content:center;padding:8px 0;}
+.anc-live-box .anc-item{max-width:480px;}
 </style>
 
 <div class="shell" id="shell">
@@ -1595,11 +1945,11 @@
       {id:'progress',name:'Progress 進度條',st:'ready'},
     ]},
     {group:'Card 卡片',emoji:'🗂️',items:[
-      {id:'card',name:'Card 卡片'},
-      {id:'product-card',name:'Product Card 商品卡'},
-      {id:'category-tile',name:'Category Tile 分類磚'},
-      {id:'article-card',name:'Article Card 文章卡'},
-      {id:'announcement-item',name:'Announcement 公告項'},
+      {id:'card',name:'Card 卡片',st:'ready'},
+      {id:'product-card',name:'Product Card 商品卡',st:'ready'},
+      {id:'category-tile',name:'Category Tile 分類磚',st:'ready'},
+      {id:'article-card',name:'Article Card 文章卡',st:'ready'},
+      {id:'announcement-item',name:'Announcement 公告項',st:'ready'},
     ]},
     {group:'Table & Chart 表格圖表',emoji:'📊',items:[
       {id:'table',name:'Table 表格'},
@@ -1692,7 +2042,12 @@
     'floating-line':{label:'Floating Line 浮動列',order:['variant','position'],axes:{variant:['selection','toolbar','fab'],position:['bottom-center','bottom-right']},zh:{variant:{selection:'選取列',toolbar:'工具列',fab:'浮動鈕'},position:{'bottom-center':'底部置中','bottom-right':'底部靠右'},axisName:{variant:'Variant 型態',position:'Position 位置'}}},
     step:{label:'Step 步驟指示器',order:['orientation','variant'],axes:{orientation:['horizontal','vertical'],variant:['numbered','dotted','icon']},zh:{orientation:{horizontal:'水平',vertical:'垂直'},variant:{numbered:'編號',dotted:'圓點',icon:'圖示'},axisName:{orientation:'Orientation 方向',variant:'Variant 樣式'}}},
     quantity:{label:'Quantity 商品計數',order:['variant','size'],axes:{variant:['outline','pill','plain'],size:['s','m','l']},zh:{variant:{outline:'外框',pill:'膠囊',plain:'極簡'},size:{s:'小 s',m:'標準 m',l:'大 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
-    progress:{label:'Progress 進度條',order:['variant','size'],axes:{variant:['bar','label','gradient'],size:['s','m','l']},zh:{variant:{bar:'基本',label:'帶百分比',gradient:'漸層'},size:{s:'細 s',m:'標準 m',l:'粗 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}}
+    progress:{label:'Progress 進度條',order:['variant','size'],axes:{variant:['bar','label','gradient'],size:['s','m','l']},zh:{variant:{bar:'基本',label:'帶百分比',gradient:'漸層'},size:{s:'細 s',m:'標準 m',l:'粗 l'},axisName:{variant:'Variant 型態',size:'Size 尺寸'}}},
+    card:{label:'Card 卡片',order:['variant','state'],axes:{variant:['elevated','outlined','filled'],state:['default','hover','selected','disabled']},zh:{variant:{elevated:'浮起',outlined:'外框',filled:'填色'},state:{default:'預設',hover:'滑過',selected:'選取',disabled:'停用'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
+    'product-card':{label:'Product Card 商品卡',order:['variant','state'],axes:{variant:['vertical','horizontal','minimal'],state:['default','hover','soldout']},zh:{variant:{vertical:'直式',horizontal:'橫式',minimal:'精簡'},state:{default:'預設',hover:'滑過',soldout:'售完'},axisName:{variant:'Variant 型態',state:'State 狀態'}}},
+    'category-tile':{label:'Category Tile 分類磚',order:['variant','state'],axes:{variant:['icon','image','gradient'],state:['default','hover','active']},zh:{variant:{icon:'圖示磚',image:'圖片磚',gradient:'漸層磚'},state:{default:'預設',hover:'滑過',active:'選中'},axisName:{variant:'Variant 磚型',state:'State 狀態'}}},
+    'article-card':{label:'Article Card 文章卡',order:['variant','state'],axes:{variant:['vertical','horizontal','overlay'],state:['default','hover']},zh:{variant:{vertical:'直式',horizontal:'橫式',overlay:'疊字'},state:{default:'預設',hover:'滑過'},axisName:{variant:'Variant 版式',state:'State 狀態'}}},
+    'announcement-item':{label:'Announcement 公告',order:['variant','intent'],axes:{variant:['banner','card','inline'],intent:['info','success','warning','danger']},zh:{variant:{banner:'橫幅',card:'卡片',inline:'行內'},intent:{info:'資訊',success:'成功',warning:'注意',danger:'重要'},axisName:{variant:'Variant 型態',intent:'Intent 語意'}}}
   
   };
   const CHOICE={};
@@ -5034,7 +5389,555 @@ function skelMedia(anim){
     sl.appendChild(wrap);draw();
   }
 
-  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep,quantity:buildQuantity,progress:buildProgress};
+
+  /* ===== Card group build: card ===== */
+  /* ==================== Card 基礎卡片（crd-）==================== */
+  /* 泛用內容容器卡：media（imEl 圖）＋ badge（.tg 標籤）＋ title ＋ desc ＋ footer actions（.btn）。
+     variant：elevated 浮起／outlined 外框／filled 填色 × state：default／hover／selected／disabled。
+     全部重用既有原子：imEl（Image）、.tg（Tag）、.btn（Button），不 inline 重畫 primitive。 */
+
+  /* 卡片工廠：o={variant, state, media, badge, title, desc, actions, live, compact, src}
+     state 用靜態 class 模擬（矩陣用）；live=true 時掛 .live 走真實 :hover、disabled 同步鎖內部按鈕 */
+  function crdCard(o){
+    o=o||{};
+    const variant=o.variant||'elevated';
+    const state=o.state||'default';
+    const card=ce('div','crd crd-v-'+variant
+      +(state!=='default'?' is-'+state:'')
+      +(o.live?' live':'')
+      +(o.compact?' crd-mx':''));
+
+    /* media slot：重用 Image 原子（16:9 滿版），CSS 覆寫為卡片滿寬 */
+    if(o.media){
+      const md=ce('div','crd-media');
+      md.appendChild(imEl('rectangular','default','l',{src:o.src||IM_POOL[5],alt:o.title||'卡片圖片',ratio:'16:9'}));
+      card.appendChild(md);
+    }
+    /* badge slot：重用 Tag 原子，釘右上角（有圖壓圖上、無圖壓卡上） */
+    if(o.badge){
+      const bd=ce('div','crd-badge');
+      const t=ce('div','tg v-solid c-round i-brand st-default');t.innerHTML='<span>精選</span>';
+      bd.appendChild(t);
+      (o.media?card.firstChild:card).appendChild(bd); // 有 media 時掛進 .crd-media 讓定位跟著圖走
+    }
+    /* body slot：title 恆有、desc 可選（CSS 兩行截斷） */
+    const body=ce('div','crd-body');
+    const ti=ce('div','crd-title');ti.textContent=o.title||'合歡山日出季開跑';
+    body.appendChild(ti);
+    if(o.desc){
+      const de=ce('div','crd-desc');
+      de.textContent=(typeof o.desc==='string')?o.desc:'十月至二月為最佳觀賞期，凌晨出發上武嶺停車場，建議提前一週預約松雪樓住宿並攜帶保暖衣物。';
+      body.appendChild(de);
+    }
+    card.appendChild(body);
+    /* footer actions slot：重用 Button 原子（主 solid primary＋次 text secondary） */
+    if(o.actions){
+      const ft=ce('div','crd-foot');
+      const bp=ce('button','btn v-solid i-primary sz-s'+(o.live?' live':''));bp.innerHTML='<span>查看詳情</span>';
+      const bs=ce('button','btn v-text i-secondary sz-s'+(o.live?' live':''));bs.innerHTML='<span>稍後</span>';
+      if(state==='disabled'){bp.disabled=true;bs.disabled=true;} // disabled 整卡不可點，按鈕同步鎖
+      ft.append(bp,bs);
+      card.appendChild(ft);
+    }
+    return card;
+  }
+
+  /* 矩陣格：一張緊湊代表卡（media＋title＋desc＋actions 全開，看得到完整解剖），state 靜態模擬 */
+  function crdCell(variant,state){
+    return crdCard({variant,state,media:true,badge:false,title:'合歡山日出季',desc:'凌晨出發武嶺，建議預約松雪樓並備保暖衣物。',actions:true,compact:true,src:IM_POOL[(({elevated:0,outlined:1,filled:2})[variant]||0)+3]});
+  }
+
+  function buildCard(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Card',title:'Card 基礎卡片',
+      lede:'泛用的<b>內容容器卡</b>：媒體圖＋標題＋兩行描述＋頁尾動作，是商品卡、文章卡等所有內容卡的基底。<b>variant × state</b>：三種容器型態（<b>elevated 浮起</b>陰影／<b>outlined 外框</b>細邊／<b>filled 填色</b>灰底）× 四種狀態（預設／滑過／選取／停用）。slots 可自由組合；內部全數重用既有原子——媒體圖用 <b>Image</b>（16:9）、右上角標用 <b>Tag</b>、動作鈕用 <b>Button</b>。',
+      specRows:[['axes','<code>variant × state</code>'],['formula','<code>3 × 4 = 12</code>'],['token-policy','<code>semantic.*.card.*</code>'],['slots','<code>media / badge / title / desc / actions</code>']]});
+    const axes=DIAL_SPECS.card.axes, zh=DIAL_SPECS.card.zh, active=CHOICE.card.active; // 接中央 store
+    const VN={elevated:['浮起','elevated'],outlined:['外框','outlined'],filled:['填色','filled']};
+    const STN={default:['預設','default'],hover:['滑過','hover'],selected:['選取','selected'],disabled:['停用','disabled']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.state.filter(s=>active.state.has(s));
+      p.appendChild(matrixPanel({badge:'card',name:'Variant × State',desc:'列＝容器型態、欄＝狀態；每格為一張完整代表卡（媒體圖＋標題＋描述＋動作）',
+        rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(STN[s][0],STN[s][1]),
+        cell:(v,s)=>crdCell(v,s),mincol:220}));
+    }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × State 矩陣','hover＝依型態各自加深（陰影變深／邊框轉強／底色再深一階）；selected＝accent 邊框＋主色淡底；disabled＝整卡淡化不可點。矩陣為靜態模擬，真實 hover 請到下方 showcase／Live 試。');
+    p=panelsIn(sec);renderM();
+
+    /* showcase：三種 variant 各一張完整範例卡並排（真實 hover） */
+    const ss=section(body,'三型態完整範例','media＋badge＋title＋desc＋actions 全開的完整卡，三種容器型態並排對照；滑鼠移上去看各自的真實 hover 反應。');
+    const shell=ce('div','row-demo');
+    const row=ce('div','crd-show');
+    [['elevated 浮起','以陰影抬離背景',0],['outlined 外框','1px 細邊、無陰影',1],['filled 填色','panel-2 灰底、無框',2]].forEach(([cap,sub,i])=>{
+      const it=ce('div','demo-item');
+      it.appendChild(crdCard({variant:axes.variant[i],state:'default',media:true,badge:true,title:'合歡山日出季開跑',desc:true,actions:true,live:true,src:IM_POOL[i]}));
+      const c=ce('div','cap');c.innerHTML=`<b>${cap}</b> ${sub}`;it.appendChild(c);
+      row.appendChild(it);
+    });
+    shell.appendChild(row);ss.appendChild(shell);
+
+    /* Live：seg 切 variant；bools 開關各 slot＋disabled，每個勾選都對應可見變化 */
+    const sl=section(body,'實際互動 Live','切換容器型態，勾選開關各個 slot（媒體圖／角標／描述／動作鈕）與停用；整卡支援真實 hover——移上去看陰影／邊框／底色加深。');
+    mountLive(sl,{
+      initial:{variant:'elevated',media:true,badge:true,description:true,actions:true,disabled:false},
+      segs:[{key:'variant',label:'Variant',options:['elevated','outlined','filled'],labels:['浮起','外框','填色']}],
+      bools:[{key:'media',label:'media 媒體圖'},{key:'badge',label:'badge 角標'},{key:'description',label:'description 描述'},{key:'actions',label:'footer actions'},{key:'disabled',label:'disabled'}],
+      boolLabel:'Slots',
+      render:st=>{
+        const stage=ce('div','crd-live-stage');
+        stage.appendChild(crdCard({
+          variant:st.variant,
+          state:st.disabled?'disabled':'default', // 比照其他頁：disabled 勾選項對映 state
+          media:st.media,badge:st.badge,
+          title:'合歡山日出季開跑',
+          desc:st.description,actions:st.actions,live:true
+        }));
+        return stage;
+      },
+      note:'badge 在有媒體圖時壓在圖右上角、拿掉媒體圖後改釘卡片右上角；disabled 時整卡淡化、內部按鈕同步鎖定、hover 不再反應。'
+    });
+  }
+
+  /* ===== Card group build: product-card ===== */
+/* ==================== Product Card 商品卡（pcd-）==================== */
+/* 重用原子：imEl（縮圖）、.tg（角標／售完標）、prEl（價格）、.btn（加入購物車／收藏）、IC_HEART／IC_STAR／IC_CART（既有 icon）
+   新增 icon const：PCD_IC_STAR_FILL（實心星，評分用）、PCD_IC_HEART_FILL（實心愛心，已收藏狀態用）——Phosphor fill 版，與既有 regular 版不同名 */
+const PCD_IC_STAR_FILL='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.38,16.38,0,0,1,9.37,28.86Z"/></svg>';
+const PCD_IC_HEART_FILL='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M240,102c0,70-103.79,126.66-108.21,129a8,8,0,0,1-7.58,0C119.79,228.66,16,172,16,102A62.07,62.07,0,0,1,78,40c20.65,0,38.73,8.88,50,23.89C139.27,48.88,157.35,40,178,40A62.07,62.07,0,0,1,240,102Z"/></svg>';
+
+/* 評分星列：實星（PCD_IC_STAR_FILL・warn 黃）+ 空星（IC_STAR regular・faint），後綴分數與評論數 */
+function pcdStars(val,count){
+  const full=Math.floor(val);                                   // 4.5 → 4 顆實星 + 1 顆空星
+  const box=ce('span','pcd-rating');
+  const stars=ce('span','pcd-stars');
+  for(let i=0;i<5;i++){
+    const s=ce('span',i<full?'pcd-star-full':'pcd-star-empty');
+    s.innerHTML=i<full?PCD_IC_STAR_FILL:IC_STAR;
+    stars.appendChild(s);
+  }
+  box.appendChild(stars);
+  box.insertAdjacentHTML('beforeend',`<span class="pcd-rate-val">${val}</span><span class="pcd-rate-cnt">(${count})</span>`);
+  box.setAttribute('aria-label',`評分 ${val} 分，共 ${count} 則評論`);
+  return box;
+}
+
+/* 商品卡本體：variant=vertical|horizontal|minimal；state=default|hover|soldout
+   o={live, badge, badgeText, badgeIntent, rating, wishlist, wished, discount, price, name, src, onWish} */
+function pcdCard(variant,state,o){
+  o=o||{};
+  const soldout=state==='soldout';
+  const card=ce('div','pcd-card pcd-v-'+variant
+    +(state==='hover'?' is-hover':'')                            // 矩陣格用靜態 class 模擬 hover
+    +(soldout?' is-soldout':'')
+    +(o.live?' live':''));                                       // Live/showcase 才吃真實 :hover
+
+  /* 收藏愛心：.btn v-text icon-only 原子；已收藏換 fill 版 + is-on 轉紅 */
+  function mkWish(){
+    const w=ce('button','btn v-text i-secondary sz-s icon-only pcd-wish'+(o.live?' live':'')+(o.wished?' is-on':''));
+    w.innerHTML=o.wished?PCD_IC_HEART_FILL:IC_HEART;
+    w.setAttribute('aria-label',o.wished?'移除收藏':'加入收藏');
+    w.setAttribute('aria-pressed',o.wished?'true':'false');
+    if(soldout)w.disabled=true;
+    if(o.onWish&&!soldout)w.onclick=o.onWish;
+    return w;
+  }
+  /* 角標：.tg 原子（新品=i-brand／熱門=i-danger） */
+  function mkBadge(){
+    const t=ce('div','tg v-soft c-round i-'+(o.badgeIntent||'brand')+' st-default pcd-badge');
+    t.innerHTML='<span>'+(o.badgeText||'新品')+'</span>';
+    return t;
+  }
+
+  /* 縮圖區（minimal 無圖）：imEl 原子 1:1，角標左上、收藏右上，售完加灰階覆蓋標 */
+  if(variant!=='minimal'){
+    const th=ce('div','pcd-thumb');
+    th.appendChild(imEl('rectangular','default','l',{ratio:'1:1',alt:o.name||'商品圖',src:o.src||IM_POOL[6]}));
+    if(o.badge!==false)th.appendChild(mkBadge());
+    if(o.wishlist!==false)th.appendChild(mkWish());
+    if(soldout){
+      const ov=ce('div','pcd-soldout-ov');
+      const t=ce('div','tg v-solid c-round i-neutral st-default');t.innerHTML='<span>售完</span>';
+      ov.appendChild(t);th.appendChild(ov);
+    }
+    card.appendChild(th);
+  }
+
+  /* 資訊區：品名 + 評分星列 + 價格(prEl) + 加入購物車(.btn) */
+  const info=ce('div','pcd-info');
+  if(variant==='minimal'&&(o.badge!==false||o.wishlist!==false||soldout)){
+    const top=ce('div','pcd-toprow');                            // minimal 無圖：角標／售完標與收藏改放同一列
+    const lf=ce('span','');
+    if(soldout){const t=ce('div','tg v-solid c-round i-neutral st-default');t.innerHTML='<span>售完</span>';lf.appendChild(t);}
+    else if(o.badge!==false)lf.appendChild(mkBadge());
+    top.appendChild(lf);
+    if(o.wishlist!==false)top.appendChild(mkWish());
+    info.appendChild(top);
+  }
+  const nm=ce('div','pcd-name');nm.textContent=o.name||'經典帆布托特包・大容量通勤款';
+  info.appendChild(nm);
+  if(o.rating!==false)info.appendChild(pcdStars(o.rating||4.5,o.count||128));
+
+  const buy=ce('div','pcd-buy');
+  buy.appendChild(prEl(o.price||(o.discount?'discount':'normal'),'md'));   // 價格原子：normal／discount／sale
+  const b=ce('button','btn v-solid i-primary sz-s'+(o.live?' live':''));
+  b.innerHTML=IC_CART+'<span>'+(soldout?'已售完':'加入購物車')+'</span>';
+  if(soldout)b.disabled=true;
+  buy.appendChild(b);
+  info.appendChild(buy);
+  card.appendChild(info);
+  return card;
+}
+
+/* 矩陣格：靜態呈現（hover 用 is-hover 模擬、售完灰階＋覆蓋標＋按鈕停用） */
+function pcdCell(variant,state){
+  return pcdCard(variant,state,{src:IM_POOL[6]});
+}
+
+function buildProductCard(view){
+  const body=viewScaffold(view,{eyebrow:'L3 Component · Product Card',title:'Product Card 商品卡',
+    lede:'電商<b>商品卡</b>：縮圖＋角標＋品名＋評分星列＋價格＋加入購物車。三種 variant（<b>直式</b> 圖上資訊下／<b>橫式</b> 圖左資訊右／<b>精簡</b> 無圖純資訊）× 三狀態（預設／<b>hover 浮起</b>／<b>售完</b> 灰階＋覆蓋標＋按鈕停用）。內部全數重用原子：image（imEl 1:1）、tag（角標／售完標）、price（prEl normal/discount）、button（加入購物車＋收藏愛心）。',
+    specRows:[['axes','<code>variant × state</code>'],['formula','<code>3 × 3 = 9</code>'],
+      ['atoms','<code>imEl · .tg · prEl · .btn · icon</code>'],['token-policy','<code>semantic.*.card.*</code>'],
+      ['slots','thumb / badge / wishlist / name / rating / price / action']]});
+  const axes=DIAL_SPECS['product-card'].axes, zh=DIAL_SPECS['product-card'].zh, active=CHOICE['product-card'].active; // 接中央 store
+  const VN={vertical:['直式','vertical'],horizontal:['橫式','horizontal'],minimal:['精簡','minimal']};
+  const STN={default:['預設','default'],hover:['滑過','hover'],soldout:['售完','soldout']};
+  let p;
+  function renderM(){ if(!p)return; p.innerHTML='';
+    const vs=axes.variant.filter(v=>active.variant.has(v));
+    const ss=axes.state.filter(s=>active.state.has(s));
+    p.appendChild(matrixPanel({badge:'product-card',name:'Variant × State（hover 為靜態模擬；售完＝灰階＋覆蓋標＋按鈕停用）',
+      rows:vs,cols:ss,
+      rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+      colLab:s=>labHTML(STN[s][0],STN[s][1]),
+      cell:(v,s)=>pcdCell(v,s),mincol:250})); }
+  mountDial(body,{axes,zh,active,onRender:renderM});
+  const sec=section(body,'Variant × State 矩陣','列＝三型態（直式／橫式／精簡）、欄＝三狀態；hover 格以靜態 class 模擬浮起，售完格圖轉灰階、覆蓋「售完」標、按鈕停用。');
+  p=panelsIn(sec);renderM();
+
+  /* Showcase：三種 variant 各一張真實範例卡（live 真 hover） */
+  const sw=section(body,'Showcase 範例','三種 variant 的真實組合：直式（新品＋原價）、橫式（熱門＋折扣價）、精簡（無圖）。滑上去看真實 hover 浮起。');
+  const rd=ce('div','row-demo');
+  [['vertical 直式 · 新品',()=>pcdCard('vertical','default',{live:true,src:IM_POOL[6],name:'經典帆布托特包・大容量通勤款'})],
+   ['horizontal 橫式 · 熱門＋折扣',()=>pcdCard('horizontal','default',{live:true,src:IM_POOL[2],badgeText:'熱門',badgeIntent:'danger',discount:true,name:'羊毛混紡圍巾・秋冬限定'})],
+   ['minimal 精簡 · 無圖',()=>pcdCard('minimal','default',{live:true,name:'不鏽鋼保溫瓶 500ml'})]
+  ].forEach(([cap,fn])=>{const it=ce('div','demo-item');it.appendChild(fn());const c=ce('div','cap');c.innerHTML=`<b>${cap}</b>`;it.appendChild(c);rd.appendChild(it);});
+  sw.appendChild(rd);
+
+  /* Live：seg 切 variant；勾選項切內容旗標；愛心可真點擊收藏 */
+  let pcdWished=false;                                           // 收藏狀態跨 render 保留
+  const sl=section(body,'實際互動 Live','切 variant，勾選角標／評分／收藏／折扣價／售完即時重組卡片；愛心可點（切換收藏、轉紅實心），售完時整卡灰階、按鈕與愛心停用。');
+  mountLive(sl,{
+    initial:{variant:'vertical',badge:true,rating:true,wishlist:true,discount:false,soldout:false},
+    segs:[{key:'variant',label:'Variant',options:['vertical','horizontal','minimal'],labels:['直式','橫式','精簡']}],
+    bools:[{key:'badge',label:'badge 角標'},{key:'rating',label:'rating 評分'},
+           {key:'wishlist',label:'wishlist 收藏'},{key:'discount',label:'discount 折扣價'},
+           {key:'soldout',label:'soldout 售完'}],
+    boolLabel:'Content / State',
+    render:st=>{
+      const wrap=ce('div','');
+      function draw(){
+        wrap.innerHTML='';
+        wrap.appendChild(pcdCard(st.variant,st.soldout?'soldout':'default',{
+          live:true,src:IM_POOL[6],
+          badge:st.badge,rating:st.rating?4.5:false,wishlist:st.wishlist,
+          discount:st.discount,wished:pcdWished,
+          onWish:()=>{pcdWished=!pcdWished;draw();}               // 點愛心切換收藏後重畫
+        }));
+      }
+      draw();
+      return wrap;
+    },
+    note:'hover 浮起為真實 <code>:hover</code>（售完不浮起）；勾 discount 價格改用 <code>prEl(\'discount\')</code> 劃線原價＋優惠價；售完＝圖灰階＋「售完」覆蓋標＋「已售完」按鈕停用＋愛心停用。'
+  });
+}
+
+  /* ===== Card group build: category-tile ===== */
+/* category-tile icons */
+/* category-tile 未新增自訂 icon：leading 重用既有 IC_PHONE／IC_BAG／IC_HOUSE／IC_FOOD／IC_AIRPLANE／IC_MUSIC，右側箭頭重用 ICON_ARROW */
+
+/* category-tile build */
+/* ==================== category-tile 分類磚 ==================== */
+  /* 分類示意資料池：zh／en／count／desc／icon（既有 Phosphor const）／img（IM_POOL 索引） */
+  const CAT_DATA=[
+    {zh:'電子產品',en:'electronics',count:'128 件',desc:'手機、平板與週邊配件',ic:IC_PHONE,img:0},
+    {zh:'服飾配件',en:'fashion',count:'86 件',desc:'男女裝、鞋包與飾品',ic:IC_BAG,img:1},
+    {zh:'居家生活',en:'home',count:'54 件',desc:'家具、寢具與收納',ic:IC_HOUSE,img:2},
+    {zh:'美食餐飲',en:'food',count:'212 件',desc:'生鮮、零食與飲品',ic:IC_FOOD,img:3},
+    {zh:'旅遊行程',en:'travel',count:'37 件',desc:'國內外行程與票券',ic:IC_AIRPLANE,img:4},
+    {zh:'音樂唱片',en:'music',count:'65 件',desc:'黑膠、CD 與周邊',ic:IC_MUSIC,img:5}
+  ];
+  /* 矩陣／Live 每個 variant 綁定的固定示意資料（icon=電子產品、image=美食、gradient=音樂） */
+  const CAT_MDATA={icon:0,image:3,gradient:5};
+  /* 單顆分類磚：variant=icon|image|gradient；state=default|hover|active
+     o={data:CAT_DATA 項, count:顯示數量(預設 true), desc:顯示描述(預設 false), arrow:顯示箭頭(預設 true), live:真實 hover} */
+  function catTile(variant,state,o){o=o||{};
+    const d=o.data||CAT_DATA[0];
+    const t=ce('div','cat-tile cat-'+variant);
+    if(state==='hover')t.classList.add('is-hover');      // 矩陣用靜態 class 模擬滑過
+    if(state==='active')t.classList.add('is-active');    // 選中（目前所在分類）
+    if(o.live)t.classList.add('live');                   // Live／showcase 才吃真實 :hover
+    t.setAttribute('role','link');t.setAttribute('tabindex','0');
+    if(state==='active')t.setAttribute('aria-current','true');
+    if(variant==='image'){
+      const m=ce('div','cat-media');                     // 重用 Image 原子（imEl），CSS 攤平成滿版背景
+      m.appendChild(imEl('rectangular','default','m',{src:IM_POOL[d.img],alt:''}));
+      t.appendChild(m);
+      t.appendChild(ce('div','cat-scrim'));              // 底部暗色漸層遮罩，確保疊字可讀
+    } else {
+      const c=ce('div','cat-circle');c.innerHTML=d.ic;c.setAttribute('aria-hidden','true');
+      t.appendChild(c);                                  // icon 磚＝主色淡底圓圈；gradient 磚＝半透明白圓圈（CSS 控色）
+    }
+    const body=ce('div','cat-body');
+    const nm=ce('div','cat-name');nm.textContent=d.zh;body.appendChild(nm);
+    if(o.desc){const ds=ce('div','cat-desc');ds.textContent=d.desc;body.appendChild(ds);}
+    if(o.count!==false){const meta=ce('div','cat-meta');
+      const tg=ce('div','tg v-soft c-round i-neutral st-default');   // 重用 Tag 原子顯示數量
+      tg.innerHTML='<span>'+d.count+'</span>';
+      meta.appendChild(tg);body.appendChild(meta);}
+    t.appendChild(body);
+    if(o.arrow!==false){const a=ce('span','cat-arrow');a.innerHTML=ICON_ARROW;a.setAttribute('aria-hidden','true');t.appendChild(a);}
+    return t;
+  }
+  /* 矩陣格：count＋arrow、無描述，資料依 variant 固定 */
+  function catCell(v,s){return catTile(v,s,{data:CAT_DATA[CAT_MDATA[v]],count:true,desc:false,arrow:true});}
+
+  function buildCategoryTile(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Category Tile',title:'Category Tile 分類磚',
+      lede:'分類導覽磚：點擊進入某分類的入口元件，圖示／圖片＋分類名＋數量。<b>variant × state</b>：icon 圖示磚（主色淡底圓圈＋Phosphor icon）／image 圖片磚（Image 原子滿版背景＋暗色遮罩疊白字）／gradient 漸層磚（accent 漸層底＋白字）× default／hover／active（選中）。leading 重用 <b>Icon</b>、背景重用 <b>Image（imEl）</b>、數量重用 <b>Tag（.tg）</b>，箭頭用既有 ICON_ARROW。',
+      specRows:[['axes','<code>variant × state</code>'],['formula','<code>3 × 3 = 9</code>'],
+        ['token-policy','<code>semantic.surface.* / semantic.accent.* / --primary-on</code>'],
+        ['slots','leading（icon 圓圈／image／gradient 白圈）/ name / count / desc? / arrow?'],
+        ['a11y','role="link" tabindex=0；選中 aria-current="true"；媒體圖 alt=""（裝飾性）']]});
+    const axes=DIAL_SPECS['category-tile'].axes, zh=DIAL_SPECS['category-tile'].zh, active=CHOICE['category-tile'].active; // 接中央 store
+    const VN={icon:['圖示磚','icon'],image:['圖片磚','image'],gradient:['漸層磚','gradient']};
+    const STN={default:['預設','default'],hover:['滑過','hover'],active:['選中','active']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const ss=axes.state.filter(s=>active.state.has(s));
+      p.appendChild(matrixPanel({badge:'category-tile',name:'Variant × State',rows:vs,cols:ss,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+        colLab:s=>labHTML(STN[s][0],STN[s][1]),
+        cell:(v,s)=>catCell(v,s),mincol:240})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × State 矩陣','列＝三種磚型、欄＝三種狀態。hover 浮起＋底色／遮罩加深、active 出現 accent 邊框（icon 磚圓圈變實心 accent；gradient 磚以 panel 間隙＋外圈表達）。');
+    p=panelsIn(sec);renderM();
+    /* Showcase：三磚型並排（含描述、真實 hover） */
+    const sc=section(body,'三種磚型 Showcase','同一顆元件的三種外觀：icon 適合密集導覽清單、image 適合視覺主導的分類入口、gradient 適合強調主打分類；此區皆為真實 hover。');
+    const row=ce('div','cat-row');
+    [['icon',0],['image',3],['gradient',5]].forEach(pair=>{
+      row.appendChild(catTile(pair[0],'default',{data:CAT_DATA[pair[1]],count:true,desc:true,arrow:true,live:true}));});
+    sc.appendChild(row);
+    /* Grid 示意：4~6 磚自適應網格 */
+    const gs=section(body,'分類磚 Grid 示意','六個分類排成自適應網格（auto-fill／minmax 220px），其中「美食餐飲」為選中態（aria-current）；真實 hover。');
+    const grid=ce('div','cat-grid');
+    CAT_DATA.forEach((d,i)=>{grid.appendChild(catTile('icon',i===3?'active':'default',{data:d,count:true,desc:false,arrow:true,live:true}));});
+    gs.appendChild(grid);
+    /* Live */
+    const sl=section(body,'實際互動 Live','切磚型、勾數量／描述／箭頭／選中即時預覽；hover 為真實互動、可與選中疊加。');
+    mountLive(sl,{
+      initial:{variant:'icon',count:true,description:false,arrow:true,active:false},
+      segs:[{key:'variant',label:'Variant',options:['icon','image','gradient'],labels:['圖示磚','圖片磚','漸層磚']}],
+      bools:[{key:'count',label:'count 數量'},{key:'description',label:'description 描述'},{key:'arrow',label:'arrow 箭頭'},{key:'active',label:'active 選中'}],
+      boolLabel:'內容／狀態',
+      render:st=>{
+        const wrap=ce('div','cat-live');
+        wrap.appendChild(catTile(st.variant,st.active?'active':'default',
+          {data:CAT_DATA[CAT_MDATA[st.variant]],count:st.count,desc:st.description,arrow:st.arrow,live:true}));
+        return wrap;},
+      note:'active 為「目前所在分類」的持續選中態（<code>aria-current="true"</code>）；image 磚白字靠暗色漸層遮罩保可讀、gradient 磚文字一律 <code>--primary-on</code>。'});
+  }
+
+  /* ===== Card group build: article-card ===== */
+/* ==================== ARTICLE CARD 文章卡（art-）==================== */
+/* 三個 variant 各自的示意內容（封面取自主檔 IM_POOL 已驗證圖池） */
+const ART_DATA={
+  vertical:{cat:'設計',title:'設計系統如何撐起跨平台的一致體驗',
+    excerpt:'從 token、元件到文件化流程，拆解設計系統在多產品線團隊中的實際運作方式，以及導入時最常踩的三個坑。',
+    author:'楊鎮瑜',date:'2026/07/12',read:'5 分鐘',srcIdx:0},
+  horizontal:{cat:'產品',title:'從資料密集後台談資訊層級的取捨',
+    excerpt:'當一個畫面要同時容納篩選、表格與批次操作，怎麼排才不會讓使用者迷路？以三個真實案例拆解。',
+    author:'陳美華',date:'2026/07/08',read:'8 分鐘',srcIdx:3},
+  overlay:{cat:'趨勢',title:'AI 輔助設計流程的一年實測記錄',
+    excerpt:'把生成式工具放進真實交付流程一年後，哪些環節真的變快、哪些反而變慢。',
+    author:'王小明',date:'2026/07/01',read:'6 分鐘',srcIdx:6}
+};
+
+/* 文章卡本體：variant=vertical|horizontal|overlay；state=default|hover（矩陣靜態用 is-hover）
+   opts={live:真實 hover, more:顯示「閱讀更多」, category/excerpt/author/meta:內容開關（預設全開）} */
+function artCard(variant,state,opts){opts=opts||{};
+  const on=k=>opts[k]!==false; // 未指定視為開啟
+  const d=ART_DATA[variant]||ART_DATA.vertical;
+  const card=ce('article','art-card v-'+variant+(state==='hover'?' is-hover':'')+(opts.live?' live':''));
+  // 封面：重用 Image 原子 imEl（16:9；橫式/疊字由 CSS 覆寫成填滿）
+  const cover=ce('div','art-cover');
+  cover.appendChild(imEl('rectangular','default','l',{src:IM_POOL[d.srcIdx],alt:d.title,ratio:'16:9'}));
+  // 內容區
+  const body=ce('div','art-body');
+  if(on('category')){ // 分類標：重用 Tag 原子 .tg（疊字版改 v-solid 保對比）
+    const c=ce('div','art-cat');
+    const t=ce('div','tg '+(variant==='overlay'?'v-solid':'v-soft')+' c-round i-brand st-default');
+    t.innerHTML='<span>'+d.cat+'</span>';c.appendChild(t);body.appendChild(c);}
+  const ti=ce('h3','art-title');ti.textContent=d.title;body.appendChild(ti);
+  if(on('excerpt')){const ex=ce('p','art-excerpt');ex.textContent=d.excerpt;body.appendChild(ex);}
+  if(on('author')||on('meta')){ // 作者列：圓形頭像（imEl circular）＋名字＋「·」＋日期＋閱讀時間
+    const row=ce('div','art-foot');
+    if(on('author')){const a=ce('div','art-author');
+      a.appendChild(imEl('circular','default','s',{alt:d.author})); // 頭像重用 Image 原子
+      const nm=ce('span','art-author-name');nm.textContent=d.author;a.appendChild(nm);row.appendChild(a);}
+    if(on('meta')){const m=ce('span','art-meta');
+      m.innerHTML=(on('author')?'<span class="art-dot">·</span>':'')+'<span>'+d.date+'</span><span class="art-dot">·</span><span>'+d.read+'</span>';
+      row.appendChild(m);}
+    body.appendChild(row);}
+  if(opts.more){ // 閱讀更多：重用 Button 原子（v-text）＋既有 ICON_ARROW
+    const mr=ce('div','art-more');
+    const b=document.createElement('button');b.className='btn v-text i-primary sz-s live';
+    b.innerHTML='<span>閱讀更多</span>'+ICON_ARROW;mr.appendChild(b);body.appendChild(mr);}
+  card.append(cover,body); // 疊字版 cover 由 CSS 轉 absolute 鋪底，DOM 順序不變
+  return card;
+}
+/* 矩陣格：靜態呈現一張對應 variant × state 的卡 */
+function artCell(variant,state){const w=ce('div','art-cell');w.appendChild(artCard(variant,state,{}));return w;}
+
+function buildArticleCard(view){
+  const body=viewScaffold(view,{eyebrow:'L3 Component · Article Card',title:'Article Card 文章卡',
+    lede:'部落格／新聞的文章入口卡：封面（重用 <b>Image 原子</b>）＋分類標（重用 <b>Tag 原子</b>）＋標題＋摘要＋作者列（圓形頭像＋日期＋閱讀時間）。<b>variant × state</b>：<b>直式</b>（封面上、內容下）／<b>橫式</b>(封面左、內容右）／<b>疊字</b>（文字壓在封面上、暗漸層遮罩）× default／hover。hover＝卡片浮起＋封面微放大＋標題轉主色。',
+    specRows:[['axes','<code>variant × state</code>'],['formula','<code>3 × 2 = 6</code>'],['token-policy','<code>semantic.*.card.*</code>'],['slots','cover / category / title / excerpt / author / meta']]});
+  const axes=DIAL_SPECS['article-card'].axes, zh=DIAL_SPECS['article-card'].zh, active=CHOICE['article-card'].active; // 接中央 store
+  const VN={vertical:['直式','vertical'],horizontal:['橫式','horizontal'],overlay:['疊字','overlay']};
+  const STN={default:['預設','default'],hover:['滑過','hover']};
+  let p;
+  function renderM(){ if(!p)return; p.innerHTML='';
+    const vs=axes.variant.filter(v=>active.variant.has(v));
+    const ss=axes.state.filter(s=>active.state.has(s));
+    p.appendChild(matrixPanel({badge:'article-card',name:'Variant × State',
+      rows:vs,cols:ss,
+      rowLab:v=>labHTML(VN[v][0],VN[v][1]),
+      colLab:s=>labHTML(STN[s][0],STN[s][1]),
+      cell:(v,s)=>artCell(v,s),mincol:300})); }
+  mountDial(body,{axes,zh,active,onRender:renderM});
+  const sec=section(body,'Variant × State 矩陣','列＝三種版式、欄＝狀態。hover 為靜態模擬：卡片浮起加陰影、封面微放大、標題轉主色；疊字版文字置底壓在暗漸層遮罩上。');
+  p=panelsIn(sec);renderM();
+  // ---- Showcase：三種 variant 各一張真實範例卡（吃真實 hover）----
+  const sc=section(body,'三種版式範例 Showcase','直式適合卡片牆／格狀列表、橫式適合窄欄或搜尋結果列（示範附「閱讀更多」text button）、疊字適合封面故事／頭條區。滑鼠移上去看真實 hover。');
+  const rd=ce('div','art-showcase');
+  rd.appendChild(artCard('vertical','default',{live:true}));
+  rd.appendChild(artCard('horizontal','default',{live:true,more:true}));
+  rd.appendChild(artCard('overlay','default',{live:true}));
+  sc.appendChild(rd);
+  // ---- 實際互動 Live ----
+  const sl=section(body,'實際互動 Live','切版式並開關內容 slot 即時預覽；整張卡吃真實 hover（浮起＋封面微放大＋標題轉主色）。');
+  mountLive(sl,{
+    initial:{variant:'vertical',category:true,excerpt:true,author:true,meta:true},
+    segs:[{key:'variant',label:'Variant',options:['vertical','horizontal','overlay'],labels:['直式','橫式','疊字']}],
+    bools:[{key:'category',label:'category 分類標'},{key:'excerpt',label:'excerpt 摘要'},{key:'author',label:'author 作者'},{key:'meta',label:'meta 日期／閱讀'}],
+    boolLabel:'內容',
+    render:st=>artCard(st.variant,'default',{live:true,category:st.category,excerpt:st.excerpt,author:st.author,meta:st.meta}),
+    note:'封面重用 <b>Image</b> 原子（imEl 16:9／頭像 circular）、分類標重用 <b>Tag</b> 原子（疊字版自動改 v-solid 保對比）、閱讀更多重用 <b>Button</b> 原子（v-text）。疊字版關掉摘要更接近頭條卡慣例。'
+  });
+}
+
+  /* ===== Card group build: announcement-item ===== */
+  /* ---- ANNOUNCEMENT-ITEM 公告項（常駐頁面的公告內容卡；有別於浮出即時通知的 notification）---- */
+  /* danger 用 ⊘ prohibit（Phosphor regular）：library 現有 const 沒有，故自建 namespaced icon */
+  const ANC_IC_PROHIBIT='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM40,128a88,88,0,0,1,88-88,87.5,87.5,0,0,1,57.23,21.13L61.13,185.23A87.5,87.5,0,0,1,40,128Zm88,88a87.5,87.5,0,0,1-57.23-21.13L194.87,70.77A87.5,87.5,0,0,1,216,128,88,88,0,0,1,128,216Z"/></svg>';
+  /* icon 走函式惰性取值：info/success/warning 重用 notification 的既有 const（避免宣告順序 TDZ 問題） */
+  function ancIcon(intent){
+    return {info:NT_IC_INFO,success:NT_IC_SUCCESS,warning:NT_IC_WARNING,danger:ANC_IC_PROHIBIT}[intent];}
+  /* 各 intent 的示意文案 */
+  const ANC_DATA={
+    info:   {title:'系統更新完成',     desc:'v2.4 已上線，新增批次匯出與報表深色模式，重新整理即可套用。', date:'2026-07-10'},
+    success:{title:'服務全面恢復',     desc:'昨日的同步延遲已排除，期間的資料已全數自動補齊，無需手動處理。', date:'2026-07-12'},
+    warning:{title:'系統維護預告',     desc:'7/20（一）02:00–04:00 進行例行維護，期間將暫停服務約 30 分鐘。', date:'2026-07-14'},
+    danger: {title:'舊版 API 停用通知', desc:'v1 API 將於 8/1 停止支援，請盡快依遷移指南升級至 v2。',       date:'2026-07-15'}};
+
+  /* 公告項原子：opts={desc,date,action,close,unread,live}；live=true 時按鈕/整卡吃真實 hover */
+  function ancItem(variant,intent,opts){opts=opts||{};
+    const d=ANC_DATA[intent];
+    const it=ce('div',`anc-item anc-v-${variant} anc-i-${intent}${opts.live?' anc-live':''}`);
+    /* leading icon：intent 色圈（inline 由 CSS 摘掉色圈、直上 intent 色） */
+    const ic=ce('span','anc-ico');ic.innerHTML=ancIcon(intent);it.appendChild(ic);
+    const bd=ce('div','anc-body');
+    const hd=ce('div','anc-head');
+    if(opts.unread){hd.appendChild(ce('span','anc-dot'));} /* 未讀圓點：intent 色 */
+    const ti=ce('div','anc-title');ti.textContent=d.title;hd.appendChild(ti);
+    bd.appendChild(hd);
+    if(opts.desc!==false&&variant!=='inline'){ /* inline 精簡單行、不放描述 */
+      const ms=ce('div','anc-desc');ms.textContent=d.desc;bd.appendChild(ms);}
+    /* 底部 meta：日期重用 .tg 標籤原子 + 「查看詳情」重用 .btn 文字鈕原子 */
+    if(opts.date!==false||opts.action){
+      const mt=ce('div','anc-meta');
+      if(opts.date!==false){
+        const dt=ce('div','tg v-soft c-round i-neutral st-default');
+        dt.innerHTML=`<span>${d.date}</span>`;mt.appendChild(dt);}
+      if(opts.action){
+        const a=ce('button',`btn v-text i-primary sz-s${opts.live?' live':''}`);
+        a.innerHTML='<span>查看詳情</span>';mt.appendChild(a);}
+      bd.appendChild(mt);}
+    it.appendChild(bd);
+    /* 右上關閉 ×：重用 .btn icon-only 原子（v-text i-secondary） */
+    if(opts.close!==false){
+      const slot=ce('span','anc-close-slot');
+      const x=ce('button',`btn v-text i-secondary sz-s icon-only${opts.live?' live':''}`);
+      x.innerHTML=ICON_CLOSE;x.setAttribute('aria-label','關閉公告');
+      slot.appendChild(x);it.appendChild(slot);}
+    return it;}
+
+  /* 矩陣格：呈現該 variant × intent 的一則靜態公告（不吃真實 hover） */
+  function ancCell(variant,intent){
+    return ancItem(variant,intent,{desc:true,date:true,action:true,close:true,unread:false});}
+
+  LIVE['announcement-item']=(host)=>mountLive(host,{
+    initial:{variant:'banner',intent:'info',desc:true,date:true,action:true,close:true,unread:false},
+    segs:[
+      {key:'variant',label:'Variant',options:['banner','card','inline'],labels:['橫幅','卡片','行內']},
+      {key:'intent',label:'Intent',options:['info','success','warning','danger'],labels:['資訊','成功','注意','重要']}],
+    bools:[{key:'desc',label:'描述文字'},{key:'date',label:'date 日期'},{key:'action',label:'action 查看詳情'},{key:'close',label:'close ×'},{key:'unread',label:'unread 未讀點'}],
+    boolLabel:'Content',
+    render:st=>{const box=ce('div','anc-live-box');
+      box.appendChild(ancItem(st.variant,st.intent,{desc:st.desc,date:st.date,action:st.action,close:st.close,unread:st.unread,live:true}));
+      return box;},
+    note:'inline 行內為精簡單行格式、描述固定不顯示；整卡與按鈕皆為真實 hover。'});
+
+  function buildAnnouncementItem(view){
+    const body=viewScaffold(view,{eyebrow:'L3 Component · Announcement',title:'Announcement 公告項',
+      lede:'常駐在頁面／列表裡的系統公告與最新消息項——有別於浮出即逝的 notification toast。<b>variant × intent（3 × 4 = 12）</b>：banner 橫幅（整條寬、左 intent 色條＋淡色底）／card 卡片（獨立圓角卡＋intent 色圈）／inline 行內（精簡單行）× info／success／warning／danger 四語意。重用 <b>.tg 日期標、.btn 查看詳情與關閉 ×、notification 語意 icon</b>；描述／日期／動作／關閉／未讀點為 content flag。',
+      specRows:[['axes','<code>variant × intent</code>'],['formula','<code>3 × 4 = 12</code>'],['token-policy','<code>--accent / --ok / --warn / --i-danger（+tint）</code>'],['reuse','<code>.tg</code> 日期標 ／ <code>.btn</code> v-text／icon-only ／ NT_IC_* 語意 icon'],['content','描述 ／ 日期 ／ 查看詳情 ／ close × ／ 未讀點']]});
+    const axes=DIAL_SPECS['announcement-item'].axes, zh=DIAL_SPECS['announcement-item'].zh, active=CHOICE['announcement-item'].active; // 接中央 store
+    const VN={banner:['橫幅','banner'],card:['卡片','card'],inline:['行內','inline']};
+    const IN={info:['資訊','info'],success:['成功','success'],warning:['注意','warning'],danger:['重要','danger']};
+    let p;
+    function renderM(){ if(!p)return; p.innerHTML='';
+      const vs=axes.variant.filter(v=>active.variant.has(v));
+      const is=axes.intent.filter(i=>active.intent.has(i));
+      p.appendChild(matrixPanel({badge:'variant × intent',name:'公告項',desc:'icon＋標題＋描述＋日期＋動作＋×',
+        rows:vs,cols:is,
+        rowLab:v=>labHTML(VN[v][0],VN[v][1]),colLab:i=>labHTML(IN[i][0],IN[i][1]),
+        cell:(v,i)=>ancCell(v,i),mincol:280})); }
+    mountDial(body,{axes,zh,active,onRender:renderM});
+    const sec=section(body,'Variant × Intent 矩陣','列＝三種呈現型態（橫幅／卡片／行內）、欄＝語意 4 色。每格為一則完整公告：intent 色 icon＋標題＋描述＋日期 .tg＋查看詳情＋可關閉 ×。');
+    p=panelsIn(sec);renderM();
+    /* ===== Showcase 1：banner 四 intent 直向堆疊 ===== */
+    const bs=section(body,'Banner 公告區','頁面頂部常見的公告堆疊：整條寬、左 3px intent 色條＋同色淡底，四種語意由輕到重直向排列。');
+    const stack=ce('div','anc-stack');
+    ['info','success','warning','danger'].forEach(i=>stack.appendChild(ancItem('banner',i,{desc:true,date:true,action:true,close:true,unread:i==='danger'})));
+    bs.appendChild(stack);
+    /* ===== Showcase 2：card 四 intent 一組 ===== */
+    const cs=section(body,'Card 公告牆','消息中心／公告列表用的獨立卡片：panel 底＋intent 色圈 icon，未讀項帶 intent 色圓點。');
+    const grid=ce('div','anc-showgrid');
+    ['info','success','warning','danger'].forEach(i=>grid.appendChild(ancItem('card',i,{desc:true,date:true,action:true,close:true,unread:i==='info'||i==='danger'})));
+    cs.appendChild(grid);
+    /* ===== 實際互動 Live ===== */
+    const sl=section(body,'實際互動 Live','切 variant／intent、勾 content flag，下面即時預覽；整卡與按鈕為真實 hover。');
+    LIVE['announcement-item'](sl);
+  }
+
+  const BUILD={input:buildInput,dropdown:buildDropdown,selector:buildSelector,tag:buildTag,tab:buildTab,tooltip:buildTooltip,notification:buildNotification,skeleton:buildSkeleton,loader:buildLoader,menu:buildMenu,'action-menu':buildActionMenu,breadcrumb:buildBreadcrumb,pagination:buildPagination,icon:buildIcon,price:buildPrice,image:buildImage,header:buildHeader,footer:buildFooter,'section-head':buildSectionHead,list:buildList,'list-item':buildListItem,collapse:buildCollapse,modal:buildModal,drawer:buildDrawer,'floating-line':buildFloatingLine,step:buildStep,quantity:buildQuantity,progress:buildProgress,card:buildCard,'product-card':buildProductCard,'category-tile':buildCategoryTile,'article-card':buildArticleCard,'announcement-item':buildAnnouncementItem};
 
   /* ===== 複雜度確認總覽 ===== */
   function choiceReport(){
@@ -5060,7 +5963,12 @@ function skelMedia(anim){
     'floating-line':'floating-line',
     step:'step',
     quantity:'quantity',
-    progress:'progress'
+    progress:'progress',
+    card:'card',
+    'product-card':'product-card',
+    'category-tile':'category-tile',
+    'article-card':'article-card',
+    'announcement-item':'announcement-item'
   }; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
   function renderSummary(view){
