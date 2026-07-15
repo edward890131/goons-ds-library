@@ -611,3 +611,12 @@ Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、
 **移除 announcement-item**：NAV／DIAL_SPECS／BUILD／DIAL_PAGE／CSS 區塊／JS 區塊／`LIVE['announcement-item']` 全數清除（anc- 殘留 0）。Card 群 5→**4 顆**、匯出頁 35/727 → **34/715**。
 
 **驗證**：node --check OK、Playwright 0 console error。card padding12/媒體 10px 圓角/selected 1px/footer 主 CTA 最右/玻璃標 blur10；product 0 爆版＋真實商品照＋玻璃標；category 三 variant 同為美食餐飲＋真食照；article 三封面對題＋疊字 hover 白字＋40% 遮罩。截圖四頁全確認。
+
+---
+
+## 2026-07-16　Product Card 收藏愛心去白底＋精簡版角標對齊修正
+
+- **愛心去白底**：`.pcd-wish` 移除白色圓框（`background:var(--panel)`＋shadow），改 `background:transparent`；直接壓在照片上、靠 `drop-shadow` 保可讀；點擊仍轉紅色實心愛心（`is-on`→`--i-danger`＋fill svg）。精簡版無圖故 icon 陰影關閉。
+- **精簡版跑版修正**：`mkBadge(inline)` 新增 inline 參數——精簡版角標不掛 `.pcd-badge`（絕對定位）也不掛 `tg-glass`（無圖背景），正常排進 `.pcd-toprow`；`.pcd-toprow` 對齊改 `align-items:flex-start`，角標與愛心**靠上對齊**。實測角標 position:static、top 對齊差 0、無溢出。
+
+**驗證**：node --check OK、Playwright 0 console error；13 顆愛心 bg 全 transparent、Live 點擊→紅實心；精簡版角標 static/非玻璃/top 對齊/不跑版。

@@ -1635,11 +1635,11 @@
 .pcd-badge{position:absolute;top:8px;left:8px;z-index:2;}
 
 /* 右上角收藏：重用 .btn v-text icon-only 原子，補圓底浮在圖上 */
-.pcd-wish{position:absolute;top:8px;right:8px;z-index:2;
-  background:var(--panel);border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,.14);}
-.pcd-wish:hover{background:var(--panel-2);}
-.pcd-wish.is-on{color:var(--i-danger);}                          /* 已收藏：愛心轉紅（fill 版 svg） */
-.pcd-v-minimal .pcd-wish{position:static;box-shadow:none;background:transparent;}
+.pcd-wish{position:absolute;top:6px;right:6px;z-index:2;background:transparent;box-shadow:none;border-radius:999px;} /* 無白底圓框 */
+.pcd-wish svg{filter:drop-shadow(0 1px 2px rgba(0,0,0,.28));}     /* 直接壓在照片上，靠 icon 陰影保可讀 */
+.pcd-wish.is-on{color:var(--i-danger);}                          /* 點擊後轉紅色實心愛心（fill 版 svg） */
+.pcd-v-minimal .pcd-wish{position:static;}
+.pcd-v-minimal .pcd-wish svg{filter:none;}                       /* 精簡版無圖，不需陰影 */
 
 /* --- 售完 soldout：圖轉灰階 + 半透明覆蓋 + 「售完」標（tg 原子） --- */
 .pcd-card.is-soldout .im-img{filter:grayscale(1);opacity:.85;}
@@ -1654,7 +1654,7 @@
 /* --- 資訊區 --- */
 .pcd-info{display:flex;flex-direction:column;gap:8px;padding:12px 4px 4px;flex:1;min-width:0;}
 .pcd-v-horizontal .pcd-info{padding:4px 4px 4px 12px;}
-.pcd-toprow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:22px;} /* minimal 用：角標＋收藏同列 */
+.pcd-toprow{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;} /* minimal 用：角標＋收藏同列、靠上對齊 */
 .pcd-name{font-size:14px;font-weight:600;color:var(--ink);line-height:1.4;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 
@@ -5484,8 +5484,8 @@ function pcdCard(variant,state,o){
     return w;
   }
   /* 角標：.tg 原子（新品=i-brand／熱門=i-danger） */
-  function mkBadge(){
-    const t=ce('div','tg v-soft c-round i-'+(o.badgeIntent||'brand')+' st-default pcd-badge tg-glass');
+  function mkBadge(inline){ // inline=true（精簡版無圖）：不絕對定位、不玻璃，正常排進 toprow
+    const t=ce('div','tg v-soft c-round i-'+(o.badgeIntent||'brand')+' st-default'+(inline?'':' pcd-badge tg-glass'));
     t.innerHTML='<span>'+(o.badgeText||'新品')+'</span>';
     return t;
   }
@@ -5510,7 +5510,7 @@ function pcdCard(variant,state,o){
     const top=ce('div','pcd-toprow');                            // minimal 無圖：角標／售完標與收藏改放同一列
     const lf=ce('span','');
     if(soldout){const t=ce('div','tg v-solid c-round i-neutral st-default');t.innerHTML='<span>售完</span>';lf.appendChild(t);}
-    else if(o.badge!==false)lf.appendChild(mkBadge());
+    else if(o.badge!==false)lf.appendChild(mkBadge(true));
     top.appendChild(lf);
     if(o.wishlist!==false)top.appendChild(mkWish());
     info.appendChild(top);
