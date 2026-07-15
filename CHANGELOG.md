@@ -577,3 +577,37 @@ Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、
 **整合手法**：各 agent 寫 `<id>.css`+`<id>.js` 純文字檔（不碰主檔），主控 integrate.js 依錨點插入（CSS 前 `</style>`、JS 前 `const BUILD`），DIAL_SPECS/BUILD/DIAL_PAGE/NAV st 4 處中央註冊由主控做。零 icon/class/fn 命名衝突。
 
 **驗證**：node --check OK、Playwright 0 console error。5 頁矩陣格數對（12/9/9/6/12）＋ Live ＋ 原子重用（product 用 13 個 prEl、article 20 個 imEl 等）；匯出頁列出 5 顆、總數 30/679→**35/727**（+5 元件、+48 變體）；dark mode 卡片底走 --panel(22,26,33) 非白；hash 路由對新元件正常。截圖：5 頁 showcase 全確認。**Card 群完成，剩 Table & Chart（5）未建。**
+
+---
+
+## 2026-07-15　Card 群改樣式（padding／玻璃標／真實照片／unify）＋ 移除 announcement
+
+參考 NFT 卡風格微調四張卡，並移除已無用的公告項。
+
+**共用**
+- 新增 `.tg.tg-glass`：圖片上的標籤改**半透明黑玻璃＋背景模糊**（`rgba(18,20,26,.5)`＋`backdrop-filter:blur(10px)`、白字），card／product 壓在照片上的角標共用。
+
+**Card**
+- 卡片加 `padding:12px`，媒體圖**內縮＋10px 圓角**（圖周圍留白）；body/foot 水平 padding 收成 4px（改由卡片 padding 提供）。
+- selected 外框改**只 1px**（移除 `box-shadow inset` 那圈，含 elevated 變體）。
+- 底部按鈕 `justify-content:flex-end` **靠右**，DOM 順序改「次要在左、主 CTA 最右」。
+- 角標壓在圖上時套 `tg-glass`；無圖時維持柔色標。
+
+**Product Card**
+- **爆版修正**：三 variant 寬度 `216/340px 固定 → width:100%+max-width`，矩陣格不再溢出（實測 0 overflow cell）。
+- 卡片加 `padding:10px`、縮圖 10px 圓角內縮（同 card）。
+- 縮圖換**真實商品照**（已驗證 200）：托特包 `1544816155`／羊毛圍巾 `1601924994987`／保溫瓶（minimal 無圖）；`PCD_IMG` const 收攏。
+- 角標套 `tg-glass` 半透明黑玻璃。
+
+**Category Tile**
+- image 磚換**真實美食照** `1504674900247`（原為風景）。
+- 三 variant **文案／icon／count 統一**（`CAT_MDATA` 全指向「美食餐飲」、Showcase 同步），只差樣式（icon 圈／圖片底／漸層底）。
+
+**Article Card**
+- 三封面換**與標題相符的照片**：設計系統 `1531403009284`／資料密集後台 `1551288049`／AI `1526378722484`（`srcIdx`→`srcId` 直接吃 photo id）。
+- 疊字 hover **標題不再轉藍**（`:not(.v-overlay)` 排除 overlay），維持白字。
+- 疊字圖上遮罩改 **≥40% 黑**（`linear-gradient(rgba(0,0,0,.7),rgba(0,0,0,.4) 55%)`）突顯文字。
+
+**移除 announcement-item**：NAV／DIAL_SPECS／BUILD／DIAL_PAGE／CSS 區塊／JS 區塊／`LIVE['announcement-item']` 全數清除（anc- 殘留 0）。Card 群 5→**4 顆**、匯出頁 35/727 → **34/715**。
+
+**驗證**：node --check OK、Playwright 0 console error。card padding12/媒體 10px 圓角/selected 1px/footer 主 CTA 最右/玻璃標 blur10；product 0 爆版＋真實商品照＋玻璃標；category 三 variant 同為美食餐飲＋真食照；article 三封面對題＋疊字 hover 白字＋40% 遮罩。截圖四頁全確認。
