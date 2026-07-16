@@ -31,8 +31,8 @@
     --c-info-100:#DBEAFE;    --c-info-200:#BFDBFE;    --c-info-300:#93C5FD;    --c-info-400:#60A5FA;    --c-info-500:#3B82F6;    --c-info-600:#2563EB;    --c-info-700:#1D4ED8;    --c-info-800:#1E40AF;    --c-info-900:#1E3A8A;
     /* ── L1 Primitive · Radius 9 階（折衷：md 8 為卡片/輸入框預設；按鈕走 pill＝框架 full）── */
     --r-none:0px; --r-xs:2px; --r-sm:4px; --r-md:8px; --r-lg:10px; --r-xl:16px; --r-2xl:24px; --r-3xl:32px; --r-pill:9999px;
-    /* ── L1 Primitive · Spacing 8-base 9 階 ── */
-    --sp-0:0px; --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+    /* ── L1 Primitive · Spacing（v0 量測校準：base 6/12 較緊、補 6px 階；比原 8-base 緊一階）── */
+    --sp-0:0px; --sp-1:4px; --sp-2:6px; --sp-3:8px; --sp-4:12px; --sp-5:16px; --sp-6:24px; --sp-7:32px; --sp-8:48px; --sp-9:64px;
     /* ── Container（響應式：desktop 基準；tablet/mobile 於下方 media 覆寫）── */
     --container-max:1280px; --container-pad:32px;
     /* ── L1 Primitive · Typography（Geist 內嵌；size H1–H10、weight、line-height）── */
@@ -177,13 +177,13 @@
      Desktop ≥1024＝base（上方 :root）／Tablet ≤1023／Mobile ≤767；元件吃 var() 自動跟隨。 */
   @media(max-width:1023px){ :root{                                  /* Tablet */
     --fs-h1:40px; --fs-h2:32px; --fs-h3:26px; --fs-h4:22px; --fs-h5:19px; --fs-h6:17px;
-    --sp-5:20px; --sp-6:28px; --sp-7:40px; --sp-8:56px;
+    --sp-6:20px; --sp-7:28px; --sp-8:40px; --sp-9:56px;
     --r-lg:10px; --r-xl:16px;
     --container-max:1024px; --container-pad:24px;
   }}
   @media(max-width:767px){ :root{                                   /* Mobile */
     --fs-h1:32px; --fs-h2:28px; --fs-h3:24px; --fs-h4:20px; --fs-h5:18px; --fs-h6:16px; --fs-h7:15px;
-    --sp-4:12px; --sp-5:16px; --sp-6:24px; --sp-7:32px; --sp-8:48px;
+    --sp-5:12px; --sp-6:16px; --sp-7:24px; --sp-8:32px; --sp-9:48px;
     --r-lg:8px; --r-xl:12px;
     --container-max:100%; --container-pad:16px;
   }}
@@ -544,8 +544,8 @@
   .tok-mode .m-val{font-family:var(--font-mono);font-size:var(--fs-h10);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .tok-fontrow{padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:var(--sp-2);}
   .tok-fontrow .fp{font-size:var(--fs-h4);color:var(--ink);}
-  /* 牌卡多欄容器：L1 / 框架索引的 group 由左至右排列、寬度不夠再往下 */
-  .tok-cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:var(--sp-3);align-items:start;}
+  /* 牌卡多欄容器：L1 / 框架索引的 group 兩兩並列（固定 2 欄、不擠成 3 欄；窄螢幕收 1 欄） */
+  .tok-cardgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sp-3);align-items:start;}
   .tok-cardgrid .tok-group{margin-bottom:0;}                 /* gap 已處理間距 */
   .tok-cardgrid .tok-group.span{grid-column:1/-1;}           /* 寬表（typography）跨滿整列 */
   .tok-cardgrid .tref-note{grid-column:1/-1;}
@@ -7794,9 +7794,9 @@ function buildScheduleChart(view){
     {g:'Radius 圓角（9 階）',kind:'text',resp:true,note:'響應式：mobile 收小 lg/xl；md 8 為預設、按鈕 pill（＝框架 full）。xs/2xl/3xl 固定不隨裝置。',
      rows:[['--r-none'],['--r-xs'],['--r-sm'],['--r-md','預設'],['--r-lg'],['--r-xl'],['--r-2xl'],['--r-3xl'],['--r-pill','按鈕']],
      def:{'--r-none':['0px','0px','0px'],'--r-xs':['2px','2px','2px'],'--r-sm':['4px','4px','4px'],'--r-md':['8px','8px','8px'],'--r-lg':['10px','10px','8px'],'--r-xl':['16px','16px','12px'],'--r-2xl':['24px','24px','24px'],'--r-3xl':['32px','32px','32px'],'--r-pill':['9999px','9999px','9999px']}},
-    {g:'Spacing 間距（8-base）',kind:'text',resp:true,note:'響應式：大間距在 tablet/mobile 收緊，小間距穩定。',
-     rows:[['--sp-0'],['--sp-1'],['--sp-2'],['--sp-3'],['--sp-4'],['--sp-5'],['--sp-6'],['--sp-7'],['--sp-8']],
-     def:{'--sp-0':['0px','0px','0px'],'--sp-1':['4px','4px','4px'],'--sp-2':['8px','8px','8px'],'--sp-3':['12px','12px','12px'],'--sp-4':['16px','16px','12px'],'--sp-5':['24px','20px','16px'],'--sp-6':['32px','28px','24px'],'--sp-7':['48px','40px','32px'],'--sp-8':['64px','56px','48px']}},
+    {g:'Spacing 間距（v0 校準）',kind:'text',resp:true,note:'依 v0.app 量測校準：base 較緊、補 6px 階（v0 最常用 gap）；響應式大間距在 tablet/mobile 再收緊。',
+     rows:[['--sp-0'],['--sp-1'],['--sp-2','6 · v0 gap'],['--sp-3'],['--sp-4','12 · v0 pad'],['--sp-5'],['--sp-6'],['--sp-7'],['--sp-8'],['--sp-9']],
+     def:{'--sp-0':['0px','0px','0px'],'--sp-1':['4px','4px','4px'],'--sp-2':['6px','6px','6px'],'--sp-3':['8px','8px','8px'],'--sp-4':['12px','12px','12px'],'--sp-5':['16px','16px','12px'],'--sp-6':['24px','20px','16px'],'--sp-7':['32px','28px','24px'],'--sp-8':['48px','40px','32px'],'--sp-9':['64px','56px','48px']}},
     {g:'Typography 複合樣式（text style）',kind:'typo',sample:true,note:'＝ Figma text style：每階字級（隨 device）＋字重＋行高（中/英）綁一包；左側即時預覽用 .ty-h* 渲染。右上切換 device 改字級欄。',
      rows:['h1','h2','h3','h4','h5','h6','h7','h8','h9','h10'],
      sz:{h1:['48px','40px','32px'],h2:['36px','32px','28px'],h3:['28px','26px','24px'],h4:['24px','22px','20px'],h5:['20px','19px','18px'],h6:['18px','17px','16px'],h7:['16px','16px','15px'],h8:['14px','14px','14px'],h9:['12px','12px','12px'],h10:['10px','10px','10px']},
@@ -7864,7 +7864,7 @@ function buildScheduleChart(view){
      rows:[['info.100','#DBEAFE'],['info.200','#BFDBFE'],['info.300','#93C5FD'],['info.400','#60A5FA'],['info.500','#3B82F6'],['info.600','#2563EB'],['info.700','#1D4ED8'],['info.800','#1E40AF'],['info.900','#1E3A8A']]},
     {t:'Radius 圓角（9 階）',note:'⚠ 框架 lg=12px；本專案折衷改 lg=10px。',
      rows:[['none','0'],['xs','2px'],['sm','4px'],['md','8px'],['lg','12px','⚠ 專案=10px'],['xl','16px'],['2xl','24px'],['3xl','32px'],['full','9999px','＝專案 pill']]},
-    {t:'Spacing 間距（9 階 · 4-base）',
+    {t:'Spacing 間距（9 階 · 4-base）',note:'⚠ 本專案依 v0.app 量測改用較緊尺標（補 6px、base 12）；見 L1 分頁。',
      rows:[['0','0px'],['1','4px'],['2','8px'],['3','12px'],['4','16px'],['5','24px'],['6','32px'],['7','48px'],['8','64px']]},
     {t:'Typography · 中文 zh（H1–H10）',note:'size / weight / line-height；中文行高預設略大於英文。',
      rows:[['h1','48px · 700 · 1.4','重點應用'],['h2','36px · 700 · 1.4','頁面主標'],['h3','28px · 600 · 1.5','區塊主標'],['h4','24px · 600 · 1.5','區塊主標'],['h5','20px · 600 · 1.5','區塊主標'],['h6','18px · 500 · 1.6','區塊次標'],['h7','16px · 500 · 1.6','區塊次標'],['h8','14px · 400 · 1.6','內文/按鈕'],['h9','12px · 400 · 1.6','內文/按鈕'],['h10','10px · 400 · 1.5','輔助']]},
