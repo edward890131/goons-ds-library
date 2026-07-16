@@ -6,6 +6,33 @@
 
 ---
 
+## 2026-07-16　Token 補齊框架缺口 + 框架索引 tab
+
+對照 `../ds-framework/themes/_base.theme.yaml` 原始定義，補齊網頁上遺漏的 token，並讓 Design Token 頁能索引框架完整定義。
+
+### L1 色階補齊
+- **Brand 主色** 4 階 → **9 階**（100–900，種子 500=#3358D4）。
+- **Brand 副色** 新增 **9 階 slate**（`--c-brand2-*`，佔位、之後可換 Goons 副色）。
+- **Feedback**（success/warning/error/info）各 3–4 階 → **各 9 階**（框架完整 Tailwind ramp）。
+
+### Radius / Elevation
+- Radius 補 `xs(2)` / `2xl(24)` / `3xl(32)`（→ 9 階；pill＝框架 full）。
+- Elevation 補 `2xl`；新增**暗色模式加深陰影**（dark 兩區塊各補一套 `--e-*`）。
+
+### Typography 複合 token（方案 A）
+- 新增每階 `--fw-h1..h10` / `--lh-h1..h10` / `--ls-h1..h10`（依框架 weight/line-height，中文優先取 zh 行高；補 letter-spacing）。
+- 新增 `.ty-h1..h10` utility class＝把 size＋weight＋line-height＋字距綁成一包，對應 Figma text style。
+- Design Token 頁 Typography 多一組「複合樣式（text style）」：一列＝字重/行高/字距＋即時 `.ty-h*` 預覽。
+
+### 框架索引 tab（唯讀）
+- Design Token 頁加第 3 個 tab **「框架索引」**：唯讀呈現 `_base.theme.yaml` 完整 L1+L2 定義（17 段／139 列），色值帶色塊。
+- ⚠ 標記處＝框架原值與本專案 v0 種子刻意不同（如 gray Tailwind vs v0 單色、radius lg 12 vs 10）；空值處＝框架留白由專案 delta 填。
+
+### 驗證
+- node --check 通過；Playwright：15 個 L1 組、3 tab、複合列即時編輯與預覽、框架索引 17 段渲染、匯出 CSS 含全部新 token（含響應式 media）、暗色陰影生效、reset 還原、**0 console error**。
+
+---
+
 ## 2026-07-13 ~ 07-14　初版建置（Basic 六顆）
 
 分階段做出來，依序如下：
