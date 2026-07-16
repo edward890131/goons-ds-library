@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-07-16（十五）　Chart：新增曲線圖 curve ＋ 甜甜圈 hover 互動
+
+### 曲線圖 curve（第 5 型態）
+- 新增 `chtSmoothPath()`（Catmull-Rom → cubic bezier），`chtLineSVG` 加 `o.smooth` 走平滑路徑；curve＝折線的平滑版，面積填充／格線／座標軸／hover tooltip 全沿用 line。
+- 接進 DIAL_SPECS（variant 4→5）、VN、矩陣、Live seg／render／free row、bool scope（line 選項改陣列 `['line','curve']` 一起顯示）；formula 4×2→5×2=10。
+- CSS：`.cht-curve` 尺寸沿用 `.cht-line`。
+
+### 甜甜圈 donut hover
+- 每段 circle 加 `.cht-seg`＋`data-i`；新增 `chtDonutHover()`：滑到某段→該段 stroke-width 15→19、其餘 opacity .28 淡出；有中央數字時中央改顯示該段 label＋%（顏色綁該段 token），離開還原。
+- 驗證：矩陣 5 列（統計/折線/曲線/長條/甜甜圈）、curve path 含 C bezier；hover 進行中段→中央 46%→26%、seg stroke 19／他段 opacity .28、離開還原 46%。
+
+---
+
 ## 2026-07-16（十四）　右緣本頁目錄（Notion 式錨點）
 
 - 每個元件頁右側加「本頁目錄」：滑鼠靠近右緣（<130px 露把手提示、<22px 浮出面板）→ 顯示浮動目錄；點項目 smooth scroll 到該段落；捲動時當前段落高亮。
