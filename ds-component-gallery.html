@@ -437,38 +437,52 @@
   .st-go:hover{border-color:var(--accent);color:var(--accent);}
   .st-go svg{width:14px;height:14px;}
 
-  /* ===== Design Token 頁（檢視 + 手動調整）===== */
-  .tok-lead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 22px;}
+  /* ===== Design Token 頁（檢視 + 手動調整；L1/L2 切換、精簡版）===== */
+  .tok-lead{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;margin:var(--sp-4) 0 var(--sp-5);}
   .tok-lead .spacer{flex:1;}
-  .tokbtn{height:36px;padding:0 15px;border-radius:var(--r-md);border:1px solid var(--line-strong);background:var(--panel);
-    color:var(--ink);font-family:var(--font-sans);font-size:var(--fs-h9);font-weight:600;cursor:pointer;transition:.13s;display:inline-flex;align-items:center;gap:7px;}
+  .tok-tabs{display:inline-flex;gap:2px;padding:3px;border-radius:var(--r-lg);background:var(--panel-2);border:1px solid var(--line);}
+  .tok-tab{height:32px;padding:0 var(--sp-4);border:none;background:transparent;border-radius:var(--r-md);cursor:pointer;
+    font-family:var(--font-sans);font-size:var(--fs-h9);font-weight:600;color:var(--muted);transition:.13s;}
+  .tok-tab:hover{color:var(--ink);}
+  .tok-tab.on{background:var(--panel);color:var(--accent);box-shadow:var(--e-sm);}
+  .tokbtn{height:34px;padding:0 var(--sp-3);border-radius:var(--r-md);border:1px solid var(--line-strong);background:var(--panel);
+    color:var(--ink);font-family:var(--font-sans);font-size:var(--fs-h9);font-weight:600;cursor:pointer;transition:.13s;display:inline-flex;align-items:center;gap:6px;}
   .tokbtn:hover{border-color:var(--accent);color:var(--accent);}
   .tokbtn.primary{background:var(--accent);border-color:var(--accent);color:var(--primary-on);}
   .tokbtn.primary:hover{filter:brightness(1.06);color:var(--primary-on);}
-  .tok-group{border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:14px;overflow:hidden;background:var(--panel);}
-  .tok-gh{display:flex;align-items:baseline;gap:10px;padding:13px 18px;background:var(--panel-2);border-bottom:1px solid var(--line);}
+  .tok-group{border:1px solid var(--line);border-radius:var(--r-lg);margin-bottom:var(--sp-3);overflow:hidden;background:var(--panel);}
+  .tok-gh{display:flex;align-items:baseline;gap:var(--sp-2);padding:var(--sp-3) var(--sp-4);background:var(--panel-2);border-bottom:1px solid var(--line);}
   .tok-gh .t{font-size:var(--fs-h8);font-weight:680;color:var(--ink);}
-  .tok-gh .d{font-size:var(--fs-h9);color:var(--muted);}
+  .tok-gh .d{font-size:var(--fs-h10);color:var(--muted);}
   .tok-gh .layer{margin-left:auto;font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.06em;text-transform:uppercase;
-    color:var(--faint);border:1px solid var(--line);border-radius:999px;padding:2px 8px;}
-  .tok-rows{display:flex;flex-direction:column;}
-  .tok-row{display:grid;grid-template-columns:minmax(180px,1.4fr) 96px minmax(150px,1fr) 1fr;align-items:center;gap:14px;
-    padding:9px 18px;border-top:1px solid var(--line);}
+    color:var(--faint);border:1px solid var(--line);border-radius:var(--r-pill);padding:2px var(--sp-2);}
+  /* L1 列：名稱 | 控制（色票鈕填滿＋hex／或值輸入／或陰影示意） */
+  .tok-row{display:grid;grid-template-columns:minmax(190px,1fr) minmax(190px,1.3fr);align-items:center;gap:var(--sp-4);
+    padding:6px var(--sp-4);border-top:1px solid var(--line);}
   .tok-row:first-child{border-top:none;}
-  .tok-name{font-family:var(--font-mono);font-size:var(--fs-h9);color:var(--ink);}
+  .tok-row.l2{grid-template-columns:minmax(170px,1fr) 1fr 1fr;}         /* 名稱 | Light | Dark */
+  .tok-name{font-family:var(--font-mono);font-size:var(--fs-h9);color:var(--ink);min-width:0;}
   .tok-name .lab{color:var(--muted);margin-left:6px;font-size:var(--fs-h10);}
-  .tok-prev{display:flex;align-items:center;justify-content:center;}
-  .tok-sw{width:64px;height:26px;border-radius:6px;border:1px solid var(--line-strong);}
-  .tok-prevtxt{font-family:var(--font-mono);font-size:var(--fs-h9);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .tok-ctl{display:flex;align-items:center;gap:8px;}
-  .tok-ctl input[type=color]{width:34px;height:30px;padding:0;border:1px solid var(--line-strong);border-radius:6px;background:none;cursor:pointer;flex:0 0 auto;}
-  .tok-ctl input[type=text]{width:100%;height:30px;padding:0 9px;border:1px solid var(--line-strong);border-radius:6px;
+  .tok-name .map{display:block;color:var(--faint);font-size:var(--fs-h10);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tok-ctl{display:flex;align-items:center;gap:var(--sp-2);min-width:0;}
+  /* 填滿式色票鈕：色鋪滿整顆、無白邊 padding */
+  .tok-sw-btn{width:44px;height:30px;border-radius:var(--r-sm);border:1px solid var(--line-strong);padding:0;background:none;overflow:hidden;cursor:pointer;flex:0 0 auto;}
+  .tok-sw-btn::-webkit-color-swatch-wrapper{padding:0;}
+  .tok-sw-btn::-webkit-color-swatch{border:none;border-radius:3px;}
+  .tok-sw-btn::-moz-color-swatch{border:none;}
+  .tok-hex{flex:1;min-width:0;height:30px;padding:0 var(--sp-2);border:1px solid var(--line-strong);border-radius:var(--r-sm);
     background:var(--panel);color:var(--ink);font-family:var(--font-mono);font-size:var(--fs-h9);}
-  .tok-ctl input[type=text]:focus{outline:none;border-color:var(--accent);}
-  .tok-def{font-family:var(--font-mono);font-size:var(--fs-h10);color:var(--faint);font-variant-numeric:tabular-nums;}
-  .tok-fontrow{padding:12px 18px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;}
+  .tok-hex:focus{outline:none;border-color:var(--accent);}
+  /* 陰影示意 box */
+  .tok-shprev{width:52px;height:30px;border-radius:var(--r-sm);background:var(--panel);border:1px solid var(--line);flex:0 0 auto;}
+  /* L2 mode 欄：小色票 + 值（可點色票改） */
+  .tok-modehead{display:grid;grid-template-columns:minmax(170px,1fr) 1fr 1fr;gap:var(--sp-4);padding:6px var(--sp-4) 4px;
+    font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);background:var(--panel-2);border-bottom:1px solid var(--line);}
+  .tok-mode{display:flex;align-items:center;gap:var(--sp-2);min-width:0;}
+  .tok-mode .m-val{font-family:var(--font-mono);font-size:var(--fs-h10);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tok-fontrow{padding:var(--sp-3) var(--sp-4);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:var(--sp-2);}
   .tok-fontrow .fp{font-size:var(--fs-h4);color:var(--ink);}
-  @media(max-width:720px){.tok-row{grid-template-columns:1fr 1fr;}.tok-prev,.tok-def{display:none;}}
+  @media(max-width:720px){.tok-row,.tok-row.l2,.tok-modehead{grid-template-columns:1fr;}.tok-modehead{display:none;}}
 
   /* ===== extra semantic tokens（→ 接 Batch1 feedback token，light/dark 自動跟隨）===== */
   :root{--ok:var(--s-feedback-success);--ok-tint:var(--s-feedback-success-tint);--warn:var(--s-feedback-warning);}
@@ -7678,106 +7692,167 @@ function buildScheduleChart(view){
     calendar:'calendar'
   }; // 轉盤元件 → 對應頁面（checkbox/radio 都在 selector 頁）
   const ICON_SPARK='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M208,144a15.78,15.78,0,0,1-10.42,14.94l-51.65,19-19,51.66a15.94,15.94,0,0,1-29.88,0L78,178l-51.62-19a15.94,15.94,0,0,1,0-29.88l51.65-19,19-51.66a15.94,15.94,0,0,1,29.88,0l19,51.65,51.66,19A15.78,15.78,0,0,1,208,144ZM152,48h16V64a8,8,0,0,0,16,0V48h16a8,8,0,0,0,0-16H184V16a8,8,0,0,0-16,0V32H152a8,8,0,0,0,0,16Zm88,32h-8V72a8,8,0,0,0-16,0v8h-8a8,8,0,0,0,0,16h8v8a8,8,0,0,0,16,0V96h8a8,8,0,0,0,0-16Z"/></svg>';
-  /* ===== Design Token 檢視 / 編輯頁 ===== */
-  const TOKEN_MODEL=[
-    {g:'Neutral 中性色階',layer:'L1 Primitive',kind:'color',
-     note:'單色底來源；light 模式的 surface / text / border 都引用這條色階（改這裡即改 light 皮）。',
-     rows:[['--c-neutral-0','','#FFFFFF'],['--c-neutral-50','','#FAFAFA'],['--c-neutral-100','','#F4F5F7'],['--c-neutral-200','','#ECEEF2'],['--c-neutral-300','','#DFE1E7'],['--c-neutral-400','','#C9CDD6'],['--c-neutral-500','','#9BA0AA'],['--c-neutral-600','','#6F7179'],['--c-neutral-700','','#3A3D45'],['--c-neutral-800','','#1C1E24'],['--c-neutral-900','','#0D0F15']]},
-    {g:'Brand 品牌色',layer:'L1 Primitive',kind:'color',
-     note:'單色底上的唯一彩色，餵給 action.primary / 選中 / 圖表主系列。500 為主錨點；dark 模式用 400。',
-     rows:[['--c-brand-400','dark','#6E8AF5'],['--c-brand-500','主','#3358D4'],['--c-brand-600','hover','#2B49B6'],['--c-brand-700','press','#233C97']]},
-    {g:'Feedback 狀態色',layer:'L1 Primitive',kind:'color',
-     note:'成功 / 警告 / 錯誤 / 資訊；同時當圖表系列色。dark 模式語意層改用 400。',
-     rows:[['--c-success-400','','#34D399'],['--c-success-500','','#10B981'],['--c-success-600','','#059669'],['--c-warning-400','','#FBBF24'],['--c-warning-500','','#F59E0B'],['--c-warning-600','','#D97706'],['--c-error-400','','#F87171'],['--c-error-500','','#EF4444'],['--c-error-600','','#DC2626'],['--c-error-700','','#B91C1C'],['--c-info-400','','#60A5FA'],['--c-info-500','','#3B82F6'],['--c-info-600','','#2563EB']]},
-    {g:'Dark 模式中性覆寫',layer:'L2 Semantic',kind:'color',mode:'dark',
-     note:'dark 模式的 surface / text / border 值（獨立於 light 色階，避免互相牽動）。',
-     rows:[['--s-surface-canvas','canvas','#0B0B0C'],['--s-surface-1','surface','#141416'],['--s-surface-2','surface-2','#1C1C20'],['--s-surface-3','surface-3','#26262B'],['--s-text-1','text','#F4F4F5'],['--s-text-2','muted','#9A9CA4'],['--s-text-3','faint','#6B6E77'],['--s-border-1','line','#26272B'],['--s-border-2','line-strong','#34363C']]},
-    {g:'Radius 圓角',layer:'L1 Primitive',kind:'text',
-     note:'折衷方案：md 8 為卡片 / 輸入框預設；按鈕走 pill。',
-     rows:[['--r-none','','0px'],['--r-sm','','4px'],['--r-md','預設','8px'],['--r-lg','','10px'],['--r-xl','','16px'],['--r-pill','按鈕','9999px']]},
-    {g:'Spacing 間距（8-base）',layer:'L1 Primitive',kind:'text',
-     note:'4 的倍數 9 階；元件 padding / gap 之後批次接這條。',
-     rows:[['--sp-0','','0px'],['--sp-1','','4px'],['--sp-2','','8px'],['--sp-3','','12px'],['--sp-4','','16px'],['--sp-5','','24px'],['--sp-6','','32px'],['--sp-7','','48px'],['--sp-8','','64px']]},
-    {g:'Typography 字級（H1–H10）',layer:'L1 Primitive',kind:'text',
-     note:'框架字級尺標；內文 16 / H1 48。',
-     rows:[['--fs-h1','','48px'],['--fs-h2','','36px'],['--fs-h3','','28px'],['--fs-h4','','24px'],['--fs-h5','','20px'],['--fs-h6','','18px'],['--fs-h7','','16px'],['--fs-h8','','14px'],['--fs-h9','','12px'],['--fs-h10','','10px']]},
-    {g:'Font Weight 字重',layer:'L1 Primitive',kind:'text',
-     rows:[['--fw-regular','','400'],['--fw-medium','','500'],['--fw-semibold','','600'],['--fw-bold','','700']]},
-    {g:'Line Height 行高',layer:'L1 Primitive',kind:'text',
-     rows:[['--lh-tight','','1.2'],['--lh-snug','','1.35'],['--lh-normal','','1.5'],['--lh-relaxed','','1.6']]},
-    {g:'Elevation 陰影',layer:'L1 Primitive',kind:'text',
-     rows:[['--e-sm','','0 1px 2px 0 rgba(0,0,0,.05)'],['--e-md','','0 4px 6px -1px rgba(0,0,0,.10),0 2px 4px -2px rgba(0,0,0,.10)'],['--e-lg','','0 10px 15px -3px rgba(0,0,0,.10),0 4px 6px -4px rgba(0,0,0,.10)'],['--e-xl','','0 20px 25px -5px rgba(0,0,0,.10),0 8px 10px -6px rgba(0,0,0,.10)']]},
-    {g:'Motion 動態',layer:'L1 Primitive',kind:'text',
-     rows:[['--dur-fast','','150ms'],['--dur-default','','300ms'],['--dur-slow','','500ms'],['--ease-standard','','cubic-bezier(.4,0,.2,1)'],['--ease-spring','','cubic-bezier(.34,1.56,.64,1)']]}
+  /* ===== Design Token 檢視 / 編輯頁（L1 primitive / L2 semantic 切換）===== */
+  // L1：純值 primitive（kind：color 色票／text 值／shadow 陰影示意／ref 唯讀參考）
+  const TOK_L1=[
+    {g:'Neutral 中性色階',kind:'color',note:'單色底來源；light 的 surface/text/border 皆引用。',
+     rows:[['--c-neutral-0'],['--c-neutral-50'],['--c-neutral-100'],['--c-neutral-200'],['--c-neutral-300'],['--c-neutral-400'],['--c-neutral-500'],['--c-neutral-600'],['--c-neutral-700'],['--c-neutral-800'],['--c-neutral-900']],
+     def:{'--c-neutral-0':'#FFFFFF','--c-neutral-50':'#FAFAFA','--c-neutral-100':'#F4F5F7','--c-neutral-200':'#ECEEF2','--c-neutral-300':'#DFE1E7','--c-neutral-400':'#C9CDD6','--c-neutral-500':'#9BA0AA','--c-neutral-600':'#6F7179','--c-neutral-700':'#3A3D45','--c-neutral-800':'#1C1E24','--c-neutral-900':'#0D0F15'}},
+    {g:'Brand 品牌色',kind:'color',note:'單色底上唯一彩色，餵 action.primary／選中／圖表主系列。要換 Goons 品牌色改這裡。',
+     rows:[['--c-brand-400','dark'],['--c-brand-500','主'],['--c-brand-600','hover'],['--c-brand-700','press']],
+     def:{'--c-brand-400':'#6E8AF5','--c-brand-500':'#3358D4','--c-brand-600':'#2B49B6','--c-brand-700':'#233C97'}},
+    {g:'Feedback 狀態色',kind:'color',note:'成功／警告／錯誤／資訊；兼圖表系列色。',
+     rows:[['--c-success-400'],['--c-success-500'],['--c-success-600'],['--c-warning-400'],['--c-warning-500'],['--c-warning-600'],['--c-error-400'],['--c-error-500'],['--c-error-600'],['--c-error-700'],['--c-info-400'],['--c-info-500'],['--c-info-600']],
+     def:{'--c-success-400':'#34D399','--c-success-500':'#10B981','--c-success-600':'#059669','--c-warning-400':'#FBBF24','--c-warning-500':'#F59E0B','--c-warning-600':'#D97706','--c-error-400':'#F87171','--c-error-500':'#EF4444','--c-error-600':'#DC2626','--c-error-700':'#B91C1C','--c-info-400':'#60A5FA','--c-info-500':'#3B82F6','--c-info-600':'#2563EB'}},
+    {g:'Radius 圓角',kind:'text',note:'md 8 為卡片/輸入框預設；按鈕走 pill。',
+     rows:[['--r-none'],['--r-sm'],['--r-md','預設'],['--r-lg'],['--r-xl'],['--r-pill','按鈕']],
+     def:{'--r-none':'0px','--r-sm':'4px','--r-md':'8px','--r-lg':'10px','--r-xl':'16px','--r-pill':'9999px'}},
+    {g:'Spacing 間距（8-base）',kind:'text',note:'4 的倍數 9 階；元件 padding/gap 吸附此。',
+     rows:[['--sp-0'],['--sp-1'],['--sp-2'],['--sp-3'],['--sp-4'],['--sp-5'],['--sp-6'],['--sp-7'],['--sp-8']],
+     def:{'--sp-0':'0px','--sp-1':'4px','--sp-2':'8px','--sp-3':'12px','--sp-4':'16px','--sp-5':'24px','--sp-6':'32px','--sp-7':'48px','--sp-8':'64px'}},
+    {g:'Typography 字級（H1–H10）',kind:'text',note:'框架字級尺標；內文 16 / H1 48。',sample:true,
+     rows:[['--fs-h1'],['--fs-h2'],['--fs-h3'],['--fs-h4'],['--fs-h5'],['--fs-h6'],['--fs-h7'],['--fs-h8'],['--fs-h9'],['--fs-h10']],
+     def:{'--fs-h1':'48px','--fs-h2':'36px','--fs-h3':'28px','--fs-h4':'24px','--fs-h5':'20px','--fs-h6':'18px','--fs-h7':'16px','--fs-h8':'14px','--fs-h9':'12px','--fs-h10':'10px'}},
+    {g:'Font Weight 字重',kind:'text',
+     rows:[['--fw-regular'],['--fw-medium'],['--fw-semibold'],['--fw-bold']],
+     def:{'--fw-regular':'400','--fw-medium':'500','--fw-semibold':'600','--fw-bold':'700'}},
+    {g:'Line Height 行高',kind:'text',
+     rows:[['--lh-tight'],['--lh-snug'],['--lh-normal'],['--lh-relaxed']],
+     def:{'--lh-tight':'1.2','--lh-snug':'1.35','--lh-normal':'1.5','--lh-relaxed':'1.6'}},
+    {g:'Elevation 陰影',kind:'shadow',note:'左側示意 box 套用實際陰影。',
+     rows:[['--e-sm'],['--e-md'],['--e-lg'],['--e-xl']],
+     def:{'--e-sm':'0 1px 2px 0 rgba(0,0,0,.05)','--e-md':'0 4px 6px -1px rgba(0,0,0,.10),0 2px 4px -2px rgba(0,0,0,.10)','--e-lg':'0 10px 15px -3px rgba(0,0,0,.10),0 4px 6px -4px rgba(0,0,0,.10)','--e-xl':'0 20px 25px -5px rgba(0,0,0,.10),0 8px 10px -6px rgba(0,0,0,.10)'}},
+    {g:'Motion 動態',kind:'text',
+     rows:[['--dur-fast'],['--dur-default'],['--dur-slow'],['--ease-standard'],['--ease-spring']],
+     def:{'--dur-fast':'150ms','--dur-default':'300ms','--dur-slow':'500ms','--ease-standard':'cubic-bezier(.4,0,.2,1)','--ease-spring':'cubic-bezier(.34,1.56,.64,1)'}},
+    {g:'Breakpoints 裝置斷點',kind:'ref',note:'裝置尺寸參考值（媒體查詢用；色彩/字級/間距目前不隨裝置變動）。',
+     rows:[['--bp-mobile','mobile'],['--bp-tablet','tablet'],['--bp-desktop','desktop'],['--bp-wide','wide']],
+     def:{'--bp-mobile':'360px','--bp-tablet':'768px','--bp-desktop':'1024px','--bp-wide':'1280px'}},
+    {g:'Grid 網格（per device）',kind:'ref',note:'各裝置欄數 · gutter · margin（框架值，設計參考）。',
+     rows:[['grid-mobile','mobile'],['grid-tablet','tablet'],['grid-desktop','desktop'],['grid-wide','wide']],
+     def:{'grid-mobile':'4 欄 · gutter 16 · margin 16','grid-tablet':'8 欄 · gutter 24 · margin 24','grid-desktop':'12 欄 · gutter 32 · margin 64','grid-wide':'12 欄 · gutter 32 · margin 96'}}
   ];
+  // L2：semantic 角色（每列 light / dark 兩模式值；值可為 hex 或 var(--c-*) 參考）
+  const TOK_L2=[
+    {g:'Surface 表面',rows:[
+      ['--s-surface-canvas','canvas','var(--c-neutral-50)','#0B0B0C'],['--s-surface-1','surface','var(--c-neutral-0)','#141416'],
+      ['--s-surface-2','surface-2','var(--c-neutral-100)','#1C1C20'],['--s-surface-3','surface-3','var(--c-neutral-200)','#26262B']]},
+    {g:'Text 文字',rows:[
+      ['--s-text-1','ink','var(--c-neutral-900)','#F4F4F5'],['--s-text-2','muted','var(--c-neutral-600)','#9A9CA4'],['--s-text-3','faint','var(--c-neutral-500)','#6B6E77']]},
+    {g:'Border 邊界',rows:[
+      ['--s-border-1','line','var(--c-neutral-300)','#26272B'],['--s-border-2','line-strong','var(--c-neutral-400)','#34363C']]},
+    {g:'Action 主要動作',rows:[
+      ['--s-action-primary','primary','var(--c-brand-500)','var(--c-brand-400)'],['--s-action-primary-hover','hover','var(--c-brand-600)','#8CA2F8'],
+      ['--s-action-primary-press','press','var(--c-brand-700)','var(--c-brand-500)'],['--s-on-primary','on','#FFFFFF','#FFFFFF']]},
+    {g:'Danger / Secondary',rows:[
+      ['--s-action-danger','danger','var(--c-error-500)','var(--c-error-400)'],['--s-sec-fill','sec fill','var(--c-neutral-100)','#22232A'],
+      ['--s-sec-on','sec on','var(--c-neutral-800)','#F4F4F5'],['--s-sec-edge','sec edge','var(--c-neutral-400)','#3A3C43']]},
+    {g:'Feedback 狀態',rows:[
+      ['--s-feedback-success','success','var(--c-success-500)','var(--c-success-400)'],['--s-feedback-warning','warning','var(--c-warning-500)','var(--c-warning-400)'],
+      ['--s-feedback-error','error','var(--c-error-500)','var(--c-error-400)'],['--s-feedback-info','info','var(--c-info-500)','var(--c-info-400)']]}
+  ];
+  function tokResolve(v){ // 把 var(--c-*) 參考解析成實際色（primitive 與模式無關，任何當下都讀得到）
+    if(typeof v==='string' && v.indexOf('var(')===0){const nm=v.slice(4,-1).trim();
+      return (getComputedStyle(document.documentElement).getPropertyValue(nm).trim())||v;}
+    return v;}
+  const tokShort=v=>String(v).replace('var(--c-','').replace(')','').replace('--c-','');
+
   function renderTokens(view){
     let ovr=document.getElementById('tokenOverrides');
     if(!ovr){ovr=document.createElement('style');ovr.id='tokenOverrides';document.head.appendChild(ovr);}
     const OV=window.__tokOverrides||(window.__tokOverrides={root:{},dark:{}});
+    const layer=window.__tokLayer||(window.__tokLayer='l1');
     function apply(){const r=Object.entries(OV.root).map(([k,v])=>k+':'+v+';').join('');
       const d=Object.entries(OV.dark).map(([k,v])=>k+':'+v+';').join('');
       ovr.textContent=(r?':root{'+r+'}':'')+(d?':root[data-theme="dark"]{'+d+'}':'');}
     apply();
-    const val=(name,def)=>{const o=(TOKEN_MODEL.find(g=>g.rows.some(r=>r[0]===name))||{}).mode==='dark'?OV.dark:OV.root;return o[name]||def;};
     view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Foundation · Design Token</p><h1>Design Token</h1></div></div>
-      <p class="lede">依 <b>DS Framework L1 Primitive → L2 Semantic</b> 架構、以 <b>v0 視覺</b> 為種子的預設 token。每列可<b>手動調整</b>、即時套用到全站元件；改 <b>Neutral / Brand / Feedback</b> 會層層往下傳。<b>Semantic 與元件別名</b>已在底層綁好，不用動。</p>
+      <p class="lede">依 <b>DS Framework L1 Primitive → L2 Semantic</b> 架構、以 <b>v0 視覺</b> 為種子的預設 token。<b>L1</b> 是純值來源、<b>L2</b> 是角色組合（含 light/dark 兩模式）。每列可即時手調、層層往下傳全站。</p>
       <div class="tok-lead">
+        <div class="tok-tabs" id="tokTabs">
+          <button class="tok-tab" data-l="l1">L1 Primitive</button>
+          <button class="tok-tab" data-l="l2">L2 Semantic</button>
+        </div>
         <button class="tokbtn primary" id="tokCopy">複製 Token CSS</button>
-        <button class="tokbtn" id="tokReset">重設為預設</button>
+        <button class="tokbtn" id="tokReset">重設</button>
         <div class="spacer"></div>
-        <div class="tok-def">改動即時預覽 · 不自動儲存（重整還原）</div>
+        <div class="tok-name" style="color:var(--faint)">即時預覽 · 不自動儲存</div>
       </div>
       <div id="tokBody"></div>`;
+    const tabs=document.getElementById('tokTabs');
+    tabs.querySelectorAll('.tok-tab').forEach(b=>{b.classList.toggle('on',b.dataset.l===layer);
+      b.onclick=()=>{window.__tokLayer=b.dataset.l;renderTokens(view);};});
     const bodyEl=document.getElementById('tokBody');
-    TOKEN_MODEL.forEach(gr=>{
-      const box=ce('div','tok-group');
-      const gh=ce('div','tok-gh');
-      gh.innerHTML=`<span class="t">${gr.g}</span>${gr.note?`<span class="d">${gr.note}</span>`:''}<span class="layer">${gr.layer}</span>`;
-      box.appendChild(gh);
-      const rows=ce('div','tok-rows');
-      gr.rows.forEach(([name,lab,def])=>{
-        const cur=val(name,def);
-        const row=ce('div','tok-row');
-        const isColor=gr.kind==='color';
-        // 名稱
-        const nm=ce('div','tok-name');nm.innerHTML=name+(lab?`<span class="lab">${lab}</span>`:'');
-        // 預覽
-        const prev=ce('div','tok-prev');
-        if(isColor){const sw=ce('div','tok-sw');sw.style.background=cur;prev.appendChild(sw);row._sw=sw;}
-        else{const t=ce('div','tok-prevtxt');t.textContent=cur;prev.appendChild(t);row._pt=t;}
-        // 控制
-        const ctl=ce('div','tok-ctl');
-        if(isColor){
-          const cp=document.createElement('input');cp.type='color';cp.value=/^#([0-9a-f]{6})$/i.test(cur)?cur:'#000000';
-          const tx=document.createElement('input');tx.type='text';tx.value=cur;
-          const commit=v=>{(gr.mode==='dark'?OV.dark:OV.root)[name]=v;apply();row._sw.style.background=v;if(/^#([0-9a-f]{6})$/i.test(v))cp.value=v;};
-          cp.oninput=()=>{tx.value=cp.value;commit(cp.value);};
-          tx.onchange=()=>commit(tx.value.trim());
-          ctl.append(cp,tx);
-        }else{
-          const tx=document.createElement('input');tx.type='text';tx.value=cur;
-          tx.onchange=()=>{(gr.mode==='dark'?OV.dark:OV.root)[name]=tx.value.trim();apply();row._pt.textContent=tx.value.trim();};
-          ctl.append(tx);
-        }
-        // 預設值
-        const dv=ce('div','tok-def');dv.textContent=def;
-        row.append(nm,prev,ctl,dv);rows.appendChild(row);
+    const mkColorCtl=(name,cur,store)=>{ // 填滿式色票鈕（無白邊）＋ hex
+      const ctl=ce('div','tok-ctl');
+      const cp=document.createElement('input');cp.type='color';cp.className='tok-sw-btn';
+      const rc=tokResolve(cur);cp.value=/^#([0-9a-f]{6})$/i.test(rc)?rc:'#000000';
+      const tx=document.createElement('input');tx.type='text';tx.className='tok-hex';tx.value=cur;
+      const commit=v=>{store[name]=v;apply();const r2=tokResolve(v);if(/^#([0-9a-f]{6})$/i.test(r2))cp.value=r2;};
+      cp.oninput=()=>{tx.value=cp.value;commit(cp.value);};
+      tx.onchange=()=>commit(tx.value.trim());
+      ctl.append(cp,tx);return ctl;};
+
+    if(layer==='l1'){
+      TOK_L1.forEach(gr=>{
+        const box=ce('div','tok-group');
+        const gh=ce('div','tok-gh');
+        gh.innerHTML=`<span class="t">${gr.g}</span>${gr.note?`<span class="d">${gr.note}</span>`:''}<span class="layer">L1 Primitive</span>`;
+        box.appendChild(gh);
+        const rows=ce('div','tok-rows');
+        gr.rows.forEach(([name,lab])=>{
+          const def=gr.def[name];const cur=OV.root[name]||def;
+          const row=ce('div','tok-row');
+          const nm=ce('div','tok-name');nm.innerHTML=name+(lab?`<span class="lab">${lab}</span>`:'');
+          let ctl;
+          if(gr.kind==='color'){ctl=mkColorCtl(name,cur,OV.root);}
+          else if(gr.kind==='ref'){ctl=ce('div','tok-ctl');const s=ce('div','m-val');s.textContent=cur;s.style.fontSize='var(--fs-h9)';ctl.appendChild(s);}
+          else if(gr.kind==='shadow'){ctl=ce('div','tok-ctl');
+            const pv=ce('div','tok-shprev');pv.style.boxShadow=cur;
+            const tx=document.createElement('input');tx.type='text';tx.className='tok-hex';tx.value=cur;
+            tx.onchange=()=>{OV.root[name]=tx.value.trim();apply();pv.style.boxShadow=tx.value.trim();};
+            ctl.append(pv,tx);}
+          else{ctl=ce('div','tok-ctl');
+            const tx=document.createElement('input');tx.type='text';tx.className='tok-hex';tx.value=cur;
+            tx.onchange=()=>{OV.root[name]=tx.value.trim();apply();};ctl.appendChild(tx);}
+          row.append(nm,ctl);rows.appendChild(row);
+        });
+        box.appendChild(rows);
+        if(gr.sample){const fr=ce('div','tok-fontrow');
+          fr.innerHTML=`<div class="fp" style="font-family:var(--font-sans)">Geist Sans · 果思設計 Goons 0123456789</div>
+            <div class="fp" style="font-family:var(--font-mono);font-size:var(--fs-h6)">Geist Mono · NT$ 12,800 · 786</div>`;
+          box.appendChild(fr);}
+        bodyEl.appendChild(box);
       });
-      box.appendChild(rows);
-      // 字體樣本（只在字級群加一條）
-      if(gr.g.indexOf('Typography')===0){
-        const fr=ce('div','tok-fontrow');
-        fr.innerHTML=`<div class="fp" style="font-family:var(--font-sans)">Geist Sans · 果思設計 0123456789</div>
-          <div class="fp" style="font-family:var(--font-mono);font-size:18px">Geist Mono · NT$ 12,800 · 786</div>`;
-        box.appendChild(fr);
-      }
-      bodyEl.appendChild(box);
-    });
-    // 匯出 CSS（primitive + dark 中性；semantic / 別名結構留在檔案）
+    }else{ // L2 semantic：每列 light / dark 兩模式
+      TOK_L2.forEach(gr=>{
+        const box=ce('div','tok-group');
+        const gh=ce('div','tok-gh');
+        gh.innerHTML=`<span class="t">${gr.g}</span><span class="layer">L2 Semantic</span>`;
+        box.appendChild(gh);
+        const head=ce('div','tok-modehead');head.innerHTML=`<span>Token</span><span>◐ Light</span><span>◑ Dark</span>`;box.appendChild(head);
+        const rows=ce('div','tok-rows');
+        gr.rows.forEach(([name,lab,lv,dv])=>{
+          const curL=OV.root[name]||lv, curD=OV.dark[name]||dv;
+          const row=ce('div','tok-row l2');
+          const nm=ce('div','tok-name');nm.innerHTML=`${name}${lab?`<span class="lab">${lab}</span>`:''}<span class="map">${tokShort(lv)} → ${tokShort(dv)}</span>`;
+          const mkMode=(cur,store)=>{const cell=ce('div','tok-mode');
+            const cp=document.createElement('input');cp.type='color';cp.className='tok-sw-btn';cp.style.width='30px';cp.style.height='26px';
+            const rc=tokResolve(cur);cp.value=/^#([0-9a-f]{6})$/i.test(rc)?rc:'#000000';
+            const vl=ce('div','m-val');vl.textContent=tokShort(cur);
+            cp.oninput=()=>{store[name]=cp.value;apply();vl.textContent=cp.value;};
+            cell.append(cp,vl);return cell;};
+          row.append(nm,mkMode(curL,OV.root),mkMode(curD,OV.dark));rows.appendChild(row);
+        });
+        box.appendChild(rows);
+        bodyEl.appendChild(box);
+      });
+    }
+    // 匯出：完整 token CSS（L1 primitive + L2 semantic light/dark）
     function buildCSS(){
-      let root='',dark='';
-      TOKEN_MODEL.forEach(gr=>{gr.rows.forEach(([n,l,d])=>{const line='  '+n+':'+val(n,d)+';\n';if(gr.mode==='dark')dark+=line;else root+=line;});});
-      return '/* Design Token（Batch1 種子；由 Design Token 頁匯出）*/\n:root{\n'+root+'}\n:root[data-theme="dark"]{\n'+dark+'}\n';
+      let p='';TOK_L1.forEach(gr=>{if(gr.kind==='ref')return;gr.rows.forEach(([n])=>{p+='  '+n+':'+(OV.root[n]||gr.def[n])+';\n';});});
+      let l='',d='';TOK_L2.forEach(gr=>gr.rows.forEach(([n,lab,lv,dv])=>{l+='  '+n+':'+(OV.root[n]||lv)+';\n';d+='  '+n+':'+(OV.dark[n]||dv)+';\n';}));
+      return '/* Design Token（v0 種子；Design Token 頁匯出）*/\n:root{\n'+p+l+'}\n:root[data-theme="dark"]{\n'+d+'}\n';
     }
     document.getElementById('tokCopy').onclick=()=>{navigator.clipboard.writeText(buildCSS()).then(()=>{const b=document.getElementById('tokCopy');b.textContent='已複製 ✓';setTimeout(()=>b.textContent='複製 Token CSS',1500);});};
     document.getElementById('tokReset').onclick=()=>{window.__tokOverrides={root:{},dark:{}};renderTokens(view);};
