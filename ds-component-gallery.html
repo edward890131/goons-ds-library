@@ -2228,9 +2228,11 @@
 
 /* ---- 陳列容器 ---- */
 .tbl-demo{max-width:100%;}
-/* 並排 table 通則：等分填滿內容區塊（非固定寬）；table 本身已 width:100% */
-.tbl-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--sp-5);align-items:start;}
-.tbl-row>.tbl-wrap,.tbl-row>.tbl-demo{min-width:0;max-width:100%;}
+/* ⚠ 不要再用 .tbl-row 當並排容器：Table 元件的資料列 <tr> 已用 class="tbl-row"，
+   若對 .tbl-row 下 display:grid 會把每一列 <tr> 變成 grid、整張表欄位錯位（2026-07-16 踩過）。
+   未來要並排等分 table，用 .tbl-cols 這種不撞名的容器類。 */
+.tbl-cols{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--sp-5);align-items:start;}
+.tbl-cols>.tbl-wrap,.tbl-cols>.tbl-demo{min-width:0;max-width:100%;}
 /* 矩陣小表：格內文字一律不換行（狀態 pill／金額不再擠爆成兩行）；欄寬夠時各欄自然排開，
    欄寬不足時整個矩陣走 .grid-scroll 橫向捲動（見 mincol），而非把內容擠爛 */
 .tbl-mini .tbl-td,.tbl-mini .tbl-th{white-space:nowrap;}
@@ -6764,7 +6766,7 @@ function buildArticleCard(view){
         rows:vs,cols:ds,
         rowLab:v=>labHTML(VN[v][0],VN[v][1]),
         colLab:d=>labHTML(DN[d][0],DN[d][1]),
-        cell:(v,d)=>tblCell(v,d),mincol:448})); }
+        cell:(v,d)=>tblCell(v,d),mincol:300})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'Variant × Density 矩陣','列＝框線體系（格線／斑馬紋／簡潔）、欄＝密度（寬鬆／緊湊）。每格是一張縮小示意表（表頭＋3 列）；斑馬紋偶數列鋪淺灰、簡潔款去外框只留表頭底線、緊湊款 padding 收窄且勾選框／標籤同步縮小。');
     p=panelsIn(sec);renderM();

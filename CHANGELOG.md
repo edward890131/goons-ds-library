@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-07-16（十三）　表格真正修好：class 撞名（.tbl-row）害整張表變 grid
+
+### 真因（前一版沒抓到）
+- Table 元件的資料列 `<tr>` 本來就用 `class="tbl-row"`；（十）為了「並排 table 等分」新增的 utility `.tbl-row{display:grid}` **class 撞名** → 把每一張表的每一列 `<tr>` 都變成 grid，欄位全錯位（表頭與資料對不齊、格子擠成一坨）。矩陣小表與 Showcase 完整表都因此爆掉。
+- 前一版（mincol 448＋nowrap）只是把矩陣「看起來」蓋過去，Showcase 表照樣壞。
+
+### 修正
+- 移除撞名的 `.tbl-row` grid 規則，改名為 `.tbl-cols`（未來要並排等分 table 用這個不撞名的容器）；`<tr class="tbl-row">` 回歸正常 table-row。
+- mincol 改回 300（撞名修掉後小表自然寬 ~244，不需要 448 硬撐）。
+- 驗證：Showcase 表頭/資料每欄 left 完全對齊（trDisplay=table-row）；矩陣 6 格小表列高一致、狀態/金額不換行、無多餘橫向捲動。
+
+---
+
 ## 2026-07-16（十二）　兩張 Live 牌卡間距、price/pagination 連動補齊、輸入框 36px、頁面標題區重塑
 
 ### A　同段兩張 Live 牌卡間距（原 0px 貼在一起）
