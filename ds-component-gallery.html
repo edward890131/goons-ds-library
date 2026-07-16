@@ -2015,16 +2015,16 @@
 
 /* ---- variant: gradient 漸層磚 ---- */
 .cat-gradient{border-color:transparent;
-  background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#7B5CFF));} /* #7B5CFF 僅作漸層終點混色基底，實際輸出仍由 --accent 主導、跟著主題切換 */
-.cat-gradient .cat-circle{background:color-mix(in srgb,var(--primary-on) 18%,transparent);color:var(--primary-on);}
+  background:linear-gradient(135deg,var(--c-neutral-600),var(--c-neutral-900));} /* 灰階漸層（中性色 深灰→近黑）；固定暗色，白字皆可讀、不隨主題翻轉 */
+.cat-gradient .cat-circle{background:color-mix(in srgb,#fff 18%,transparent);color:#fff;}
 
-/* ---- 媒體底（image / gradient）上的文字與原子覆寫：一律用 --primary-on（on-accent 白） ---- */
-.cat-image .cat-name,.cat-gradient .cat-name{color:var(--primary-on);}
-.cat-image .cat-desc,.cat-gradient .cat-desc{color:color-mix(in srgb,var(--primary-on) 78%,transparent);}
-.cat-image .cat-arrow,.cat-gradient .cat-arrow{color:color-mix(in srgb,var(--primary-on) 85%,transparent);}
+/* ---- 媒體底（image 暗遮罩 / gradient 灰階）文字與原子：固定用白字（媒體底恆為暗色，不能用 --primary-on＝深色模式會翻黑看不到）---- */
+.cat-image .cat-name,.cat-gradient .cat-name{color:#fff;}
+.cat-image .cat-desc,.cat-gradient .cat-desc{color:color-mix(in srgb,#fff 78%,transparent);}
+.cat-image .cat-arrow,.cat-gradient .cat-arrow{color:color-mix(in srgb,#fff 85%,transparent);}
 /* count 用的 Tag 原子在暗媒體上改半透明白底，保住對比 */
 .cat-image .tg.v-soft,.cat-gradient .tg.v-soft{
-  background:color-mix(in srgb,var(--primary-on) 22%,transparent);color:var(--primary-on);}
+  background:color-mix(in srgb,#fff 22%,transparent);color:#fff;}
 
 /* ---- state: hover（矩陣靜態 .is-hover ＋ Live 真實 :hover，兩者同步） ---- */
 .cat-tile.is-hover,.cat-tile.live:hover{transform:translateY(-2px);
