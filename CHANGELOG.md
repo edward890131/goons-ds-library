@@ -13,9 +13,14 @@
 - 接進 DIAL_SPECS（variant 4→5）、VN、矩陣、Live seg／render／free row、bool scope（line 選項改陣列 `['line','curve']` 一起顯示）；formula 4×2→5×2=10。
 - CSS：`.cht-curve` 尺寸沿用 `.cht-line`。
 
-### 甜甜圈 donut hover
-- 每段 circle 加 `.cht-seg`＋`data-i`；新增 `chtDonutHover()`：滑到某段→該段 stroke-width 15→19、其餘 opacity .28 淡出；有中央數字時中央改顯示該段 label＋%（顏色綁該段 token），離開還原。
-- 驗證：矩陣 5 列（統計/折線/曲線/長條/甜甜圈）、curve path 含 C bezier；hover 進行中段→中央 46%→26%、seg stroke 19／他段 opacity .28、離開還原 46%。
+### 甜甜圈 donut hover（改成 tooltip，非改中央數字）
+- 每段 circle 加 `.cht-seg`＋`data-i`；`chtDonutHover()` 改成跟折線／長條一樣浮 `.cht-tip` tooltip（label＋%，跟隨滑鼠），**不動中央數字、不 focus/淡化其他段**（依 Yuu 回饋修正）。
+- 驗證：矩陣 5 列（統計/折線/曲線/長條/甜甜圈）、curve path 含 C bezier；hover 進行中段→浮出「26% 進行中」tooltip、中央維持 46%、他段 opacity 不變。
+
+### 補回 line／curve 的「漸層填充 gradient」篩選項（Yuu 回饋）
+- 新增 `chtUID` 計數＋`<linearGradient>` defs（accent .32→0 直向漸層）；`chtLineSVG` 加 `o.grad`→面積填充從 flat `.14` 改 `url(#gradN)`。
+- 接進 chtChart line／curve 分支、LIVE initial/bools（新增「漸層填充 gradient」勾選）/render、CHT_BOOL_SCOPE（scope `['line','curve']`）。
+- 驗證：line/curve 顯示該勾選、勾選後 area fill=url(#chtGrad1) 且有 linearGradient def；bar/stat/donut 自動隱藏此項。
 
 ---
 

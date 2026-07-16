@@ -2276,7 +2276,7 @@
 .cht-plot svg{display:block;}
 .cht-guide{stroke:var(--line-strong);stroke-width:1;stroke-dasharray:3 3;pointer-events:none;}
 .cht-hdot{fill:var(--accent);stroke:var(--panel);stroke-width:1.6;pointer-events:none;}
-.cht-seg{cursor:pointer;transition:stroke-width .15s,opacity .15s;}
+.cht-seg{cursor:default;}
 .cht-bhl{fill:var(--accent);pointer-events:none;}
 .cht-axis{font-size:8px;fill:var(--muted);font-variant-numeric:tabular-nums;}
 .cht-tip{position:absolute;transform:translate(-50%,calc(-100% - 9px));background:var(--ink);color:var(--canvas);
@@ -6849,6 +6849,7 @@ function buildArticleCard(view){
   const CHT_XCATS=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月']; // 折線 x 類別
   const CHT_BAR_CATS=['週一','週二','週三','週四','週五','週六','週日'];        // 長條 x 類別
   const SVGNS='http://www.w3.org/2000/svg';
+  let chtUID=0; // 漸層填充 <linearGradient> 唯一 id 計數
 
   /* --- 座標軸留白：yaxis 開→左側留數值刻度、xaxis 開→底部留類別 --- */
   function chtPad(o){return {L:o.yaxis?26:6, R:6, T:6, B:o.xaxis?15:6};}
@@ -6892,13 +6893,15 @@ function buildArticleCard(view){
     const pts=chtPtsBox(data,box);
     const mx=Math.max.apply(null,data),mn=Math.min.apply(null,data);
     const d=o.smooth?chtSmoothPath(pts):pts.map((pt,i)=>(i?'L':'M')+pt[0].toFixed(1)+' '+pt[1].toFixed(1)).join(' ');
+    const gid=o.grad?('chtGrad'+(++chtUID)):null; // 漸層填充唯一 id
     let s='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="折線圖：近 '+data.length+' 期呈上升趨勢">';
+    if(gid)s+='<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".32"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>';
     if(o.grid)for(let i=0;i<4;i++){ // 4 條水平淡格線（--line）
       const y=(box.y+i*box.h/3).toFixed(1);
       s+='<line x1="'+box.x+'" y1="'+y+'" x2="'+(box.x+box.w)+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"/>';
     }
     if(o.area) // 面積填充：折線閉合到底邊，accent 半透明
-      s+='<path d="'+d+' L'+pts[pts.length-1][0].toFixed(1)+' '+(box.y+box.h)+' L'+pts[0][0].toFixed(1)+' '+(box.y+box.h)+' Z" fill="var(--accent)" fill-opacity=".14" stroke="none"/>';
+      s+='<path d="'+d+' L'+pts[pts.length-1][0].toFixed(1)+' '+(box.y+box.h)+' L'+pts[0][0].toFixed(1)+' '+(box.y+box.h)+' Z" '+(gid?'fill="url(#'+gid+')"':'fill="var(--accent)" fill-opacity=".14"')+' stroke="none"/>';
     s+='<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
     const ticks=[mx,Math.round(mx-(mx-mn)/3),Math.round(mn+(mx-mn)/3),mn]; // y 刻度由大到小
     s+=chtAxisSVG(o,box,ticks,CHT_XCATS.slice(0,data.length),pts.map(pt=>pt[0]));
@@ -6994,23 +6997,19 @@ function buildArticleCard(view){
     if(o.center)s+='<text x="60" y="58" class="cht-donut-num" text-anchor="middle">46%</text><text x="60" y="75" class="cht-donut-sub" text-anchor="middle">完成率</text>';
     return s+'</svg>';
   }
-  /* 甜甜圈 hover：滑到某段→該段加粗、其餘淡出；若有中央數字則中央改顯示該段 label＋% */
-  function chtDonutHover(box,center){
+  /* 甜甜圈 hover：跟折線／長條一樣浮 .cht-tip tooltip（label＋%），不動中央數字、不 focus 段 */
+  function chtDonutHover(box){
     const segs=[...box.querySelectorAll('.cht-seg')];if(!segs.length)return;
-    const numEl=box.querySelector('.cht-donut-num'),subEl=box.querySelector('.cht-donut-sub');
-    const defNum=numEl?numEl.textContent:'',defSub=subEl?subEl.textContent:'';
+    box.style.position='relative';
+    const tip=ce('div','cht-tip');box.appendChild(tip);
     segs.forEach((c,i)=>{
       const g=CHT_DONUT_SEGS[i];
-      c.addEventListener('mouseenter',()=>{
-        segs.forEach((o,j)=>{o.setAttribute('stroke-width',j===i?'19':'13');o.style.opacity=j===i?'1':'.28';});
-        if(numEl){numEl.textContent=g.v+'%';numEl.setAttribute('fill','var('+g.c+')');}
-        if(subEl)subEl.textContent=g.k;
-      });
-      c.addEventListener('mouseleave',()=>{
-        segs.forEach(o=>{o.setAttribute('stroke-width','15');o.style.opacity='1';});
-        if(numEl){numEl.textContent=defNum;numEl.setAttribute('fill','var(--ink)');}
-        if(subEl)subEl.textContent=defSub;
-      });
+      const move=(e)=>{const r=box.getBoundingClientRect();
+        tip.innerHTML='<b>'+g.v+'%</b><span>'+g.k+'</span>';
+        tip.style.left=(e.clientX-r.left)+'px';tip.style.top=(e.clientY-r.top)+'px';tip.classList.add('on');};
+      c.addEventListener('mouseenter',move);
+      c.addEventListener('mousemove',move);
+      c.addEventListener('mouseleave',()=>tip.classList.remove('on'));
     });
   }
   /* 圖例：重用 .tg 原子（v-soft i-neutral），前置 .cht-dot 色點綁各系列色 token */
@@ -7042,11 +7041,13 @@ function buildArticleCard(view){
       box.appendChild(chtLineNode({w:s?170:340,h:s?76:150,
         area:o.area===undefined?true:o.area,
         grid:o.grid===undefined?!s:o.grid,
+        grad:!!o.grad,
         xaxis:!!o.xaxis,yaxis:!!o.yaxis,interactive:!!o.interactive}));
     }else if(variant==='curve'){ // 曲線＝折線的平滑版（Catmull-Rom），選項沿用 line
       box.appendChild(chtLineNode({w:s?170:340,h:s?76:150,smooth:true,
         area:o.area===undefined?true:o.area,
         grid:o.grid===undefined?!s:o.grid,
+        grad:!!o.grad,
         xaxis:!!o.xaxis,yaxis:!!o.yaxis,interactive:!!o.interactive}));
     }else if(variant==='bar'){
       box.appendChild(chtBarNode({w:s?170:340,h:s?76:150,
@@ -7055,7 +7056,7 @@ function buildArticleCard(view){
     }else{ // donut
       const center=o.center===undefined?true:o.center;
       box.innerHTML=chtDonutSVG({center});
-      chtDonutHover(box,center); // 滑段高亮＋（有中央數字時）中央改顯示該段 label＋%
+      chtDonutHover(box); // 滑段浮 tooltip（同折線／長條）
       if(o.legend===undefined?!s:o.legend)box.appendChild(chtLegend());
     }
     return box;
@@ -7071,7 +7072,7 @@ function buildArticleCard(view){
      mountLive 控制列只建一次，故在 render 時依 label 文字比對、隱藏非當前 variant 的勾選項 */
   const CHT_BOOL_SCOPE={
     '趨勢 trend':'stat','單位 unit':'stat',
-    '面積填充 area':['line','curve'],'格線 grid':['line','curve'],'X 軸月份':['line','curve'],'Y 軸數值':['line','curve'],
+    '面積填充 area':['line','curve'],'漸層填充 gradient':['line','curve'],'格線 grid':['line','curve'],'X 軸月份':['line','curve'],'Y 軸數值':['line','curve'],
     '第二系列 series2':'bar','數值標 values':'bar','X 軸星期':'bar','Y 軸數量':'bar',
     '中央數字 center':'donut','圖例 legend':'donut'
   };
@@ -7133,13 +7134,13 @@ function buildArticleCard(view){
     mountLive(sl,{
       initial:{variant:'line',size:'m',
         statTrend:true,statUnit:false,
-        lineArea:true,lineGrid:true,lineXcat:true,lineYval:true,
+        lineArea:true,lineGrid:true,lineXcat:true,lineYval:true,lineGrad:false,
         barSeries2:true,barVals:false,barXcat:true,barYval:true,
         donutCenter:true,donutLegend:true},
       segs:[{key:'variant',label:'Variant',options:['stat','line','curve','bar','donut'],labels:['統計數字','折線','曲線','長條','甜甜圈']},
             {key:'size',label:'Size',options:['m','s'],labels:['標準','精簡']}],
       bools:[{key:'statTrend',label:'趨勢 trend'},{key:'statUnit',label:'單位 unit'},
-             {key:'lineArea',label:'面積填充 area'},{key:'lineGrid',label:'格線 grid'},{key:'lineXcat',label:'X 軸月份'},{key:'lineYval',label:'Y 軸數值'},
+             {key:'lineArea',label:'面積填充 area'},{key:'lineGrad',label:'漸層填充 gradient'},{key:'lineGrid',label:'格線 grid'},{key:'lineXcat',label:'X 軸月份'},{key:'lineYval',label:'Y 軸數值'},
              {key:'barSeries2',label:'第二系列 series2'},{key:'barVals',label:'數值標 values'},{key:'barXcat',label:'X 軸星期'},{key:'barYval',label:'Y 軸數量'},
              {key:'donutCenter',label:'中央數字 center'},{key:'donutLegend',label:'圖例 legend'}],
       boolLabel:'選項（依圖型）',
@@ -7148,8 +7149,8 @@ function buildArticleCard(view){
         const stage=ce('div','cht-live-stage');
         let node;
         if(st.variant==='stat')node=chtChart('stat',st.size,{title:true,trend:st.statTrend?'up':null,unit:st.statUnit});
-        else if(st.variant==='line')node=chtChart('line',st.size,{area:st.lineArea,grid:st.lineGrid,xaxis:st.lineXcat,yaxis:st.lineYval,interactive:true,wide:true});
-        else if(st.variant==='curve')node=chtChart('curve',st.size,{area:st.lineArea,grid:st.lineGrid,xaxis:st.lineXcat,yaxis:st.lineYval,interactive:true,wide:true});
+        else if(st.variant==='line')node=chtChart('line',st.size,{area:st.lineArea,grad:st.lineGrad,grid:st.lineGrid,xaxis:st.lineXcat,yaxis:st.lineYval,interactive:true,wide:true});
+        else if(st.variant==='curve')node=chtChart('curve',st.size,{area:st.lineArea,grad:st.lineGrad,grid:st.lineGrid,xaxis:st.lineXcat,yaxis:st.lineYval,interactive:true,wide:true});
         else if(st.variant==='bar')node=chtChart('bar',st.size,{series2:st.barSeries2,vals:st.barVals,xaxis:st.barXcat,yaxis:st.barYval,interactive:true,wide:true});
         else node=chtChart('donut',st.size,{center:st.donutCenter,legend:st.donutLegend});
         const tile=ce('div','cht-tile'+(st.variant==='line'||st.variant==='curve'||st.variant==='bar'?' cht-tile-wide':''));tile.appendChild(node);
