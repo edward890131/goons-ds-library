@@ -6,6 +6,23 @@
 
 ---
 
+## 2026-07-16（八）　Batch 2：Basic 17 顆元件內部值接 token + 元件 bug 修正
+
+### Bug 修正（品牌改黑後的連帶問題）
+- **深色模式 solid/active/checked 文字消失**：tab active(v-contained)、tag solid(i-brand/i-danger)、checkbox 打勾/dash、tab count 的硬寫 `#fff` → `var(--primary-on)`/`var(--danger-on)`（會隨主題翻轉：淺色白字、深色深字）。已於深色實測：tag solid 亮底深字、checkbox 深勾亮底。
+- **action-menu 面板防塌**：`.am-panel` 加 `height:max-content` + `flex:0 0 auto` + item `flex:0 0 auto`，強化巢狀 flex/grid 內不被壓縮。
+
+### Batch 2 tokenization（多 agent 並行分析 + 序列套用）
+用 5 個並行 agent 分析 Basic 17 顆元件的硬寫值,回傳精確整行編輯,主控序列套用(避免多 agent 同寫衝突),共 **~126 筆**：
+- **font-size → `--fs-h*`**（吸附 v0 字級階）、**border-radius → `--r-*`**、**padding/margin/gap → `--sp-*`**（v0 較緊尺標）。
+- 涵蓋:button/input/dropdown/selector/tag/tab/icon/notification/tooltip/skeleton/loader/number/menu/action-menu/breadcrumb/pagination/image。共用尺寸類 `.sz-s/m/l` 一併接上。
+- 顏色早已 token 化,故不動;≤2-3px 微值、width/height/border 寬度、line-height、0 值保留。
+- 驗證:node OK、button/notification computed 值正確解析(桌面 sz-m 16/14/8、sz-l 16/16/10;響應式 mobile 自動變 12/15/8)、0 console error、雙主題無破版。
+
+**待辦**：Batch 3(Complex 12)／Batch 4(Card 4)／Batch 5(Table&Chart 5) 同法接 token。
+
+---
+
 ## 2026-07-16（七）　數值字體一致（.m-val 補 mono）+ 預覽 Sans/Mono 切換
 
 揪出真正的不一致（前幾次沒抓到）：
