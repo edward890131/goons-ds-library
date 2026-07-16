@@ -6,6 +6,30 @@
 
 ---
 
+## 2026-07-16（二）　Token 版型精簡 + 品牌色互換 + typography 中英/device
+
+依 Yuu 回饋再調整：
+
+### 版型（充分利用左右寬度、大幅縮短頁面）
+- **L1 色彩表** 由一列一色 → **水平 swatch grid**（auto-fill，桌機約 6 欄／列）。Neutral 從 11 列變 2 列。
+- **框架索引 tab** 由 139 列值表 → **分類索引卡片**（水平排列）：只列「共哪幾類 · 各類要產出哪些 token 名稱」，不列值（值看 L1／L2）。
+
+### Typography 重構
+- 複合樣式表新增 **device 切換**（🖥/▭/▯ tab）改字級欄；補上 **英文行高**（`--lh-en-h*`），中英並列。
+- **字距抽成獨立組別**（Letter Spacing 字距，水平 grid），不再包在 typography 內。
+
+### 品牌色互換
+- **主色改深黑**（`--c-brand-*` 9 階黑，500=#1C1C20；primary 動作＝黑按鈕白字）。暗色模式翻成亮端（`brand-200` 亮按鈕深字），on-primary 自動切換。
+- **副色改品牌藍**（`--c-brand2-*`＝原 #3358D4 indigo）。元件端 secondary 仍走中性色（要不要接藍待確認）。
+
+### 斷點
+- **wide 1280 → 1920**。
+
+### 驗證
+- node --check 通過；Playwright：色表 6 欄×2 列、typo 無溢出、device 切換（48↔32px）、框架索引 17 卡/139 chip 無值、主色黑（按鈕 rgb(28,28,32) 白字）、暗色翻亮、匯出含 fs/fw/lh/lh-en/ls + 響應式 media、**0 console error**。
+
+---
+
 ## 2026-07-16　Token 補齊框架缺口 + 框架索引 tab
 
 對照 `../ds-framework/themes/_base.theme.yaml` 原始定義，補齊網頁上遺漏的 token，並讓 Design Token 頁能索引框架完整定義。
