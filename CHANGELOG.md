@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-07-16（七）　數值字體一致（.m-val 補 mono）+ 預覽 Sans/Mono 切換
+
+揪出真正的不一致（前幾次沒抓到）：
+
+- **`.m-val` 漏綁 mono**：Breakpoints／Grid 的值（如「360px」「4 欄 gutter 16」）落在 `.tok-mode` scope 外 → fallback 成 Geist Sans；其他 token 值（hex/字級）都 mono，就它 sans。把 `.tok-mode .m-val` 改為全域 `.m-val{font-family:var(--font-mono)}`，所有數值統一 Geist Mono。
+- **預覽加 Sans/Mono 字體切換**：typo 預覽原本固定 Geist Sans（因為預覽的是標題樣式）；新增第三組 tab **Sans／Mono**，可即時看數字在 Geist Mono 下的樣子（打「000」→ 零與底部 Geist Mono 示意一致）。
+- **`--font-mono` 補 CJK fallback**（PingFang TC／Noto Sans TC）：mono 情境含中文時不再掉到系統等寬醜字。
+
+**釐清**：Geist Mono 字檔本身正確（官方 latin woff2、每個英數字元等寬無 fallback）。之前的「零不一樣」＝該用 mono 的數值被 sans 渲染（已修）＋ 預覽是標題樣式故為 sans（現可切 Mono）。
+
+---
+
 ## 2026-07-16（六）　全站字體統一（消除 Arial）+ Geist Mono 驗證
 
 - **全域字體繼承**：加 `input,button,select,textarea{font-family:inherit}`。原本 72 個表單控制項（色票 input、圖示按鈕等）fallback 到瀏覽器預設 **Arial**；補後整頁只剩 **Geist / Geist Mono**（實測 arial=0），數字/文字全站一致。
