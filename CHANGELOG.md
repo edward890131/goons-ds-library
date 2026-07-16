@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-07-16（十四）　右緣本頁目錄（Notion 式錨點）
+
+- 每個元件頁右側加「本頁目錄」：滑鼠靠近右緣（<130px 露把手提示、<22px 浮出面板）→ 顯示浮動目錄；點項目 smooth scroll 到該段落；捲動時當前段落高亮。
+- 目錄內容：`.block>h2`＝主段落（lv1）＋ `.famhead .fz`＝家族子元件小標（lv2 縮排）；`renderView` 換頁後重建。
+- 段落 <2 的頁面（需求匯總／Design Token）自動隱藏；≤900px 行動版隱藏。
+- **不放實體 overlay**：用 document mousemove 偵測右緣 x 座標，避免熱區蓋到 `.main` 捲軸拖曳。
+- 驗證：price 頁 4 段、input 頁 3 段＋4 個 lv2 家族子項、點擊 scroll（0→1312）、summary 頁 dock display:none。
+
+---
+
 ## 2026-07-16（十三）　表格真正修好：class 撞名（.tbl-row）害整張表變 grid
 
 ### 真因（前一版沒抓到）

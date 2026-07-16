@@ -241,6 +241,23 @@
   .container{max-width:none;} /* 右側內容填滿寬度 */
   /* ---- 桌機側邊欄收合（漢堡切換）＋收合時滑鼠移到左緣 peek 顯示 ---- */
   .edge-trigger{display:none;}
+  /* ===== 右緣本頁目錄（Notion 式錨點）===== */
+  .toc-dock{position:fixed;top:58px;right:0;bottom:0;z-index:38;pointer-events:none;}
+  .toc-handle{position:absolute;top:50%;right:6px;transform:translateY(-50%);width:4px;height:52px;border-radius:var(--r-pill);background:var(--line-strong);opacity:0;transition:opacity .2s;}
+  .toc-dock.hint .toc-handle{opacity:.5;}
+  .toc-dock.peek .toc-handle{opacity:0;}
+  .toc-panel{position:absolute;top:20px;right:14px;width:250px;max-height:calc(100% - 40px);overflow-y:auto;pointer-events:auto;
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 14px 36px rgba(0,0,0,.14);
+    padding:var(--sp-4);opacity:0;visibility:hidden;transform:translateX(10px);transition:opacity .18s,transform .18s,visibility .18s;}
+  .toc-panel.on{opacity:1;visibility:visible;transform:translateX(0);}
+  .toc-panel .toc-head{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 var(--sp-3);padding:0 var(--sp-2);}
+  .toc-item{display:block;width:100%;text-align:left;border:none;background:transparent;cursor:pointer;font-family:var(--font-sans);
+    font-size:var(--fs-h9);color:var(--muted);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-sm);line-height:1.4;
+    border-left:2px solid transparent;transition:background .12s,color .12s;}
+  .toc-item:hover{background:var(--canvas);color:var(--ink);}
+  .toc-item.lv2{padding-left:var(--sp-6);font-size:var(--fs-h10);color:var(--faint);}
+  .toc-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--i-primary-tint);}
+  @media(max-width:900px){.toc-dock{display:none!important;}}
   @media(min-width:901px){
     .shell.nav-collapsed .layout{grid-template-columns:1fr;} /* sidebar/edge-trigger 皆 position:fixed 出流，只剩 .main 在 grid 內 → 單軌填滿（不能用 0 1fr，否則 main 遞補進 0 寬軌被壓爛）*/
     .shell.nav-collapsed .sidebar{position:fixed;top:58px;left:0;bottom:0;width:var(--sb);z-index:40;
@@ -2620,6 +2637,8 @@
     <main class="main"><div class="container" id="view"></div>
       <div class="container"><footer class="site-footer">© 2026 GOONS DESIGN, all rights reserved. Powered by 最厲害的 Yuu</footer></div>
     </main>
+    <!-- 右緣本頁目錄（滑到右緣浮出，點擊 scroll 到段落）-->
+    <div class="toc-dock" id="tocDock"><span class="toc-handle" aria-hidden="true"></span><nav class="toc-panel" id="tocPanel" aria-label="本頁目錄"></nav></div>
   </div>
 </div>
 
@@ -8297,6 +8316,7 @@ function buildScheduleChart(view){
     document.querySelectorAll('.nav-item').forEach(el=>el.setAttribute('aria-current',el.dataset.id===id));
     if(window.innerWidth<=900)document.getElementById('shell').classList.remove('nav-open'); // 窄螢幕選完自動收起
     const _m=document.querySelector('.main');if(_m)_m.scrollTo(0,0); // app-shell：捲 main 容器（非 document）
+    buildTOC(); // 換頁後重建右緣本頁目錄
   }
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
     const tpin=document.createElement('button');tpin.className='nav-item nav-pin';tpin.dataset.id='tokens';tpin.setAttribute('aria-current',current==='tokens');
@@ -8325,6 +8345,44 @@ function buildScheduleChart(view){
     function cur(){const a=document.documentElement.getAttribute('data-theme');return a||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
     function set(t){document.documentElement.setAttribute('data-theme',t);knob.innerHTML=t==='dark'?MOON:SUN;}
     set('light');btn.onclick=()=>set(cur()==='dark'?'light':'dark');})();
+
+  /* ===== 右緣本頁目錄（滑到右緣浮出 → 點擊 scroll 到段落；含當前段落高亮）===== */
+  const tocDock=document.getElementById('tocDock'), tocPanel=document.getElementById('tocPanel');
+  let tocT, tocItems=[];
+  function tocShow(){clearTimeout(tocT);tocPanel.classList.add('on');tocDock.classList.add('peek');}
+  function tocHide(){clearTimeout(tocT);tocT=setTimeout(()=>{tocPanel.classList.remove('on');tocDock.classList.remove('peek');},180);}
+  function buildTOC(){
+    const view=document.getElementById('view');
+    tocItems=[];
+    view.querySelectorAll('.block > h2, .famhead').forEach(el=>{ // .block>h2＝主段落（lv1）、.famhead＝家族子元件小標（lv2）
+      if(el.classList.contains('famhead')){const t=el.querySelector('.fz');if(t)tocItems.push({el,lv:2,txt:t.textContent.trim()});}
+      else tocItems.push({el,lv:1,txt:el.textContent.trim()});
+    });
+    if(tocItems.length<2){tocDock.style.display='none';tocPanel.classList.remove('on');tocPanel.innerHTML='';return;} // 段落太少不顯示
+    tocDock.style.display='';
+    tocPanel.innerHTML='<p class="toc-head">本頁目錄</p>';
+    const main=document.querySelector('.main');
+    tocItems.forEach(it=>{
+      const b=document.createElement('button');b.className='toc-item'+(it.lv===2?' lv2':'');b.textContent=it.txt;
+      b.onclick=()=>{const r=it.el.getBoundingClientRect(),mr=main.getBoundingClientRect();main.scrollTo({top:r.top-mr.top+main.scrollTop-72,behavior:'smooth'});};
+      it.btn=b;tocPanel.appendChild(b);
+    });
+    if(main._tocScroll)main.removeEventListener('scroll',main._tocScroll); // 舊 listener 先移除避免累積
+    main._tocScroll=()=>{const mr=main.getBoundingClientRect();let cur=0;
+      tocItems.forEach((it,i)=>{if(it.el.getBoundingClientRect().top-mr.top<120)cur=i;});
+      tocItems.forEach((it,i)=>it.btn.classList.toggle('active',i===cur));};
+    main.addEventListener('scroll',main._tocScroll);main._tocScroll();
+  }
+  // 用 mousemove 偵測右緣（不放實體 overlay，避免擋到 .main 捲軸拖曳）
+  document.addEventListener('mousemove',e=>{
+    if(getComputedStyle(tocDock).display==='none')return;
+    const dist=window.innerWidth-e.clientX, belowBar=e.clientY>64;
+    tocDock.classList.toggle('hint',dist<130&&belowBar); // 靠近右緣先露出把手提示
+    const pr=tocPanel.getBoundingClientRect();
+    const overPanel=tocPanel.classList.contains('on')&&e.clientX>=pr.left-10&&e.clientX<=pr.right+6&&e.clientY>=pr.top-10&&e.clientY<=pr.bottom+10;
+    if((dist<22&&belowBar)||overPanel)tocShow();
+    else if(tocPanel.classList.contains('on'))tocHide();
+  });
 
   /* 重整／深連結：從 hash 還原檢視（無效或無 hash → summary），並讓側邊欄展開對應群組 */
   current=hashId()||'summary';
