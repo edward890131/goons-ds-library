@@ -6,6 +6,12 @@
 
 ---
 
+## 2026-07-16（十六・撤除）　移除元件組合示範頁
+
+- Yuu 覺得視覺不夠好，整頁移除（`git revert` 前一版 Batch 1）：拿掉側邊欄「Showcase 組合示範」群組＋入口、renderView dispatch、`renderCompose`/`composeShop`＋`.cmp-*` CSS。組合示範方向暫緩，日後要做再重規劃視覺。
+
+---
+
 ## 2026-07-16（十五）　Chart：新增曲線圖 curve ＋ 甜甜圈 hover 互動
 
 ### 曲線圖 curve（第 5 型態）
