@@ -658,3 +658,23 @@ Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、
 - **匯出頁**（`renderSummary` 重寫）：① 元件牌卡不再攤平，**多一層「四大分類」**（比照側邊欄 Basic/Complex/Card/Table&Chart，`.sumcat` 可折疊、預設收合、header 帶 選取/總數 pill）。② **三種版型**：`accordion 分類展開`（原可展開牌卡＋Live）／`list 緊湊清單`（一列一元件、點列跳頁）／`grid 分組網格`（小磚＋勾選＋變體數）。③ AI toggle **右側加方案 tab**（`.sum-tabs`）切換三版型；`sumLayout` 跨切頁持久。SUMSEL／AI 建議／JSON 匯出邏輯共用，切版型與 AI 皆 `renderBody()` 重繪、分類 pill 即時連動。
 
 **驗證**：node --check OK、Playwright 0 error。table pager=5 顆 pg-btn／cellTypes 有 dropdown＋文字按鈕且無爆版；chart Live 寬 380、X/Y 軸 label、hover 顯示 tooltip（78／6月）＋單一 hover-dot；匯出頁 tab 在 AI 右側、4 分類（18/12/4/5）預設收合、三版型各 39 項、勾選連動 total 786↔642。
+
+---
+
+## 2026-07-16　Design Token 系統（v0 種子）＋網站 chrome 全 token 化
+
+依 DS Framework L1 Primitive → L2 Semantic 架構、v0 by Vercel 視覺為種子，建立整套預設 token，並把網站自身 chrome 全數接上 token。分批進行、每批 Yuu review。
+
+**Batch 1 — Token 地基 + Design Token 頁**
+- 內嵌 GeistSans/GeistMono（Latin 變體字 base64；CJK 走系統字 fallback），離線可用。
+- L1 Primitive：neutral 11 階／brand 4／feedback（success/warning/error/info）／radius（md 8 預設＋pill）／spacing 8-base 9 階／typography H1–H10＋weight＋line-height／elevation／motion。
+- L2 Semantic：surface/text/border/action/danger/sec/feedback，light + dark（dark 覆寫語意層＋品牌 accent 提亮）；tint 一律 color-mix 跟著品牌色走。
+- 舊 28 個 CSS 變數改為 semantic 別名 → 全站零改動即套上 v0 皮（單色底＋品牌藍 accent、圓角折衷 8px、按鈕 pill）。
+- 新增 🎨 Design Token 頁：79 列可即時手調、Neutral/Brand/Feedback 層層下傳、複製 Token CSS、重設；routing/hashId/nav pin 全接。
+
+**Batch 6 — 網站自身 chrome 全 token 化**
+- 顏色：scrollbar → --line-strong；#fff → --primary-on／--c-neutral-0；陰影 rgba(0,0,0) → color-mix(var(--ink))（dark 不再死黑）。
+- 圓角：字面值 8/9/999/5/6/7px → --r-md/--r-pill/--r-sm。
+- 字級：topbar/sidebar/nav/headings/dial/blocks/vpanel/mgrid/eyebrow/footer/匯出頁/Design Token 頁的 font-size 全吸附到 H1–H10（13.5→h8、12.5→h9、11→h9…，Yuu 定案「吸附到尺標」）。
+- 間距：padding/margin/gap ≥7px 吸附到 8-base（7/10→sp2、20→sp5、34→sp6…；≤6px 光學微調保留；main 下捲 96px 為標註例外）。
+- 明暗兩模式驗過、0 console error。元件內部 CSS（.btn/.cbx/.tabi/.nt-/.tg…）留待 Batch 2–5。
