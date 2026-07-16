@@ -645,3 +645,16 @@ Card 卡片群（🗂️）5 顆一次做完，5 個 fable agent 平行產出、
 **整合手法**：各 agent 寫 `<id>.css`+`<id>.js`（不碰主檔），主控 integrate2.js 依錨點插入＋中央註冊（DIAL_SPECS/BUILD/DIAL_PAGE/NAV st）。零 icon/class/fn 命名衝突、schedule-chart 0 處 sch-、calendar 0 處 Date。
 
 **驗證**：node --check OK、Playwright 0 console error。5 頁矩陣格數對（6/8/9/6/6）＋ Live ＋ SVG 圖表 render（line 面積/bar 雙系列/donut 四段環/月曆/甘特/時間軸皆正確）；匯出頁 34/715 → **39/786**。**四大組（Basic 17／Complex 12／Card 4／Table&Chart 5）全數 ready，整套 DS 陳列完成。**
+
+---
+
+## 2026-07-16　Table/Chart 打磨＋側邊欄去綠點＋匯出頁分類三版型
+
+四項同步調整（單檔 self-contained HTML，Playwright 全驗、0 console error）。
+
+- **Table**：① 分頁改用 library **Pagination 元件**（`pgBar('numbered','s')`＝`pg-btn`＋`pgArrow`），不再自畫 `.btn`。② 新增 **Cell Types 欄位型別** 區塊＋ `tblTable({cellTypes:true})`：資料格新增「**Dropdown**」（重用 `ddField`、可展開選單，`.tbl-celltypes{overflow:visible}` 免裁切）與「**文字按鈕**」（重用 `.btn v-text`）兩型別，連同原文字/Tag/數字共 5 種。
+- **Chart**：① line/bar 改 DOM 節點（`chtLineNode`/`chtBarNode`），新增 **X 軸類別／Y 軸數值** 可各自開關（`chtPad`＋`chtAxisSVG`，line=月份、bar=星期）。② **hover tooltip**：滑到折線/長條顯示該點數值＋類別（`.cht-tip`，色 `--ink/--canvas` 雙主題安全）。③ **端點 dots 改 hover 驅動**：移除永遠顯示的每點圓點，改滑到最近點才出現 dot＋垂直導引。④ 圖表**加寬**（m 300→wide 380／s 170→210；Live/dashboard 用 `wide`）。scope map／Live bools 同步（移 `dots`、加 `lineXcat/lineYval/barXcat/barYval`）。
+- **側邊欄**：`renderNav` 移除每項的**綠點製作狀態** `.dot`（全數 ready，圓圈已無資訊量）。
+- **匯出頁**（`renderSummary` 重寫）：① 元件牌卡不再攤平，**多一層「四大分類」**（比照側邊欄 Basic/Complex/Card/Table&Chart，`.sumcat` 可折疊、預設收合、header 帶 選取/總數 pill）。② **三種版型**：`accordion 分類展開`（原可展開牌卡＋Live）／`list 緊湊清單`（一列一元件、點列跳頁）／`grid 分組網格`（小磚＋勾選＋變體數）。③ AI toggle **右側加方案 tab**（`.sum-tabs`）切換三版型；`sumLayout` 跨切頁持久。SUMSEL／AI 建議／JSON 匯出邏輯共用，切版型與 AI 皆 `renderBody()` 重繪、分類 pill 即時連動。
+
+**驗證**：node --check OK、Playwright 0 error。table pager=5 顆 pg-btn／cellTypes 有 dropdown＋文字按鈕且無爆版；chart Live 寬 380、X/Y 軸 label、hover 顯示 tooltip（78／6月）＋單一 hover-dot；匯出頁 tab 在 AI 右側、4 分類（18/12/4/5）預設收合、三版型各 39 項、勾選連動 total 786↔642。
