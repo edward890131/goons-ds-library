@@ -6,6 +6,14 @@
 
 ---
 
+## 2026-07-16（六）　全站字體統一（消除 Arial）+ Geist Mono 驗證
+
+- **全域字體繼承**：加 `input,button,select,textarea{font-family:inherit}`。原本 72 個表單控制項（色票 input、圖示按鈕等）fallback 到瀏覽器預設 **Arial**；補後整頁只剩 **Geist / Geist Mono**（實測 arial=0），數字/文字全站一致。
+- **Geist Mono 驗證**：比對官方 Google Fonts（`fonts.googleapis.com/css2?family=Geist+Mono`），內嵌的 latin woff2 `or3nQ6H-…FrcdmhHkjko.woff2` 與官方**同一支**、已載入、為真等寬。頁面上「零看起來不同」＝數值用 Geist Mono、預覽/示意文字用 Geist Sans（比例字）的差異，非字體錯誤。
+- Design Token 頁 CSS 確認**全綁 token**（無硬寫色、type 用 `--fs-*`、間距 `--sp-*`），本頁已完整 dogfood DS。
+
+---
+
 ## 2026-07-16（五）　字重/字級對齊 v0 + typo 預覽強化
 
 - **字重全站對齊 v0**：v0 量測顯示標題全用 **600、無 700**。`--fw-h*` 改 600 封頂；並全域把 32 處硬寫重字重（700/680/660/650/640/620）→ **600**，所有頁面標題即時變 v0 感（Geist 本就＝v0 的 GeistSans，已確認載入）。

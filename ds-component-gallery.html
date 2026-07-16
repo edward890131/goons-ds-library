@@ -203,6 +203,8 @@
   .ty-h10{font-size:var(--fs-h10);font-weight:var(--fw-h10);line-height:var(--lh-h10);letter-spacing:var(--ls-h10);}
 
   *{box-sizing:border-box}
+  /* 全域：所有表單控制項繼承 DS 字體（消除瀏覽器預設 Arial，全站數字/文字一致用 Geist）。個別元件另設 mono 者仍優先。 */
+  input,button,select,textarea,optgroup{font-family:inherit;}
   html,body{margin:0;height:100%;}
   body{background:var(--canvas);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;line-height:1.5;overflow:hidden;} /* app-shell：document 不捲，捲動交給 sidebar / main */
 
