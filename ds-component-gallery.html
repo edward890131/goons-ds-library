@@ -258,6 +258,37 @@
   .toc-item.lv2{padding-left:var(--sp-6);font-size:var(--fs-h10);color:var(--faint);}
   .toc-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--i-primary-tint);}
   @media(max-width:900px){.toc-dock{display:none!important;}}
+  /* ===== 元件組合示範頁 ===== */
+  .cmp-tabs{display:inline-flex;gap:var(--sp-1);padding:var(--sp-1);background:var(--panel-2);border-radius:var(--r-pill);margin:0 0 var(--sp-6);}
+  .cmp-tab{display:inline-flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15;border:none;background:transparent;cursor:pointer;padding:var(--sp-2) var(--sp-6);border-radius:var(--r-pill);color:var(--muted);transition:background .14s,color .14s;}
+  .cmp-tab .zh{font-size:var(--fs-h8);font-weight:600;}
+  .cmp-tab .en{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.06em;opacity:.75;}
+  .cmp-tab:hover{color:var(--ink);}
+  .cmp-tab.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1);}
+  .cmp-frame{border:1px solid var(--line-strong);border-radius:var(--r-lg);overflow:hidden;background:var(--canvas);box-shadow:var(--e-lg);}
+  .cmp-frame-bar{display:flex;align-items:center;gap:8px;padding:9px var(--sp-5);background:var(--panel-2);border-bottom:1px solid var(--line);}
+  .cmp-frame-dot{width:10px;height:10px;border-radius:var(--r-pill);background:var(--line-strong);flex:0 0 auto;}
+  .cmp-frame-url{margin-left:var(--sp-3);font-family:var(--font-mono);font-size:var(--fs-h10);color:var(--faint);background:var(--panel);padding:3px var(--sp-4);border-radius:var(--r-pill);border:1px solid var(--line);}
+  .cmp-shop-hd{display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-4) var(--sp-6);background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap;}
+  .cmp-shop-logo{font-family:var(--font-mono);font-weight:600;font-size:var(--fs-h5);color:var(--ink);letter-spacing:-.01em;flex:0 0 auto;}
+  .cmp-shop-logo b{color:var(--accent);}
+  .cmp-shop-nav{display:flex;gap:var(--sp-5);flex:0 1 auto;}
+  .cmp-shop-navlink{font-size:var(--fs-h8);color:var(--muted);cursor:pointer;text-decoration:none;white-space:nowrap;}
+  .cmp-shop-navlink:hover{color:var(--ink);}
+  .cmp-shop-navlink.on{color:var(--ink);font-weight:600;}
+  .cmp-shop-body{padding:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-5);}
+  .cmp-sec-title{display:flex;align-items:baseline;gap:var(--sp-3);margin-top:var(--sp-2);}
+  .cmp-sec-title .zh{font-size:var(--fs-h5);font-weight:600;color:var(--ink);}
+  .cmp-sec-title .en{font-family:var(--font-mono);font-size:var(--fs-h9);color:var(--faint);text-transform:uppercase;letter-spacing:.08em;}
+  .cmp-cat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-4);}
+  .cmp-prod-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-4);}
+  .cmp-prod-grid .pcd-card{width:auto;}
+  .cmp-pg{display:flex;justify-content:center;margin-top:var(--sp-3);}
+  .cmp-ph{padding:64px var(--sp-6);text-align:center;color:var(--muted);}
+  .cmp-ph .em{font-size:40px;margin-bottom:var(--sp-4);}
+  .cmp-ph h3{font-size:var(--fs-h4);color:var(--ink);margin:0 0 var(--sp-2);}
+  .cmp-ph p{max-width:44ch;margin:0 auto;font-size:var(--fs-h8);}
+  @media(max-width:900px){.cmp-cat-row,.cmp-prod-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
   @media(min-width:901px){
     .shell.nav-collapsed .layout{grid-template-columns:1fr;} /* sidebar/edge-trigger 皆 position:fixed 出流，只剩 .main 在 grid 內 → 單軌填滿（不能用 0 1fr，否則 main 遞補進 0 寬軌被壓爛）*/
     .shell.nav-collapsed .sidebar{position:fixed;top:58px;left:0;bottom:0;width:var(--sb);z-index:40;
@@ -2697,6 +2728,9 @@
       {id:'tree-view',name:'Tree View 樹狀',st:'ready'},
       {id:'schedule-chart',name:'Schedule Chart 排程圖',st:'ready'},
       {id:'calendar',name:'Calendar 日曆／時間',st:'ready'},
+    ]},
+    {group:'Showcase 組合示範',emoji:'🖼️',items:[
+      {id:'compose',name:'元件組合示範',st:'ready'},
     ]},
   ];
   const STAT={ready:'已定案',partial:'部分'};
@@ -8339,6 +8373,69 @@ function buildScheduleChart(view){
     };
   }
 
+  /* ===== 元件組合示範頁（tab 切換 電商／儀表板／部落格；全部取用現有元件組合）===== */
+  const CMP_CHEV_R='<svg viewBox="0 0 256 256" fill="currentColor"><path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"/></svg>';
+  function cmpSecTitle(zh,en){const d=ce('div','cmp-sec-title');d.innerHTML='<span class="zh">'+zh+'</span><span class="en">'+en+'</span>';return d;}
+  function cmpPlaceholder(zh,en,batch){const d=ce('div','cmp-ph');d.innerHTML='<div class="em">🚧</div><h3>'+zh+' '+en+'</h3><p>這個組合示意排在 <b>'+batch+'</b>，稍後用同一套元件庫拼出來。</p>';return d;}
+  /* 電商 one-page：header→麵包屑→熱門分類(category-tile)→商品列表(product-card)→分頁器(pagination)，全用現成元件 */
+  function composeShop(host){
+    const frame=ce('div','cmp-frame');
+    frame.innerHTML='<div class="cmp-frame-bar"><span class="cmp-frame-dot"></span><span class="cmp-frame-dot"></span><span class="cmp-frame-dot"></span><span class="cmp-frame-url">goons-store.com</span></div>';
+    /* ---- 站頂 header（重用 .field 搜尋、.btn 收藏/購物車、.tg 數量）---- */
+    const hd=ce('div','cmp-shop-hd');
+    const logo=ce('span','cmp-shop-logo');logo.innerHTML='GOONS<b>Store</b>';hd.appendChild(logo);
+    const nav=ce('nav','cmp-shop-nav');['首頁','服飾','3C','居家','特賣'].forEach((t,i)=>{const a=ce('a','cmp-shop-navlink'+(i===1?' on':''));a.textContent=t;a.href='javascript:void 0';nav.appendChild(a);});hd.appendChild(nav);
+    const sp=ce('div');sp.style.flex='1 1 auto';hd.appendChild(sp);
+    const sf=ce('div','field');sf.style.cssText='width:200px;min-width:0;flex:0 1 200px;';sf.innerHTML=ICON_SEARCH+'<span class="ph">搜尋商品…</span>';hd.appendChild(sf);
+    const wish=ce('button','btn v-text i-secondary sz-m icon-only live');wish.innerHTML=IC_HEART;wish.setAttribute('aria-label','收藏');hd.appendChild(wish);
+    const cart=ce('button','btn v-solid i-primary sz-m live');cart.innerHTML=IC_CART+'<span>購物車 · 3</span>';hd.appendChild(cart);
+    frame.appendChild(hd);
+    /* ---- body ---- */
+    const body=ce('div','cmp-shop-body');
+    // 麵包屑（重用 .bc-*）
+    const bc=ce('div','bc-trail');
+    bc.innerHTML='<a class="bc-item" href="javascript:void 0">首頁</a><span class="bc-sep">'+CMP_CHEV_R+'</span>'
+      +'<a class="bc-item" href="javascript:void 0">服飾配件</a><span class="bc-sep">'+CMP_CHEV_R+'</span>'
+      +'<span class="bc-item bc-current">包款</span>';
+    body.appendChild(bc);
+    // 熱門分類（重用 category-tile：3 icon 磚 + 1 image 磚）
+    body.appendChild(cmpSecTitle('熱門分類','Categories'));
+    const catRow=ce('div','cmp-cat-row');
+    [ ['icon',0],['icon',1],['icon',2],['image',3] ].forEach(([v,i])=>catRow.appendChild(catTile(v,i===1?'active':'default',{data:CAT_DATA[i],live:true})));
+    body.appendChild(catRow);
+    // 本週嚴選 商品（重用 product-card：一般/折扣/特價/售完）
+    body.appendChild(cmpSecTitle('本週嚴選','Featured'));
+    const grid=ce('div','cmp-prod-grid');
+    const prods=[
+      {name:'經典帆布托特包・大容量',price:'normal',src:PCD_IMG.bag,badge:false,rating:4.5,count:128,wished:true},
+      {name:'羊毛混紡圍巾・霧灰',price:'discount',src:PCD_IMG.scarf,badgeText:'熱門',badgeIntent:'danger',rating:4.8,count:96},
+      {name:'不鏽鋼保溫瓶 500ml',price:'sale',src:PCD_IMG.bottle,badgeText:'新品',badgeIntent:'brand',rating:4.2,count:54},
+      {name:'限量聯名帆布包・已完售',state:'soldout',src:PCD_IMG.bag,rating:4.6,count:212},
+    ];
+    prods.forEach(pd=>grid.appendChild(pcdCard('vertical',pd.state||'default',Object.assign({live:true},pd))));
+    body.appendChild(grid);
+    // 分頁器（重用 pagination）
+    const pg=ce('div','cmp-pg');pg.appendChild(pgBar('numbered','m',{total:8,current:1,onNav:function(){}}));
+    body.appendChild(pg);
+    frame.appendChild(body);
+    host.appendChild(frame);
+  }
+  function renderCompose(view){
+    view.innerHTML='<p class="eyebrow">Showcase · 組合示範</p><h1>元件組合示範</h1>'
+      +'<p class="lede">把設計系統的元件<b>組成真實頁面</b>——同一套元件庫怎麼拼出不同類型網站。下方 tab 切換 <b>電商 / 儀表板 / 部落格</b> 三種常見網站的簡易 one-page 示意；每個區塊都<b>直接取用現有元件</b>（product-card／category-tile／table／chart／button…），不重畫 primitive。</p>'
+      +'<div class="head-rule"></div><div class="cmp-tabs" id="cmpTabs"></div><div class="cmp-stage" id="cmpStage"></div>';
+    const TABS=[{k:'shop',zh:'電商',en:'E-commerce'},{k:'dash',zh:'儀表板',en:'Dashboard'},{k:'blog',zh:'部落格',en:'Blog'}];
+    let cur='shop';
+    const tabsEl=view.querySelector('#cmpTabs'), stage=view.querySelector('#cmpStage');
+    function renderTabs(){tabsEl.innerHTML='';TABS.forEach(t=>{const b=ce('button','cmp-tab'+(t.k===cur?' on':''));b.innerHTML='<span class="zh">'+t.zh+'</span><span class="en">'+t.en+'</span>';b.onclick=()=>{if(cur===t.k)return;cur=t.k;renderTabs();renderStage();};tabsEl.appendChild(b);});}
+    function renderStage(){stage.innerHTML='';
+      if(cur==='shop')composeShop(stage);
+      else if(cur==='dash')stage.appendChild(cmpPlaceholder('儀表板','Dashboard','Batch 2'));
+      else stage.appendChild(cmpPlaceholder('部落格','Blog','Batch 3'));
+    }
+    renderTabs();renderStage();
+  }
+
   /* ===== 檢視切換 ===== */
   let current='summary';
   /* URL hash 記住當前檢視：重新整理／深連結會停在原元件頁，不跳回匯出需求 */
@@ -8351,6 +8448,7 @@ function buildScheduleChart(view){
     const item=NAV.flatMap(g=>g.items).find(x=>x.id===id);
     if(id==='summary'){renderSummary(view);}
     else if(id==='tokens'){renderTokens(view);}
+    else if(id==='compose'){renderCompose(view);}
     else if(id==='button'){view.innerHTML=buttonViewHTML();renderSpecStrip();renderAxes();renderMatrix();renderSizes();renderBooleans();renderCount();renderLive();}
     else if(BUILD[id]){BUILD[id](view);}
     else{view.innerHTML=`<div class="placeholder"><div class="em">🧩</div><h2>${item.name}</h2><p>這顆元件還沒定案。先在已完成的元件上把「元件該多複雜」的模式定下來，我再用同一套方式套到這裡。</p><div class="axhint">預定軸：variant × state × size（＋各自的內容軸）</div></div>`;}

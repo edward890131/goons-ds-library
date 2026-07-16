@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-07-16（十六）　元件組合示範頁 Batch 1：頁面骨架 ＋ 電商 one-page
+
+- 側邊欄最下新增群組「🖼️ Showcase 組合示範」→ 入口 `元件組合示範`（id `compose`）；renderView 加 dispatch。
+- 頁面：eyebrow/h1/lede/head-rule ＋ tab 切換（電商／儀表板／部落格）；儀表板/部落格先放 Batch 2/3 placeholder。
+- **電商 one-page**（`composeShop`，全部取用現成元件、零重畫 primitive）：瀏覽器框（三點＋假 url）→ 站頂 header（logo＋nav＋`.field` 搜尋＋`.btn` 收藏/購物車＋數量）→ 麵包屑（`.bc-*`）→ 熱門分類（`catTile` 3 icon＋1 image 磚）→ 本週嚴選（`pcdCard` 一般/折扣/特價/售完，含評分星/badge/收藏/加入購物車）→ 分頁器（`pgBar`）。
+- 驗證：nav 新群組＋入口、3 tab 切換、4 分類磚＋4 商品卡（含 soldout 灰階＋已售完 disabled）、麵包屑/分頁器、5 圖載入。
+- ⏳ 待辦 Batch 2 儀表板 one-page、Batch 3 部落格 one-page。
+
+---
+
 ## 2026-07-16（十五）　Chart：新增曲線圖 curve ＋ 甜甜圈 hover 互動
 
 ### 曲線圖 curve（第 5 型態）
