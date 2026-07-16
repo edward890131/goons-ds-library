@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-07-16（十七）　Design Token Batch 4+5：Card 4 ＋ Table&Chart 5 內部值接 token（backlog 收尾）
+
+- Batch 4 Card：card(`.crd-`)／product-card(`.pcd-`)／category-tile(`.cat-`)／article-card(`.art-`)。
+- Batch 5 Table&Chart：table(`.tbl-`)／chart(`.cht-`)／tree-view(`.trv-`)／schedule-chart(`.gnt-`)／calendar(`.cal-`)。
+- 129 筆確定性套用（同 Batch 3 政策：font-size 吸附 --fs-h*、spacing 吸附 --sp-*、radius 吸附 --r-*，tie→較緊；≤3px／寬高／邊框／0／50%／pill 保留）。
+- 驗證：product-card padding/gap/font 解析正常、schedule-chart(gnt) 523 節點無 0 崩塌、pill radius=9999 解析、calendar/table 正常。
+- ✅ **Design Token 內部值接 token backlog 全數收尾**（Batch 2 Basic 17 ＋ Batch 3 Complex 12 ＋ Batch 4 Card 4 ＋ Batch 5 Table&Chart 5＝全 38 顆）。
+
+### 側邊欄左緣 peek 熱區加寬＋延遲（同日）
+- edge-trigger 14→28px；進入延遲 .14s（hover-intent）、離開延遲 .32s（滑走不馬上縮回）。
+
+---
+
 ## 2026-07-16（十六・撤除）　移除元件組合示範頁
 
 - Yuu 覺得視覺不夠好，整頁移除（`git revert` 前一版 Batch 1）：拿掉側邊欄「Showcase 組合示範」群組＋入口、renderView dispatch、`renderCompose`/`composeShop`＋`.cmp-*` CSS。組合示範方向暫緩，日後要做再重規劃視覺。
