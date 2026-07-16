@@ -6,6 +6,31 @@
 
 ---
 
+## 2026-07-16（十）　站台 chrome 英文改 mono + 側邊欄收合/edge-peek + table 並排等分 + 骨架字級接 token
+
+### T1　站台 chrome 英文 → Geist Mono（元件維持 sans）
+- **關鍵**：多數元件沒自帶 font-family、靠繼承 body 的 sans → 不能翻 body（會害元件全變 mono）。正解：body 維持 sans，只對 chrome 葉節點文字加 mono。中文自動 fallback PingFang，只有英數變 Geist Mono。
+- 加 mono 的 chrome selector：`.brand-title, h1, .lede, .block>.sub, .dial h2/.hint, .spec .cell .v, .vname/.vdesc, .nav-item .nm, .nav-group .gh .gh-t, .famhead .fz, .placeholder h2/p, .site-footer, .sc-name/.sumcat-t/.sr-name/.st-name, .tok-gh .t/.d, .dh-title, .tok-tab/.tokbtn/.copybtn`。
+- 驗證：chrome h1/lede/nav/sub 全 Geist Mono；元件 .btn/.tg/.tbl-wrap 維持 Geist(sans)。
+
+### T2　桌機側邊欄收合 + 左緣 hover peek（漢堡切換）
+- `.hamb` 桌機也顯示（原 display:none 只行動版）；點擊：`innerWidth>900` → toggle `.nav-collapsed`，否則行動抽屜 `.nav-open`。
+- 收合（@media min-width:901）：`.layout` grid 首軌→0（主內容滿寬）、`.sidebar` 改 position:fixed 藏到 translateX(-100%) 完全移出畫面。
+- 左緣 peek：DOM 插入 `.edge-trigger`(14px 熱區) 在 sidebar 前；`.edge-trigger:hover ~ .sidebar, .sidebar:hover{translateX(0)}` 純 CSS 滑出蓋在內容上，離開即收。
+- 驗證：漢堡 toggle nav-collapsed、收合 grid=0/sidebar 右緣=0 offscreen、edge-trigger display:block。（hover-peek 純 CSS ~ 選擇器，headless 無法真 hover，需實機點一下確認手感）
+
+### T3　並排 table 等分填滿（全站通則）
+- `.tbl-demo` max-width 760px → 100%（表格填滿內容區，table 本身已 width:100%）。
+- 新增通則 utility `.tbl-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap}` + 子項 min-width:0 → 任何並排 table 等分填滿、非固定寬。（目前站上無 2-up table，此為通則 + 移除固定寬；未來並排直接套 .tbl-row）
+- 驗證：tbl-demo maxW=100%、寬度 1077/主內容 1152。
+
+### T4　共用骨架字級對齊 token（吸附 --fs-h*）
+- `.demo-item .cap` 11→h10、`.ctl .lab` 10→h10、`.seg button` 12→h9、`.chk` 12.5→h9、`.live-note` 11.5→h10、`.placeholder h2` 20→h5 / p 14→h8 / .axhint 12→h9、`.famhead .fz` 16→h7 / .fe 11→h10。（`.placeholder .em` 30px 裝飾 emoji 保留）
+
+手法：apply_four.js 確定性套用 16 筆、逐筆唯一匹配檢查；node --check + Playwright computed 驗證，0 error。
+
+---
+
 ## 2026-07-16（九）　全站預設圓角 → 4px + 輸入框統一 + 共用骨架間距接 token
 
 ### 起因（Yuu 回報）

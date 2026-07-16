@@ -216,7 +216,7 @@
   /* ---------- topbar ---------- */
   .topbar{z-index:30;height:58px;flex:0 0 58px;display:flex;align-items:center;gap:var(--sp-4);
     padding:0 var(--sp-4);background:var(--panel);border-bottom:1px solid var(--line);}
-  .hamb{display:none;width:38px;height:38px;border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--panel);
+  .hamb{display:inline-flex;width:38px;height:38px;border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--panel);
     color:var(--muted);cursor:pointer;align-items:center;justify-content:center;transition:.13s;flex:0 0 auto;}
   .hamb:hover{color:var(--ink);border-color:var(--accent);}
   .hamb svg{width:19px;height:19px;}
@@ -239,6 +239,16 @@
   .sidebar{min-height:0;overflow-y:auto;border-right:1px solid var(--line);background:var(--panel);padding:var(--sp-4) var(--sp-3);} /* 撐滿 layout 高度、自身垂直捲動 */
   .main{min-width:0;min-height:0;overflow:auto;padding:var(--sp-6) var(--container-pad) 96px;} /* 水平 gutter 接響應式 container-pad（32/24/16）；下捲留白 96 例外 */
   .container{max-width:none;} /* 右側內容填滿寬度 */
+  /* ---- 桌機側邊欄收合（漢堡切換）＋收合時滑鼠移到左緣 peek 顯示 ---- */
+  .edge-trigger{display:none;}
+  @media(min-width:901px){
+    .shell.nav-collapsed .layout{grid-template-columns:0 1fr;}
+    .shell.nav-collapsed .sidebar{position:fixed;top:58px;left:0;bottom:0;width:var(--sb);z-index:40;
+      transform:translateX(-100%);transition:transform .2s var(--ease-standard);box-shadow:6px 0 24px rgba(0,0,0,.10);}
+    .shell.nav-collapsed .edge-trigger{display:block;position:fixed;top:58px;left:0;bottom:0;width:14px;z-index:39;}
+    .shell.nav-collapsed .edge-trigger:hover ~ .sidebar,
+    .shell.nav-collapsed .sidebar:hover{transform:translateX(0);}
+  }
 
   /* 類別間以淺灰細線分隔；類別標題與頁籤標題同字級/字重/顏色 */
   .nav-group{border-top:1px solid var(--line);margin-top:var(--sp-2);padding-top:var(--sp-2);margin-bottom:2px;}
@@ -306,6 +316,12 @@
   section.block{margin:var(--sp-7) 0 0;}
   .block > h2{font-size:var(--fs-h9);font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 var(--sp-1);font-weight:600;}
   .block > .sub{color:var(--faint);font-size:var(--fs-h9);margin:0 0 var(--sp-5);} .block > .sub code{font-family:var(--font-mono);background:var(--panel-2);padding:1px 5px;border-radius:var(--r-sm);}
+  /* 站台 chrome 文字：英文用 Geist Mono（技術風格），中文自動 fallback PingFang；元件庫元件維持 sans（見 body 預設） */
+  .brand-title,h1,.lede,.block>.sub,.dial h2,.dial .hint,.spec .cell .v,
+  .vpanel .vtitle .vname,.vpanel .vtitle .vdesc,.nav-item .nm,.nav-group .gh .gh-t,
+  .famhead .fz,.placeholder h2,.placeholder p,.site-footer,
+  .sc-name,.sumcat-t,.sr-name,.st-name,.tok-gh .t,.tok-gh .d,.dh-title,
+  .tok-tab,.tokbtn,.copybtn{font-family:var(--font-mono);}
 
   .panels{display:flex;flex-direction:column;gap:var(--sp-4);}
   .vpanel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
@@ -366,21 +382,21 @@
   /* ---------- demo rows ---------- */
   .row-demo{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:var(--sp-6);display:flex;flex-wrap:wrap;gap:var(--sp-7);align-items:flex-end;}
   .demo-item{display:flex;flex-direction:column;align-items:flex-start;gap:var(--sp-4);}
-  .demo-item .cap{font-family:var(--font-mono);font-size:11px;color:var(--faint);letter-spacing:.05em;} .demo-item .cap b{color:var(--muted);font-weight:600;}
+  .demo-item .cap{font-family:var(--font-mono);font-size:var(--fs-h10);color:var(--faint);letter-spacing:.05em;} .demo-item .cap b{color:var(--muted);font-weight:600;}
 
   /* ---------- live section ---------- */
   .livewrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:var(--sp-6);}
   .ctl-row{display:flex;flex-wrap:wrap;gap:var(--sp-5) var(--sp-7);align-items:flex-start;margin-bottom:var(--sp-6);}
   .ctl{display:flex;flex-direction:column;gap:var(--sp-3);}
-  .ctl .lab{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+  .ctl .lab{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
   .seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:3px;gap:2px;}
-  .seg button{border:none;background:transparent;color:var(--muted);font-family:var(--font-mono);font-size:12px;padding:var(--sp-2) var(--sp-4);border-radius:var(--r-sm);cursor:pointer;transition:.12s;}
+  .seg button{border:none;background:transparent;color:var(--muted);font-family:var(--font-mono);font-size:var(--fs-h9);padding:var(--sp-2) var(--sp-4);border-radius:var(--r-sm);cursor:pointer;transition:.12s;}
   .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.07);}
   .checks{display:flex;gap:var(--sp-5);flex-wrap:wrap;padding-top:2px;}
-  .chk{display:inline-flex;align-items:center;gap:var(--sp-2);font-size:12.5px;color:var(--muted);cursor:pointer;font-family:var(--font-mono);}
+  .chk{display:inline-flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-h9);color:var(--muted);cursor:pointer;font-family:var(--font-mono);}
   .chk input{accent-color:var(--accent);width:15px;height:15px;}
   .live-stage{background:var(--panel);border:1px dashed var(--line-strong);border-radius:var(--r-sm);padding:var(--sp-8);display:flex;justify-content:center;align-items:center;min-height:118px;}
-  .live-note{font-family:var(--font-mono);font-size:11.5px;color:var(--faint);margin:var(--sp-5) 0 var(--sp-3);}
+  .live-note{font-family:var(--font-mono);font-size:var(--fs-h10);color:var(--faint);margin:var(--sp-5) 0 var(--sp-3);}
   .live-free{display:flex;gap:var(--sp-5);flex-wrap:wrap;align-items:flex-end;}
   /* live 可輸入欄位（裸 input 嵌在 .field 容器內，hover/focus 為真）*/
   .field.live-field{cursor:text;}
@@ -394,15 +410,15 @@
   /* ---------- placeholder ---------- */
   .placeholder{border:1px dashed var(--line-strong);border-radius:var(--radius);padding:60px 40px;text-align:center;background:var(--panel);}
   .placeholder .em{font-size:30px;margin-bottom:10px;}
-  .placeholder h2{color:var(--ink);font-size:20px;margin:0 0 8px;}
-  .placeholder p{color:var(--muted);max-width:46ch;margin:0 auto;font-size:14px;}
-  .placeholder .axhint{font-family:var(--font-mono);font-size:12px;color:var(--faint);margin-top:16px;}
+  .placeholder h2{color:var(--ink);font-size:var(--fs-h5);margin:0 0 var(--sp-3);}
+  .placeholder p{color:var(--muted);max-width:46ch;margin:0 auto;font-size:var(--fs-h8);}
+  .placeholder .axhint{font-family:var(--font-mono);font-size:var(--fs-h9);color:var(--faint);margin-top:var(--sp-5);}
 
   /* ---------- 家族子區塊小標 ---------- */
   .famhead{display:flex;align-items:baseline;gap:var(--sp-3);margin:var(--sp-8) 0 var(--sp-2);padding-top:var(--sp-6);border-top:1px solid var(--line-strong);}
   .famhead:first-child{margin-top:var(--sp-6);}
-  .famhead .fz{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.01em;}
-  .famhead .fe{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
+  .famhead .fz{font-size:var(--fs-h7);font-weight:600;color:var(--ink);letter-spacing:-.01em;}
+  .famhead .fe{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);}
 
   /* ---------- 側邊欄置頂：複雜度確認（與其他頁同一套 current 高亮邏輯）---------- */
   .nav-pin{margin-bottom:2px;}
@@ -2206,7 +2222,10 @@
 .tbl-actbtn{padding:2px 4px;min-height:0;}                           /* 文字按鈕儲存格：貼齊列高 */
 
 /* ---- 陳列容器 ---- */
-.tbl-demo{max-width:760px;}
+.tbl-demo{max-width:100%;}
+/* 並排 table 通則：等分填滿內容區塊（非固定寬）；table 本身已 width:100% */
+.tbl-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--sp-5);align-items:start;}
+.tbl-row>.tbl-wrap,.tbl-row>.tbl-demo{min-width:0;max-width:100%;}
   /* ===== Table&Chart group: chart ===== */
 /* ==================== CHART 圖表（cht-）==================== */
 /* 儀表板圖表：stat 統計數字卡（重用 prMetricEl 原子）＋ line 折線／bar 長條／donut 甜甜圈（inline SVG 手刻）。
@@ -2585,6 +2604,7 @@
   </div>
 
   <div class="layout">
+    <div class="edge-trigger" id="edgeTrigger"></div>
     <aside class="sidebar" id="sidebar"></aside>
     <div class="scrim" id="scrim"></div>
     <main class="main"><div class="container" id="view"></div>
@@ -8273,7 +8293,7 @@ function buildScheduleChart(view){
 
   /* ===== topbar 行為 =====（桌機側欄常駐；窄螢幕漢堡控制抽屜）*/
   const shell=document.getElementById('shell');
-  document.getElementById('hambBtn').onclick=()=>shell.classList.toggle('nav-open');
+  document.getElementById('hambBtn').onclick=()=>{ if(window.innerWidth>900) shell.classList.toggle('nav-collapsed'); else shell.classList.toggle('nav-open'); };
   document.getElementById('scrim').onclick=()=>shell.classList.remove('nav-open');
   document.addEventListener('click',e=>{const h=e.target.closest('.dcard-head');if(h)h.closest('.dcard').classList.toggle('collapsed');});
   (function(){const btn=document.getElementById('themeBtn'),knob=document.getElementById('themeKnob');
