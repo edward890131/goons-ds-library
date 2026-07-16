@@ -675,7 +675,7 @@
 
   /* ===== checkbox / radio ===== */
   .cbx{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:6px;display:inline-flex;box-sizing:border-box;padding:0;flex:0 0 auto;
-    align-items:center;justify-content:center;color:#fff;transition:.12s;cursor:pointer;}
+    align-items:center;justify-content:center;color:var(--primary-on);transition:.12s;cursor:pointer;} /* 打勾色＝primary-on：淺色黑底白勾、深色亮底深勾，隨主題翻轉 */
   .cbx svg{width:14px;height:14px;flex:0 0 auto;}
   .cbx.sz-s{width:16px;height:16px;border-radius:5px;} .cbx.sz-m{width:20px;height:20px;} .cbx.sz-l{width:24px;height:24px;border-radius:7px;}
   .cbx.sz-s svg{width:11px;height:11px;} .cbx.sz-l svg{width:16px;height:16px;}
@@ -683,7 +683,7 @@
   .cbx.st-checked,.cbx.st-indeterminate{background:var(--accent);border-color:var(--accent);}
   .cbx.st-focus{border-color:var(--accent);}
   .cbx.st-disabled{opacity:.45;cursor:not-allowed;}
-  .cbx .dash{width:60%;height:2px;background:#fff;border-radius:2px;}
+  .cbx .dash{width:60%;height:2px;background:var(--primary-on);border-radius:2px;}
   .rdo{border:1.5px solid var(--i-sec-edge);background:var(--panel);border-radius:999px;display:inline-flex;box-sizing:border-box;padding:0;flex:0 0 auto;
     align-items:center;justify-content:center;transition:.12s;cursor:pointer;}
   .rdo.sz-s{width:16px;height:16px;} .rdo.sz-m{width:20px;height:20px;} .rdo.sz-l{width:24px;height:24px;}
@@ -698,9 +698,9 @@
   .tg{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 8px;border-radius:999px;font-size:11px;
     font-weight:600;border:0.75px solid transparent;font-family:var(--font-sans);cursor:default;transition:.12s;}
   .tg.c-round{border-radius:999px;} .tg.c-rect{border-radius:5px;}
-  .tg.i-brand{--tfill:var(--accent);--tc:var(--accent);--tedge:var(--accent);--ton:#fff;--ttint:var(--i-primary-tint);--ttint2:var(--i-primary-tint2);}
+  .tg.i-brand{--tfill:var(--accent);--tc:var(--accent);--tedge:var(--accent);--ton:var(--primary-on);--ttint:var(--i-primary-tint);--ttint2:var(--i-primary-tint2);}
   .tg.i-neutral{--tfill:var(--i-sec-fill);--tc:var(--i-sec-fg);--tedge:var(--i-sec-edge);--ton:var(--i-sec-on);--ttint:var(--i-sec-tint);--ttint2:var(--i-sec-tint2);}
-  .tg.i-danger{--tfill:var(--i-danger);--tc:var(--i-danger);--tedge:var(--i-danger);--ton:#fff;--ttint:var(--i-danger-tint);--ttint2:var(--i-danger-tint2);}
+  .tg.i-danger{--tfill:var(--i-danger);--tc:var(--i-danger);--tedge:var(--i-danger);--ton:var(--danger-on);--ttint:var(--i-danger-tint);--ttint2:var(--i-danger-tint2);}
   .tg.v-solid{background:var(--tfill);color:var(--ton);border-color:var(--tfill);}
   .tg.v-outline{background:transparent;color:var(--tc);border-color:var(--tedge);}
   .tg.v-soft{background:var(--ttint);color:var(--tc);border-color:transparent;}
@@ -721,7 +721,7 @@
   .v-line .tabi.st-active{color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent);}
   .v-contained .tabi{border:1px solid var(--line);border-radius:999px;} /* 容器 variant：全圓角 */
   .v-contained .tabi.st-hover{background:var(--panel-2);color:var(--ink);}
-  .v-contained .tabi.st-active{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .v-contained .tabi.st-active{background:var(--accent);color:var(--primary-on);border-color:var(--accent);}
   .v-pill .tabi{border-radius:999px;}
   .v-pill .tabi.st-hover{color:var(--ink);}
   .v-pill .tabi.st-active{background:var(--panel);color:var(--accent);box-shadow:0 1px 2px rgba(0,0,0,.08);}
@@ -736,7 +736,7 @@
     background:var(--panel-2);color:var(--muted);font-size:11px;font-weight:600;font-family:var(--font-mono);box-sizing:border-box;}
   .tabi.sz-s .tcount{min-width:16px;height:16px;padding:0 4px;font-size:10px;}
   .tabi.st-active .tcount{background:var(--i-primary-tint);color:var(--accent);}
-  .v-contained .tabi.st-active .tcount{background:rgba(255,255,255,.28);color:#fff;}
+  .v-contained .tabi.st-active .tcount{background:color-mix(in srgb,var(--primary-on) 24%,transparent);color:var(--primary-on);}
 
   /* ===== toggle 開關（tab 家族 atom）===== */
   .switchrow{display:inline-flex;align-items:center;gap:11px;}
@@ -1028,7 +1028,8 @@
 
 /* ===== action-menu (am-) ===== */
 /* ===== Action Menu 動作選單 ===== */
-  .am-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(0,0,0,.16);padding:6px;display:flex;flex-direction:column;gap:2px;min-height:max-content;} /* min-height:max-content 修正：巢狀 flex column 面板在 grid 格子／flex 容器內會被算成單列高、內容溢出，撐回內容高（矩陣＋Live 兩處通用） */
+  .am-panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 28px rgba(0,0,0,.16);padding:6px;display:flex;flex-direction:column;gap:2px;min-height:max-content;height:max-content;flex:0 0 auto;} /* min-height+height:max-content＋flex:0 0 auto 修正：巢狀 flex column 面板在 grid／flex 容器內被算成單列高、內容溢出，撐回內容高並不被父容器壓縮（矩陣／Live／匯出卡三處通用） */
+  .am-panel>.am-item,.am-panel>.am-divider{flex:0 0 auto;} /* 面板被高度限縮時 item 不垂直壓縮 */
   .am-panel.sz-s{min-width:132px;} .am-panel.sz-m{min-width:170px;} .am-panel.sz-l{min-width:210px;}
   .am-item{display:flex;align-items:center;gap:10px;min-width:118px;padding:8px 12px;border-radius:10px;border:1px solid transparent;font-family:var(--font-sans);font-size:14px;line-height:1.2;color:var(--ink);cursor:pointer;user-select:none;white-space:nowrap;}
   .am-item svg{width:16px;height:16px;flex:0 0 auto;color:var(--muted);}
