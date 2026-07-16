@@ -717,7 +717,7 @@
 
   /* ===== tag ===== */
   .tg{display:inline-flex;align-items:center;gap:var(--sp-1);height:22px;padding:0 var(--sp-3);border-radius:var(--r-pill);font-size:var(--fs-h10);
-    font-weight:600;border:0.75px solid transparent;font-family:var(--font-sans);cursor:default;transition:.12s;}
+    font-weight:600;border:0.75px solid transparent;font-family:var(--font-sans);cursor:default;transition:.12s;white-space:nowrap;}
   .tg.c-round{border-radius:var(--r-pill);} .tg.c-rect{border-radius:var(--r-sm);}
   .tg.i-brand{--tfill:var(--accent);--tc:var(--accent);--tedge:var(--accent);--ton:var(--primary-on);--ttint:var(--i-primary-tint);--ttint2:var(--i-primary-tint2);}
   .tg.i-neutral{--tfill:var(--i-sec-fill);--tc:var(--i-sec-fg);--tedge:var(--i-sec-edge);--ton:var(--i-sec-on);--ttint:var(--i-sec-tint);--ttint2:var(--i-sec-tint2);}
@@ -2188,7 +2188,7 @@
 .tbl-wrap .tbl tbody tr.is-selected .tbl-name{color:var(--accent);font-weight:600;}
 
 /* ---- 欄位型別 ---- */
-.tbl-num{text-align:right;font-variant-numeric:tabular-nums;}        /* 金額：右對齊＋等寬數字 */
+.tbl-num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;} /* 金額：右對齊＋等寬數字，不換行 */
 .tbl-mut{color:var(--muted);}                                        /* 日期等次要文字 */
 .tbl-col-cbx{width:36px;text-align:center;}                          /* 勾選欄（重用 .cbx 原子） */
 .tbl-col-cbx .cbx{vertical-align:middle;cursor:pointer;}
@@ -2231,6 +2231,9 @@
 /* 並排 table 通則：等分填滿內容區塊（非固定寬）；table 本身已 width:100% */
 .tbl-row{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:var(--sp-5);align-items:start;}
 .tbl-row>.tbl-wrap,.tbl-row>.tbl-demo{min-width:0;max-width:100%;}
+/* 矩陣小表：格內文字一律不換行（狀態 pill／金額不再擠爆成兩行）；欄寬夠時各欄自然排開，
+   欄寬不足時整個矩陣走 .grid-scroll 橫向捲動（見 mincol），而非把內容擠爛 */
+.tbl-mini .tbl-td,.tbl-mini .tbl-th{white-space:nowrap;}
   /* ===== Table&Chart group: chart ===== */
 /* ==================== CHART 圖表（cht-）==================== */
 /* 儀表板圖表：stat 統計數字卡（重用 prMetricEl 原子）＋ line 折線／bar 長條／donut 甜甜圈（inline SVG 手刻）。
@@ -6651,7 +6654,7 @@ function buildArticleCard(view){
     const rows=(o.data||(o.mini?TBL_DATA.slice(0,3):TBL_DATA)).map(d=>Object.assign({},d)); // 資料副本
     (o.selected||[]).forEach(i=>{if(rows[i])rows[i]._sel=true;});
     const zebra=variant==='striped'||!!o.zebra;                                    // v-striped 或 stripe 開關都算斑馬紋
-    const wrap=ce('div','tbl-wrap tbl-v-'+variant+' tbl-dn-'+density+(zebra?' tbl-zebra':'')+(o.live?' live':'')+(o.cellTypes?' tbl-celltypes':''));
+    const wrap=ce('div','tbl-wrap tbl-v-'+variant+' tbl-dn-'+density+(zebra?' tbl-zebra':'')+(o.live?' live':'')+(o.cellTypes?' tbl-celltypes':'')+(o.mini?' tbl-mini':''));
     const table=ce('table','tbl');wrap.appendChild(table);
     const cols=o.cellTypes?[                                                       // 欄位型別展示表：文字／Tag／數字／Dropdown／文字按鈕
       {key:'name',  lab:'姓名',  sortable:false,cls:'tbl-name'},
@@ -6761,7 +6764,7 @@ function buildArticleCard(view){
         rows:vs,cols:ds,
         rowLab:v=>labHTML(VN[v][0],VN[v][1]),
         colLab:d=>labHTML(DN[d][0],DN[d][1]),
-        cell:(v,d)=>tblCell(v,d),mincol:300})); }
+        cell:(v,d)=>tblCell(v,d),mincol:448})); }
     mountDial(body,{axes,zh,active,onRender:renderM});
     const sec=section(body,'Variant × Density 矩陣','列＝框線體系（格線／斑馬紋／簡潔）、欄＝密度（寬鬆／緊湊）。每格是一張縮小示意表（表頭＋3 列）；斑馬紋偶數列鋪淺灰、簡潔款去外框只留表頭底線、緊湊款 padding 收窄且勾選框／標籤同步縮小。');
     p=panelsIn(sec);renderM();
@@ -8294,11 +8297,11 @@ function buildScheduleChart(view){
     const _m=document.querySelector('.main');if(_m)_m.scrollTo(0,0); // app-shell：捲 main 容器（非 document）
   }
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
-    const pin=document.createElement('button');pin.className='nav-item nav-pin';pin.dataset.id='summary';pin.setAttribute('aria-current',current==='summary');
-    pin.innerHTML=`<span>📋 需求匯總</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
-    host.appendChild(ce('div','nav-sep')); // 需求匯總 ↔ Design Token 分隔線
     const tpin=document.createElement('button');tpin.className='nav-item nav-pin';tpin.dataset.id='tokens';tpin.setAttribute('aria-current',current==='tokens');
     tpin.innerHTML=`<span>🎨 Design Token</span>`;tpin.onclick=()=>renderView('tokens');host.appendChild(tpin);
+    host.appendChild(ce('div','nav-sep')); // Design Token ↔ 需求匯總 分隔線
+    const pin=document.createElement('button');pin.className='nav-item nav-pin';pin.dataset.id='summary';pin.setAttribute('aria-current',current==='summary');
+    pin.innerHTML=`<span>📋 需求匯總</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin); // 需求匯總移到 Design Token 下方
     NAV.forEach((g,gi)=>{const hasCur=g.items.some(it=>it.id===current); // 只展開「當前檢視所在」的群組，其餘（含 Basic）預設收合
       const grp=document.createElement('div');grp.className='nav-group'+(hasCur?'':' collapsed');
       const head=document.createElement('button');head.className='gh';
