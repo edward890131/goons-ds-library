@@ -6,6 +6,33 @@
 
 ---
 
+## 2026-07-16（九）　全站預設圓角 → 4px + 輸入框統一 + 共用骨架間距接 token
+
+### 起因（Yuu 回報）
+1. 頁面段落間距鬆散、不一致、沒套 token。
+2. 元件庫輸入框（`.field`，8px 圓角）跟 Design Token 頁的 hex 輸入框（`.tok-hex`，4px 圓角）長不一樣，哪個才是元件庫的？
+
+### 釐清
+- **`.field` 才是元件庫正版輸入框**（全站 input/dropdown/選擇器/搜尋框/表格欄位都用它）；`.tok-hex` 只是 token 頁改值的內部小工具、非元件。
+- Yuu 決策：**全站預設圓角收到 4px**（改 `--radius` alias，選項 C — 卡片/面板/modal/輸入全 4px）。
+
+### 圓角（radius_global.js 確定性套用）
+- `--radius` alias `r-md(8px)` → `r-sm(4px)`（連帶 43 處 `var(--radius)` 消費者全變 4px）。
+- 所有 `border-radius:var(--r-md)` ×33、`var(--r-lg)` ×9 → `var(--r-sm)`。
+- 硬寫單值 px 圓角 {5,6,7,8,9,10,11,12,14}px ×45 → `var(--r-sm)`。
+- 複合端蓋（segmented / date-range cap / bottom-sheet 頂角）×5 → r-sm 版。
+- **保留**：pill(`999px`/`--r-pill` ×34)、圓形(`50%` ×12)、`0`、微圓角(1/2/3px 的 dot/dash/indicator/arrow)、以及 `.im-rounded`（圖片圓角變體，若也 4px 會跟 `.im-rectangular` 撞、變體示範失效）。
+- 結果：`.field`／`.btn`（含 sz-l 原 10px）／卡片／面板／spec／dial 全 4px；**輸入框自動與 `.tok-hex` 統一**（皆 r-sm 4px）。`.field` 保留 40px 高與 12px 內距（舒適/可及性；未縮成 tok-hex 的 30px 緊湊編輯盒尺寸）。
+
+### 共用骨架間距（scaffold_spacing.js，13 筆）
+Batch 2 只掃各元件前綴 class，共用示範骨架漏掉 → 這批鬆散元兇。吸附到 token 網格（0/4/6/8/12/16/24/32/48/64，平手取較緊，對齊 v0）：
+- `.row-demo` 26/30→24/32、`.demo-item` 12→sp-4、`.livewrap` 24→sp-6、`.ctl-row` 20/30/22→16/32/24、`.ctl` 8→sp-3、`.seg button` 6/12→sp-2/sp-4、`.checks` 18→sp-5、`.chk` 7→sp-2、`.live-stage` 44→sp-8、`.live-note` 16/8→sp-5/sp-3、`.live-free` 16→sp-5、`.famhead` 10/46/6/24→sp-3/sp-8/sp-2/sp-6。
+
+### 驗證
+node --check OK、雙主題、computed 實測：`.field` r=4px、`.btn` r=4px、`.btn.sz-l` r=4px、`.ctl-row` gap=16/32 mb=24、`.demo-item` gap=12、0 真實 console error（僅 favicon 404）。
+
+---
+
 ## 2026-07-16（八）　Batch 2：Basic 17 顆元件內部值接 token + 元件 bug 修正
 
 ### Bug 修正（品牌改黑後的連帶問題）
