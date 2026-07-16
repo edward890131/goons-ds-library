@@ -7950,7 +7950,7 @@ function buildScheduleChart(view){
       TOK_L1.forEach(gr=>{
         const box=ce('div','tok-group');
         const gh=ce('div','tok-gh');
-        gh.innerHTML=`<span class="t">${gr.g}</span>${gr.note?`<span class="d">${gr.note}</span>`:''}<span class="layer">L1 Primitive</span>`;
+        gh.innerHTML=`<span class="t">${gr.g}</span>${gr.note?`<span class="d">${gr.note}</span>`:''}`;
         box.appendChild(gh);
         if(gr.kind==='typo'){ // 複合 text style：device 切換＋中英切換＋自訂預覽文案；全寬
           box.classList.add('span');
@@ -8060,7 +8060,7 @@ function buildScheduleChart(view){
       bodyEl.appendChild(intro);
       FRAMEWORK_REF.forEach(sec=>{
         const box=ce('div','tok-group');
-        const gh=ce('div','tok-gh');gh.innerHTML=`<span class="t">${sec.t}</span>${sec.note?`<span class="d">${sec.note}</span>`:''}<span class="layer">Framework</span>`;box.appendChild(gh);
+        const gh=ce('div','tok-gh');gh.innerHTML=`<span class="t">${sec.t}</span>${sec.note?`<span class="d">${sec.note}</span>`:''}`;box.appendChild(gh);
         const rows=ce('div','tok-rows');
         sec.rows.forEach(([k,v,r])=>{
           const row=ce('div','tref-row');
@@ -8076,7 +8076,7 @@ function buildScheduleChart(view){
       TOK_L2.forEach(gr=>{
         const box=ce('div','tok-group');
         const gh=ce('div','tok-gh');
-        gh.innerHTML=`<span class="t">${gr.g}</span><span class="layer">L2 Semantic</span>`;
+        gh.innerHTML=`<span class="t">${gr.g}</span>`;
         box.appendChild(gh);
         const head=ce('div','tok-modehead');head.innerHTML=`<span>Token</span><span>◐ Light</span><span>◑ Dark</span>`;box.appendChild(head);
         const rows=ce('div','tok-rows');
