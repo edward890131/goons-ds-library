@@ -275,10 +275,12 @@
   .nav-item .dot.st-partial{background:var(--warn);}
 
   /* ---------- headings / spec ---------- */
-  .eyebrow{font-family:var(--font-mono);font-size:var(--fs-h9);letter-spacing:.14em;text-transform:uppercase;
-    color:var(--accent);font-weight:600;margin:0 0 var(--sp-2);}
-  h1{font-size:var(--fs-h3);line-height:1.15;letter-spacing:-.02em;margin:0 0 var(--sp-2);text-wrap:balance;font-weight:600;}
+  .eyebrow{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--faint);font-weight:600;margin:0 0 var(--sp-2);}
+  h1{font-size:var(--fs-h2);line-height:1.15;letter-spacing:-.02em;margin:0 0 var(--sp-5);text-wrap:balance;font-weight:600;}
   .lede{color:var(--muted);max-width:62ch;margin:0;font-size:var(--fs-h8);}
+  .sum-top + .lede{margin-top:var(--sp-5);} /* 匯總/Token 頁：標題區塊 → 說明距離加大 */
+  .head-rule{border-top:1px solid var(--line);margin:var(--sp-5) 0 0;} /* 說明文字下方淺分隔線（滿內容寬）*/
   .lede b{color:var(--ink);} .lede code{font-family:var(--font-mono);font-size:var(--fs-h9);background:var(--panel-2);padding:1px 6px;border-radius:var(--r-sm);}
 
   .spec{margin:var(--sp-5) 0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
@@ -387,6 +389,7 @@
 
   /* ---------- live section ---------- */
   .livewrap{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:var(--sp-6);}
+  .livewrap + .livewrap{margin-top:var(--sp-6);} /* 同段兩張 Live 牌卡間距（price/metric）*/
   .ctl-row{display:flex;flex-wrap:wrap;gap:var(--sp-5) var(--sp-7);align-items:flex-start;margin-bottom:var(--sp-6);}
   .ctl{display:flex;flex-direction:column;gap:var(--sp-3);}
   .ctl .lab{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
@@ -603,7 +606,7 @@
   :root{--ok:var(--s-feedback-success);--ok-tint:var(--s-feedback-success-tint);--warn:var(--s-feedback-warning);}
 
   /* ===== input ===== */
-  .field{display:inline-flex;align-items:center;gap:var(--sp-3);height:40px;padding:0 var(--sp-3);border-radius:var(--r-sm);
+  .field{display:inline-flex;align-items:center;gap:var(--sp-3);height:36px;padding:0 var(--sp-3);border-radius:var(--r-sm);
     border:0.75px solid var(--i-sec-edge);background:var(--panel);color:var(--ink);font-size:var(--fs-h8);min-width:220px;
     font-family:var(--font-sans);transition:border-color .13s,box-shadow .13s,background .13s;}
   .field .ph{color:var(--faint);flex:1;} .field .val{color:var(--ink);flex:1;}
@@ -642,7 +645,7 @@
   textarea.tarea:focus{border-color:var(--accent);}
 
   /* ===== file 檔案上傳 ===== */
-  .filefield{display:inline-flex;align-items:center;gap:var(--sp-3);padding:0 var(--sp-3);height:40px;border-radius:var(--r-sm);
+  .filefield{display:inline-flex;align-items:center;gap:var(--sp-3);padding:0 var(--sp-3);height:36px;border-radius:var(--r-sm);
     border:0.75px solid var(--i-sec-edge);background:var(--panel);min-width:260px;font-size:var(--fs-h9);color:var(--muted);transition:.13s;}
   .filefield.has-file{color:var(--ink);}
   /* file variant：外框／實色 對齊 input（外框＝白底實線、實色＝panel-2 填色）*/
@@ -682,7 +685,7 @@
   .ddsearch:focus{border-color:var(--accent);}
   /* 多選 dropdown：trigger 內 chip + 選項勾選框 */
   .dd-body{flex:1;display:flex;flex-wrap:wrap;gap:var(--sp-1);align-items:center;min-width:0;}
-  .field.dd.multi{height:auto;min-height:40px;padding-top:var(--sp-1);padding-bottom:var(--sp-1);}
+  .field.dd.multi{height:auto;min-height:36px;padding-top:var(--sp-1);padding-bottom:var(--sp-1);}
   .ddchip{display:inline-flex;align-items:center;gap:var(--sp-1);height:22px;padding:0 var(--sp-1) 0 var(--sp-3);border-radius:var(--r-sm);
     background:var(--i-primary-tint);color:var(--accent);font-size:var(--fs-h9);font-weight:600;}
   .ddchip .x{display:inline-flex;cursor:pointer;opacity:.7;} .ddchip .x:hover{opacity:1;} .ddchip svg{width:12px;height:12px;}
@@ -2885,7 +2888,7 @@
   function ce(t,c){const e=document.createElement(t);if(c)e.className=c;return e;}
   function labHTML(zh,en){return `<span class="zh">${zh}</span><span class="en">${en}</span>`;}
   function viewScaffold(view,o){
-    view.innerHTML=`<p class="eyebrow">${o.eyebrow}</p><h1>${o.title}</h1><p class="lede">${o.lede}</p><div class="spec" id="specStrip"></div><div id="cbody"></div>`;
+    view.innerHTML=`<p class="eyebrow">${o.eyebrow}</p><h1>${o.title}</h1><p class="lede">${o.lede}</p><div class="head-rule"></div><div class="spec" id="specStrip"></div><div id="cbody"></div>`;
     document.getElementById('specStrip').innerHTML=o.specRows.map(r=>`<div class="cell"><div class="k">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('');
     return document.getElementById('cbody');
   }
@@ -3999,7 +4002,7 @@ function skelMedia(anim){
   }
   LIVE.pagination=(host)=>{
     let cur=3; const total=10;                          // 當前頁次以 closure 保存，切 variant／size 不重置
-    return mountLive(host,{
+    return mountLive(host,{gate:'pagination',
       initial:{variant:'numbered',size:'m'},
       segs:[{key:'variant',label:'Variant',options:['numbered','prev-next'],labels:['數字','前後']},
             {key:'size',label:'Size',options:['s','m','l']}],
@@ -4242,7 +4245,7 @@ function skelMedia(anim){
   }
   LIVE.price=(host)=>{
     /* 第一段：價格 price（維持原樣不動） */
-    mountLive(host,{
+    mountLive(host,{gate:'price',
       initial:{variant:'discount',size:'md'},
       segs:[{key:'variant',label:'Variant',options:['normal','discount','sale','free'],labels:['一般','折扣','特價','免費']},
             {key:'size',label:'Size',options:['sm','md','lg']}],
@@ -4251,7 +4254,7 @@ function skelMedia(anim){
       free:()=>['normal','discount','sale','free'].map(v=>prEl(v,'md'))
     });
     /* 第二段：數值 metric（dashboard KPI），獨立控制列避免與價格軸互相干擾；標題／單位／趨勢皆可各自開關 */
-    mountLive(host,{
+    mountLive(host,{gate:'price',
       initial:{size:'md',trend:'up',showUnit:false,showTitle:false},
       segs:[{key:'size',label:'Size',options:['sm','md','lg']},
             {key:'trend',label:'Trend 趨勢',options:['none','up','down'],labels:['無','上升','下降']}],
@@ -7961,6 +7964,7 @@ function buildScheduleChart(view){
     apply();
     view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Foundation · Design Token</p><h1>Design Token</h1></div><button class="copybtn" id="tokCopy">複製 Token CSS</button></div>
       <p class="lede">依 <b>DS Framework L1 Primitive → L2 Semantic</b> 架構、以 <b>v0 視覺</b> 為種子的預設 token。<b>L1</b> 純值來源、<b>L2</b> 角色組合（含 light/dark）、<b>框架索引</b> 是唯讀的框架完整定義對照。L1/L2 每列可即時手調、層層往下傳全站。</p>
+      <div class="head-rule"></div>
       <div class="tok-lead">
         <div class="tok-tabs" id="tokTabs">
           <button class="tok-tab" data-l="l1">L1 Primitive</button>
@@ -8161,7 +8165,8 @@ function buildScheduleChart(view){
     const rep=choiceReport();
     view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Overview · 需求匯總</p><h1>需求匯總</h1></div>
         <button class="copybtn" id="copyBtn">複製並匯出JSON</button></div>
-      <p class="lede">每個元件<b>最後選定的複雜度</b>——先依<b>四大分類</b>展開，再展開牌卡看該元件的<b>實際操作</b>，牌卡前的勾選框決定<b>要不要產出</b>。右上 <b>方案 tab</b> 可切三種檢視版型；回各元件用「變數篩選器」調整組合，這頁即時彙整。</p>
+      <p class="lede">每個元件<b>最後選定的複雜度</b>——先依<b>四大分類</b>展開，再展開牌卡看該元件的<b>實際操作</b>，牌卡前的勾選框決定<b>要不要產出</b>。回各元件用「變數篩選器」調整組合，這頁即時彙整。</p>
+      <div class="head-rule"></div>
       <div class="sum-actions">
         <button class="aitoggle" id="aiBtn">${ICON_SPARK}<span>AI 建議產出</span><span class="sw"></span></button>
         <div class="spacer"></div>

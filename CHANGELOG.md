@@ -6,6 +6,30 @@
 
 ---
 
+## 2026-07-16（十二）　兩張 Live 牌卡間距、price/pagination 連動補齊、輸入框 36px、頁面標題區重塑
+
+### A　同段兩張 Live 牌卡間距（原 0px 貼在一起）
+- Number 頁 Live 段落有兩張 `.livewrap`（price + metric），原本 margin 0 → 貼死。加 `.livewrap + .livewrap{margin-top:var(--sp-6)}`（24px）。驗證：gap 0→24。
+
+### 4　price / pagination 自訂 Live 補上篩選器連動
+- 上輪只接了 button+14 顆 mountLive 主 Live；這輪補 price（兩段 mountLive 都加 `gate:'price'`）、pagination（`gate:'pagination'`）。
+- 驗證：price 取消 sale → Live sale disabled；pagination 取消 prev-next → Live 前後 disabled；勾回還原。
+
+### 6　輸入框 / dropdown / file 高度 40 → 36px
+- `.field`、`.field.dd.multi` min-height、`.filefield` 一律 40→36。padding 維持 sp-3(8)。驗證：field/dropdown trigger computed height=36。
+
+### B　頁面標題區重塑（參考 Design Token 頁樣式，全站通則）
+- **eyebrow** 調小調淡：`fs-h9(13)→fs-h10(11)`、`color accent→faint`。
+- **h1** 放大：`fs-h3(26)→fs-h2(32)`；margin-bottom `sp-2(6)→sp-5(16)`（元件頁 h1→lede 距離加大）。
+- **匯總/Token 頁**（h1 在 sum-top flex 內）：加 `.sum-top + .lede{margin-top:sp-5}` → 標題區塊→說明 0→16px。
+- **說明文字下方淺分隔線**：新增 `.head-rule{border-top:1px solid var(--line);margin:sp-5 0 0}`（滿內容寬），插入 viewScaffold（元件頁）／renderSummary（需求匯總）／renderTokens（Design Token）三處 lede 之後。
+- 順手：需求匯總 lede 移除已作廢的「右上 方案 tab 可切三種檢視版型」過時文案。
+- 驗證：三種頁型 eyebrow 11px/faint、h1 32px、標題→說明 16px、head-rule 滿寬(1077/1088)、lede→rule 16。
+
+手法：batch2_0716.js 確定性套用 13 筆逐筆唯一匹配；node --check + Playwright computed/互動全驗證，0 error。
+
+---
+
 ## 2026-07-16（十一）　需求匯總改名+分隔線、AI 建議推薦集、篩選器連動 Live disable、分類磚1px、輸入框內距、Token 複製鈕、Number 節奏
 
 ### T1　側邊欄：匯出需求 → 需求匯總 + 分隔線
