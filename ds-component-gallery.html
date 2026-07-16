@@ -252,6 +252,7 @@
 
   /* 類別間以淺灰細線分隔；類別標題與頁籤標題同字級/字重/顏色 */
   .nav-group{border-top:1px solid var(--line);margin-top:var(--sp-2);padding-top:var(--sp-2);margin-bottom:2px;}
+  .nav-sep{height:1px;background:var(--line);margin:var(--sp-2) 6px;} /* 需求匯總/Design Token 間分隔線 */
   .nav-group .gh{display:flex;align-items:center;gap:var(--sp-2);width:100%;text-align:left;background:transparent;border:none;cursor:pointer;
     font-family:var(--font-sans);font-size:var(--fs-h8);font-weight:600;color:var(--muted);
     padding:var(--sp-2);border-radius:var(--r-sm);transition:.12s;}
@@ -280,7 +281,7 @@
   .lede{color:var(--muted);max-width:62ch;margin:0;font-size:var(--fs-h8);}
   .lede b{color:var(--ink);} .lede code{font-family:var(--font-mono);font-size:var(--fs-h9);background:var(--panel-2);padding:1px 6px;border-radius:var(--r-sm);}
 
-  .spec{margin:var(--sp-5) 0 var(--sp-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  .spec{margin:var(--sp-5) 0;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
     padding:var(--sp-5);display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--sp-4) var(--sp-5);}
   .spec .cell .k{font-family:var(--font-mono);font-size:var(--fs-h10);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:6px;}
   .spec .cell .v{font-size:var(--fs-h8);color:var(--ink);}
@@ -392,6 +393,7 @@
   .seg{display:inline-flex;background:var(--panel-2);border:1px solid var(--line-strong);border-radius:var(--r-sm);padding:3px;gap:2px;}
   .seg button{border:none;background:transparent;color:var(--muted);font-family:var(--font-mono);font-size:var(--fs-h9);padding:var(--sp-2) var(--sp-4);border-radius:var(--r-sm);cursor:pointer;transition:.12s;}
   .seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.07);}
+  .seg button:disabled,.seg button.is-off{opacity:.32;cursor:not-allowed;box-shadow:none;} /* 篩選器未勾的軸值→Live 對應選項停用 */
   .checks{display:flex;gap:var(--sp-5);flex-wrap:wrap;padding-top:2px;}
   .chk{display:inline-flex;align-items:center;gap:var(--sp-2);font-size:var(--fs-h9);color:var(--muted);cursor:pointer;font-family:var(--font-mono);}
   .chk input{accent-color:var(--accent);width:15px;height:15px;}
@@ -443,7 +445,7 @@
     font-family:var(--font-sans);font-size:var(--fs-h8);font-weight:600;cursor:pointer;transition:.13s;}
   .copybtn:hover{filter:brightness(1.06);}
   .sumcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:opacity .15s,border-color .13s;}
-  .sumcard.unpicked{opacity:.5;}
+  .sumcard.unpicked{opacity:.8;} /* 未選（非 disabled）：只微淡化，仍可點選 */
   .sc-head{display:flex;align-items:center;gap:13px;padding:15px 20px;cursor:pointer;}
   .sc-head:hover{background:var(--canvas);}
   .sc-check{display:inline-flex;flex:0 0 auto;align-items:center;}
@@ -493,7 +495,7 @@
   .sumlist{display:flex;flex-direction:column;gap:2px;}
   .sumrow{display:flex;align-items:center;gap:13px;padding:10px 12px;border-radius:var(--r-sm);cursor:pointer;transition:background .12s,opacity .15s;}
   .sumrow:hover{background:var(--panel-2);}
-  .sumrow.unpicked{opacity:.5;}
+  .sumrow.unpicked{opacity:.8;}
   .sr-check{display:inline-flex;flex:0 0 auto;align-items:center;}
   .sr-check input{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;margin:0;}
   .sr-name{flex:1;min-width:0;font-size:var(--fs-h8);font-weight:600;color:var(--ink);}
@@ -507,7 +509,7 @@
   .sumtile{position:relative;display:flex;flex-direction:column;gap:5px;padding:14px;border:1px solid var(--line);border-radius:var(--r-sm);
     background:var(--panel-2);cursor:pointer;transition:border-color .13s,opacity .15s,box-shadow .13s;}
   .sumtile:hover{border-color:var(--accent);box-shadow:0 2px 10px color-mix(in srgb, var(--ink) 8%, transparent);}
-  .sumtile.unpicked{opacity:.5;}
+  .sumtile.unpicked{opacity:.8;}
   .st-check{position:absolute;top:11px;right:11px;display:inline-flex;}
   .st-check input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;margin:0;}
   .st-name{font-size:var(--fs-h8);font-weight:600;color:var(--ink);padding-right:22px;line-height:1.3;}
@@ -601,7 +603,7 @@
   :root{--ok:var(--s-feedback-success);--ok-tint:var(--s-feedback-success-tint);--warn:var(--s-feedback-warning);}
 
   /* ===== input ===== */
-  .field{display:inline-flex;align-items:center;gap:var(--sp-3);height:40px;padding:0 var(--sp-4);border-radius:var(--r-sm);
+  .field{display:inline-flex;align-items:center;gap:var(--sp-3);height:40px;padding:0 var(--sp-3);border-radius:var(--r-sm);
     border:0.75px solid var(--i-sec-edge);background:var(--panel);color:var(--ink);font-size:var(--fs-h8);min-width:220px;
     font-family:var(--font-sans);transition:border-color .13s,box-shadow .13s,background .13s;}
   .field .ph{color:var(--faint);flex:1;} .field .val{color:var(--ink);flex:1;}
@@ -626,7 +628,7 @@
   .fieldwrap .fh{font-size:var(--fs-h10);color:var(--faint);} .fieldwrap .fh.err{color:var(--i-danger);}
 
   /* ===== textarea 多行輸入 ===== */
-  .tarea{display:flex;align-items:flex-start;min-height:80px;padding:var(--sp-3) var(--sp-4);border-radius:var(--r-sm);border:0.75px solid var(--i-sec-edge);
+  .tarea{display:flex;align-items:flex-start;min-height:80px;padding:var(--sp-3);border-radius:var(--r-sm);border:0.75px solid var(--i-sec-edge);
     background:var(--panel);color:var(--ink);font-size:var(--fs-h8);min-width:260px;font-family:var(--font-sans);line-height:1.5;transition:border-color .13s,background .13s;}
   .tarea .ph{color:var(--faint);} .tarea .val{color:var(--ink);}
   .tarea.v-filled{background:var(--panel-2);border-color:transparent;}
@@ -2038,15 +2040,15 @@
 .cat-tile.is-hover .cat-arrow,.cat-tile.live:hover .cat-arrow{transform:translateX(2px);}
 
 /* ---- state: active 選中（accent 邊框＋選中感；可與 hover 疊加） ---- */
-.cat-tile.is-active{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+.cat-tile.is-active{border-color:var(--accent);}
 .cat-icon.is-active{background:var(--i-primary-tint);}
 .cat-icon.is-active .cat-circle{background:var(--accent);color:var(--primary-on);}        /* 圓圈變實心 accent */
 .cat-icon.is-active .cat-name{color:var(--accent);}
-.cat-gradient.is-active{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent);}       /* 本體即 accent 底 → 用 panel 間隙＋外圈 accent 表達選中 */
+.cat-gradient.is-active{box-shadow:0 0 0 1px var(--panel),0 0 0 2px var(--accent);}       /* 本體即 accent 底 → 用 panel 間隙＋外圈 accent 表達選中 */
 .cat-tile.is-active.is-hover,.cat-tile.is-active.live:hover{transform:translateY(-2px);
-  box-shadow:0 0 0 1px var(--accent),0 6px 18px rgba(0,0,0,.10);}
+  box-shadow:0 6px 18px rgba(0,0,0,.10);}
 .cat-gradient.is-active.is-hover,.cat-gradient.is-active.live:hover{
-  box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent),0 6px 18px rgba(0,0,0,.10);}
+  box-shadow:0 0 0 1px var(--panel),0 0 0 2px var(--accent),0 6px 18px rgba(0,0,0,.10);}
 
 /* ---- Showcase / Grid / Live 版位 ---- */
 .cat-row{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch;}
@@ -2848,13 +2850,14 @@
         const box=document.createElement('input');box.type='checkbox';box.checked=active[k].has(val);
         const txt=document.createElement('span');txt.textContent=ZH[k][val].replace(/\s.*/,'')+'·'+val;
         box.onchange=()=>{if(!box.checked){if(active[k].size===1){box.checked=true;return;}active[k].delete(val);}else active[k].add(val);
-          row.classList.toggle('off',!box.checked);renderMatrix();renderSizes();renderCount();};
+          row.classList.toggle('off',!box.checked);renderMatrix();renderSizes();renderCount();renderLive();};
         row.append(box,txt);list.appendChild(row);});
       ax.appendChild(list);host.appendChild(ax);}}
 
   /* ---- live ---- */
-  function seg(key,opts){const s=document.createElement('div');s.className='seg';opts.forEach(o=>{const b=document.createElement('button');b.textContent=o;b.setAttribute('aria-pressed',live[key]===o);b.onclick=()=>{live[key]=o;renderLive();};s.appendChild(b);});return s;}
+  function seg(key,opts){const s=document.createElement('div');s.className='seg';const gate=active[key];opts.forEach(o=>{const b=document.createElement('button');b.textContent=o;const on=!gate||gate.has(o);b.disabled=!on;b.classList.toggle('is-off',!on);b.setAttribute('aria-pressed',live[key]===o);b.onclick=()=>{if(b.disabled)return;live[key]=o;renderLive();};s.appendChild(b);});return s;}
   function renderLive(){
+    ['variant','intent','size'].forEach(k=>{if(active[k]&&!active[k].has(live[k])){const f=AXES[k].find(v=>active[k].has(v));if(f)live[k]=f;}}); // 篩選器連動：選中值被篩掉就跳到第一個啟用值
     const ctl=document.getElementById('liveCtl');ctl.innerHTML='';
     const groups=[['variant','Variant',AXES.variant],['intent','Intent',AXES.intent],['size','Size',AXES.size]];
     groups.forEach(([key,lab,opts])=>{const c=document.createElement('div');c.className='ctl';c.innerHTML=`<span class="lab">${lab}</span>`;c.appendChild(seg(key,opts));ctl.appendChild(c);});
@@ -2921,7 +2924,7 @@
         const box=document.createElement('input');box.type='checkbox';box.checked=active[k].has(val);
         const txt=document.createElement('span');txt.textContent=(zh[k][val]||val).replace(/\s.*/,'')+'·'+val;
         box.onchange=()=>{if(!box.checked){if(active[k].size===1){box.checked=true;return;}active[k].delete(val);}else active[k].add(val);
-          row.classList.toggle('off',!box.checked);onRender();updateCount();};
+          row.classList.toggle('off',!box.checked);onRender();updateCount();(LIVE_REFRESH.get(active)||[]).forEach(fn=>fn());};
         row.append(box,txt);list.appendChild(row);});
       ax.appendChild(list);axesWrap.appendChild(ax);});
     card.append(head,bodyEl);host.appendChild(card);updateCount();
@@ -2930,18 +2933,22 @@
   /* ---- 共用：實際互動 Live 控制面板（segmented 控制 + boolean 勾選 + 即時預覽）---- */
   function mountLive(host,cfg){
     const state=Object.assign({},cfg.initial||{});
+    // 篩選器連動：cfg.gate=元件 id → 讀 DIAL_SPECS[id].axes（完整軸值）＋ CHOICE[id].active（目前勾選），
+    // 讓「變數篩選器」沒勾的軸值，在下方實際操作 Live 的對應 seg 選項一起被 disable。
+    const gid=cfg.gate; const gAxes=(gid&&DIAL_SPECS[gid])?DIAL_SPECS[gid].axes:null; const gActive=(gid&&CHOICE[gid])?CHOICE[gid].active:null;
     const wrap=ce('div','livewrap');
     const ctlRow=ce('div','ctl-row');
     const stage=ce('div','live-stage');
     function rerender(){stage.innerHTML='';stage.appendChild(cfg.render(state));}
+    const segRefs=[]; // 供篩選器連動時更新各 seg 選項 disabled
     (cfg.segs||[]).forEach(s=>{
       const c=ce('div','ctl');c.innerHTML=`<span class="lab">${s.label}</span>`;
-      const seg=ce('div','seg');
-      s.options.forEach((o,i)=>{const b=document.createElement('button');b.textContent=s.labels?s.labels[i]:o;
+      const seg=ce('div','seg');const btns=[];
+      s.options.forEach((o,i)=>{const b=document.createElement('button');b.textContent=s.labels?s.labels[i]:o;b.dataset.val=o;
         b.setAttribute('aria-pressed',state[s.key]===o);
-        b.onclick=()=>{state[s.key]=o;[...seg.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');rerender();};
-        seg.appendChild(b);});
-      c.appendChild(seg);ctlRow.appendChild(c);});
+        b.onclick=()=>{if(b.disabled)return;state[s.key]=o;[...seg.children].forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');rerender();};
+        seg.appendChild(b);btns.push(b);});
+      c.appendChild(seg);ctlRow.appendChild(c);segRefs.push({key:s.key,btns});});
     if((cfg.bools||[]).length){
       const c=ce('div','ctl');c.innerHTML=`<span class="lab">${cfg.boolLabel||'Content'}</span>`;
       const checks=ce('div','checks');
@@ -2952,11 +2959,25 @@
     wrap.appendChild(stage);
     if(cfg.free){if(cfg.note){const n=ce('p','live-note');n.innerHTML=cfg.note;wrap.appendChild(n);}
       const f=ce('div','live-free');cfg.free().forEach(nd=>f.appendChild(nd));wrap.appendChild(f);}
-    host.appendChild(wrap);rerender();
+    host.appendChild(wrap);
+    // 依篩選器 active 停用未勾軸值選項；若目前選中的值被停用，改跳到第一個仍啟用值
+    function syncActive(){ if(!gActive){rerender();return;}
+      segRefs.forEach(({key,btns})=>{ const set=gActive[key], full=gAxes&&gAxes[key]; if(!set||!full)return;
+        let cur=state[key];
+        if(full.includes(cur)&&!set.has(cur)){const first=btns.find(b=>full.includes(b.dataset.val)&&set.has(b.dataset.val));if(first)cur=first.dataset.val;}
+        state[key]=cur;
+        btns.forEach(b=>{const v=b.dataset.val, gated=full.includes(v), on=!gated||set.has(v);
+          b.disabled=!on; b.classList.toggle('is-off',!on); b.setAttribute('aria-pressed',String(v===cur));});
+      });
+      rerender();
+    }
+    if(gActive){ if(!LIVE_REFRESH.has(gActive))LIVE_REFRESH.set(gActive,[]); LIVE_REFRESH.get(gActive).push(syncActive); }
+    syncActive();
   }
 
   /* ===== 各元件「實際操作 Live」共用 registry ===== 元件頁與「複雜度確認」頁共用同一份，改一處兩邊同步 */
   const LIVE={};
+  const LIVE_REFRESH=new Map(); // 篩選器 active 物件 → 該頁 Live syncActive fns（換頁 clear）
   LIVE.button=(host)=>mountLive(host,{
     initial:{variant:'solid',intent:'primary',size:'m',lead:false,trail:false,disabled:false},
     segs:[{key:'variant',label:'Variant',options:AXES.variant},{key:'intent',label:'Intent',options:AXES.intent},{key:'size',label:'Size',options:AXES.size}],
@@ -2965,7 +2986,7 @@
     note:'↓ solid / soft / outline / text 快速對照',
     free:()=>['solid','soft','outline','text'].map(v=>mkBtn({variant:v,intent:'primary',size:'m',isLive:true}))
   });
-  LIVE.input=(host)=>mountLive(host,{
+  LIVE.input=(host)=>mountLive(host,{gate:'input',
     initial:{variant:'outline',label:true,required:false,hint:false,lead:false,eye:false},
     segs:[{key:'variant',label:'Variant',options:['outline','filled']}],
     bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'lead',label:'leading icon'},{key:'eye',label:'後綴 eye'}],
@@ -2990,7 +3011,7 @@
     note:'↓ outline vs filled 快速對照（滑鼠移上去試 hover）',
     free:()=>{const mk=v=>{const f=ce('div',`field live-field v-${v}`);const i=document.createElement('input');i.className='bare';i.placeholder=v;i.style.minWidth='170px';f.appendChild(i);return f;};return [mk('outline'),mk('filled')];}
   });
-  LIVE.dropdown=(host)=>mountLive(host,{
+  LIVE.dropdown=(host)=>mountLive(host,{gate:'dropdown',
     initial:{variant:'outline',type:'single',label:true,required:false,hint:false,searchable:false},
     segs:[{key:'variant',label:'Variant',options:['outline','filled']},{key:'type',label:'Type',options:['single','multi'],labels:['單選','多選']}],
     bools:[{key:'label',label:'label'},{key:'required',label:'必填 *'},{key:'hint',label:'hint'},{key:'searchable',label:'searchable'}],
@@ -3000,7 +3021,7 @@
       if(st.hint){const h=ce('span','fh');h.textContent=st.type==='multi'?'可複選多個縣市':'單選一個縣市';wrap.appendChild(h);}
       return wrap;}
   });
-  LIVE.checkbox=(host)=>mountLive(host,{
+  LIVE.checkbox=(host)=>mountLive(host,{gate:'checkbox',
     initial:{size:'m',indeterminate:false,disabled:false},
     segs:[],
     bools:[{key:'indeterminate',label:'indeterminate'},{key:'disabled',label:'disabled'}],
@@ -3013,7 +3034,7 @@
       row.append(box,lab);return row;
     }
   });
-  LIVE.radio=(host)=>mountLive(host,{
+  LIVE.radio=(host)=>mountLive(host,{gate:'radio',
     initial:{size:'m',disabled:false},
     segs:[],
     bools:[{key:'disabled',label:'disabled'}],
@@ -3027,7 +3048,7 @@
       return g;
     }
   });
-  LIVE.tag=(host)=>mountLive(host,{
+  LIVE.tag=(host)=>mountLive(host,{gate:'tag',
     initial:{variant:'soft',corner:'round',intent:'brand',icon:false,close:false},
     segs:[{key:'variant',label:'Variant',options:['solid','outline','soft']},{key:'corner',label:'Corner',options:['round','rect']},{key:'intent',label:'Intent',options:['brand','neutral','danger']}],
     bools:[{key:'icon',label:'icon'},{key:'close',label:'removable ×'}],
@@ -3038,7 +3059,7 @@
       return t;
     }
   });
-  LIVE.tab=(host)=>mountLive(host,{
+  LIVE.tab=(host)=>mountLive(host,{gate:'tab',
     initial:{variant:'line',size:'m',icon:false,count:false},
     segs:[{key:'variant',label:'Variant',options:['line','contained','pill']},{key:'size',label:'Size',options:['m','s']}],
     bools:[{key:'icon',label:'leading icon'},{key:'count',label:'count badge'}],
@@ -3375,7 +3396,7 @@
     const btn=ce('button','tt-trig');btn.innerHTML=TT_INFO+'<span>hover 我</span>';
     const tip=ttEl(placement,size,arrow);tip.classList.add('tt-float','tt-fp-'+placement);
     wrap.append(btn,tip);return wrap;}
-  LIVE.tooltip=(host)=>mountLive(host,{
+  LIVE.tooltip=(host)=>mountLive(host,{gate:'tooltip',
     initial:{placement:'top',size:'m',arrow:true},
     segs:[{key:'placement',label:'Placement',options:['top','bottom','left','right'],labels:['上','下','左','右']},
           {key:'size',label:'Size',options:['s','m']}],
@@ -3447,7 +3468,7 @@
     const badge=ce('div','nt-rect-badge');badge.innerHTML=NT_ICON[intent];
     const tx=ce('div','nt-rect-txt');tx.textContent=NT_TITLE[intent];
     el.append(badge,tx);return el;}
-  LIVE.notification=(host)=>mountLive(host,{
+  LIVE.notification=(host)=>mountLive(host,{gate:'notification',
     initial:{variant:'soft',intent:'info',icon:true,desc:true,action:false,close:true,timer:false},
     segs:[
       {key:'variant',label:'Variant',options:['solid','outline','soft','dark'],labels:['實心','外框','柔色','半透明黑']},
@@ -3547,7 +3568,7 @@ function skelMedia(anim){
   return m;
 }
 
-  LIVE.skeleton=(host)=>mountLive(host,{
+  LIVE.skeleton=(host)=>mountLive(host,{gate:'skeleton',
     initial:{shape:'rectangle',size:'m',anim:'shimmer',card:false},
     segs:[
       {key:'shape',label:'Shape',options:['text','rectangle','circle'],labels:['文字列','矩形','圓形']},
@@ -3623,7 +3644,7 @@ function skelMedia(anim){
     if(opts.progress){const pc=ce('span','ld-pct');pc.textContent=(opts.pct||65)+'%';wrap.appendChild(pc);}
     return wrap;
   }
-  LIVE.loader=(host)=>mountLive(host,{
+  LIVE.loader=(host)=>mountLive(host,{gate:'loader',
     initial:{variant:'circular',size:'m',intent:'primary',label:false,progress:false,inline:false},
     segs:[{key:'variant',label:'Variant',options:['circular','dots','bar'],labels:['旋轉圈','跳動點','進度條']},
           {key:'size',label:'Size',options:['s','m','l'],labels:['小','標準','大']},
@@ -3718,7 +3739,7 @@ function skelMedia(anim){
     });
     return bar;
   }
-  LIVE.menu=(host)=>mountLive(host,{
+  LIVE.menu=(host)=>mountLive(host,{gate:'menu',
     initial:{variant:'horizontal',size:'m',icon:false},
     segs:[{key:'variant',label:'Variant',options:['horizontal','vertical'],labels:['水平','垂直']},
           {key:'size',label:'Size',options:['s','m','l']}],
@@ -3795,7 +3816,7 @@ function skelMedia(anim){
     return base;
   }
 
-  LIVE['action-menu']=(host)=>mountLive(host,{
+  LIVE['action-menu']=(host)=>mountLive(host,{gate:'action-menu',
     initial:{variant:'with-icon',size:'m',open:true},
     segs:[
       {key:'variant',label:'Variant',options:['default','with-icon','with-divider'],labels:['純文字','帶圖示','含分隔線']},
@@ -3886,7 +3907,7 @@ function skelMedia(anim){
     });
     return wrap;
   }
-  LIVE.breadcrumb=(host)=>mountLive(host,{
+  LIVE.breadcrumb=(host)=>mountLive(host,{gate:'breadcrumb',
     initial:{separator:'chevron',depth:'5',collapsed:false},
     segs:[
       {key:'separator',label:'Separator',options:['chevron','slash','arrow'],labels:['› 箭頭','/ 斜線','→ 箭頭']},
@@ -4103,7 +4124,7 @@ function skelMedia(anim){
   /* Live 可切換的示意 icon 集 */
   const IC_LIVE_SET={'dashboard':IC_DASHBOARD,'chart-bar':IC_CHART_BAR,'bell':IC_BELL,'user':IC_USER,'settings':IC_SETTINGS,'heart':IC_HEART,'star':IC_STAR,'calendar':IC_CALENDAR};
 
-  LIVE.icon=(host)=>mountLive(host,{
+  LIVE.icon=(host)=>mountLive(host,{gate:'icon',
     initial:{size:'l',tone:'primary',glyph:'dashboard'},
     segs:[
       {key:'size',label:'Size',options:['s','m','l','xl'],labels:['16','20','24','32']},
@@ -4323,7 +4344,7 @@ function skelMedia(anim){
     }
     return box;
   }
-  LIVE.image=(host)=>mountLive(host,{
+  LIVE.image=(host)=>mountLive(host,{gate:'image',
     initial:{variant:'rounded',state:'default',size:'l',ratio:'4:3'},
     segs:[
       {key:'variant',label:'Shape',options:['rectangular','rounded','circular'],labels:['矩形','圓角','圓形']},
@@ -7783,7 +7804,7 @@ function buildScheduleChart(view){
     out._total=total;out._full=full;return out;
   }
   const SUMSEL=new Set(Object.keys(DIAL_SPECS)); // 手動選取要產出的元件（預設全選、跨切頁持久）
-  const RECOMMEND=['button','input','dropdown','checkbox','radio','tag']; // AI 建議＝已定案的元件
+  const RECOMMEND=['button','input','dropdown','checkbox','radio','tag','icon','tooltip','notification','modal','card','table','tab','pagination','menu']; // AI 建議＝最常見/使用機率最高的元件（預設推薦集）
   let aiOn=false,aiSnapshot=null; // AI 建議 toggle 狀態＋開啟前的選擇快照
   let sumLayout='accordion'; // 匯出頁版型方案：accordion 分類展開／list 緊湊清單／grid 分組網格（跨切頁持久）
   const DIAL_PAGE={button:'button',input:'input',dropdown:'dropdown',checkbox:'selector',radio:'selector',tag:'tag',tab:'tab',notification:'notification',tooltip:'tooltip',skeleton:'skeleton',loader:'loader',menu:'menu','action-menu':'action-menu',breadcrumb:'breadcrumb',pagination:'pagination',icon:'icon',price:'price',image:'image',
@@ -7938,7 +7959,7 @@ function buildScheduleChart(view){
       if(has(OV.mobile))css+='@media(max-width:767px){:root{'+blk(OV.mobile)+'}}';
       ovr.textContent=css;}
     apply();
-    view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Foundation · Design Token</p><h1>Design Token</h1></div></div>
+    view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Foundation · Design Token</p><h1>Design Token</h1></div><button class="copybtn" id="tokCopy">複製 Token CSS</button></div>
       <p class="lede">依 <b>DS Framework L1 Primitive → L2 Semantic</b> 架構、以 <b>v0 視覺</b> 為種子的預設 token。<b>L1</b> 純值來源、<b>L2</b> 角色組合（含 light/dark）、<b>框架索引</b> 是唯讀的框架完整定義對照。L1/L2 每列可即時手調、層層往下傳全站。</p>
       <div class="tok-lead">
         <div class="tok-tabs" id="tokTabs">
@@ -7946,7 +7967,6 @@ function buildScheduleChart(view){
           <button class="tok-tab" data-l="l2">L2 Semantic</button>
           <button class="tok-tab" data-l="ref">框架索引</button>
         </div>
-        <button class="tokbtn primary" id="tokCopy">複製 Token CSS</button>
         <button class="tokbtn" id="tokReset">重設</button>
         <div class="spacer"></div>
         <div class="tok-name" style="color:var(--faint)">${layer==='ref'?'唯讀對照 · 框架 base theme':'即時預覽 · 不自動儲存'}</div>
@@ -8139,16 +8159,11 @@ function buildScheduleChart(view){
 
   function renderSummary(view){
     const rep=choiceReport();
-    view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Overview · 匯出需求</p><h1>匯出需求</h1></div>
+    view.innerHTML=`<div class="sum-top"><div class="sum-head"><p class="eyebrow">Overview · 需求匯總</p><h1>需求匯總</h1></div>
         <button class="copybtn" id="copyBtn">複製並匯出JSON</button></div>
       <p class="lede">每個元件<b>最後選定的複雜度</b>——先依<b>四大分類</b>展開，再展開牌卡看該元件的<b>實際操作</b>，牌卡前的勾選框決定<b>要不要產出</b>。右上 <b>方案 tab</b> 可切三種檢視版型；回各元件用「變數篩選器」調整組合，這頁即時彙整。</p>
       <div class="sum-actions">
         <button class="aitoggle" id="aiBtn">${ICON_SPARK}<span>AI 建議產出</span><span class="sw"></span></button>
-        <div class="sum-tabs" id="sumTabs" role="tablist">
-          <button class="stab" data-l="accordion">分類展開</button>
-          <button class="stab" data-l="list">緊湊清單</button>
-          <button class="stab" data-l="grid">分組網格</button>
-        </div>
         <div class="spacer"></div>
         <div class="sumtotal" id="sumTotal"></div>
       </div>
@@ -8237,10 +8252,6 @@ function buildScheduleChart(view){
         else{inner=ce('div','sumgrid');g.ids.forEach(id=>inner.appendChild(makeTile(id)));}
         body.appendChild(catShell(g,inner));});}
 
-    const tabs=document.getElementById('sumTabs');
-    tabs.querySelectorAll('.stab').forEach(b=>{b.classList.toggle('on',b.dataset.l===sumLayout);
-      b.onclick=()=>{sumLayout=b.dataset.l;tabs.querySelectorAll('.stab').forEach(x=>x.classList.toggle('on',x===b));renderBody();};});
-
     renderBody();syncTotal();
     const todo=NAV.flatMap(g=>g.items).filter(it=>!DIAL_SPECS[it.id]&&it.id!=='input'&&!it.st).length;
     document.getElementById('sumRest').innerHTML=`input 家族的 <code>search / password / textarea / file</code> 以完整狀態建立（無轉盤）。其餘 <b>${todo}</b> 個項目為待建，之後定案後會一併納入此總覽。`;
@@ -8264,6 +8275,7 @@ function buildScheduleChart(view){
   function hashId(){const h=decodeURIComponent(location.hash.replace(/^#/,''));if(h==='summary'||h==='tokens')return h;
     const ids=NAV.flatMap(g=>g.items).map(x=>x.id);return ids.includes(h)?h:null;}
   function renderView(id){
+    LIVE_REFRESH.clear(); // 換頁清掉舊 Live 篩選器連動註冊，避免累積
     current=id;const view=document.getElementById('view');
     if(hashId()!==id)location.hash=id; // 寫入 hash 供重整後還原
     const item=NAV.flatMap(g=>g.items).find(x=>x.id===id);
@@ -8278,7 +8290,8 @@ function buildScheduleChart(view){
   }
   function renderNav(){const host=document.getElementById('sidebar');host.innerHTML='';
     const pin=document.createElement('button');pin.className='nav-item nav-pin';pin.dataset.id='summary';pin.setAttribute('aria-current',current==='summary');
-    pin.innerHTML=`<span>📋 匯出需求</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
+    pin.innerHTML=`<span>📋 需求匯總</span>`;pin.onclick=()=>renderView('summary');host.appendChild(pin);
+    host.appendChild(ce('div','nav-sep')); // 需求匯總 ↔ Design Token 分隔線
     const tpin=document.createElement('button');tpin.className='nav-item nav-pin';tpin.dataset.id='tokens';tpin.setAttribute('aria-current',current==='tokens');
     tpin.innerHTML=`<span>🎨 Design Token</span>`;tpin.onclick=()=>renderView('tokens');host.appendChild(tpin);
     NAV.forEach((g,gi)=>{const hasCur=g.items.some(it=>it.id===current); // 只展開「當前檢視所在」的群組，其餘（含 Basic）預設收合

@@ -6,6 +6,46 @@
 
 ---
 
+## 2026-07-16（十一）　需求匯總改名+分隔線、AI 建議推薦集、篩選器連動 Live disable、分類磚1px、輸入框內距、Token 複製鈕、Number 節奏
+
+### T1　側邊欄：匯出需求 → 需求匯總 + 分隔線
+- 導覽 pin「📋 匯出需求」→「📋 需求匯總」；頁面 header eyebrow/h1 同步改名。
+- 需求匯總 ↔ Design Token 間補 `.nav-sep`（1px hairline），與下方 Basic 群 border-top 一致，三段皆有分隔。
+
+### T2　AI 建議＝最常見推薦集 + 未選為「unselected 非 disabled」
+- `RECOMMEND` 由 6 顆擴為 15 顆最常見/高使用率元件：button/input/dropdown/checkbox/radio/tag/icon/tooltip/notification/modal/card/table/tab/pagination/menu。
+- 點 AI 建議 → 只選這 15 顆，其餘變「未選」；未選卡 opacity .5→**.8**（讀作未選、非停用，仍可點）；再勾任一未選卡 → `onManual` 關閉 AI 已選模式（aiBtn 去 on），選擇保留。
+- 驗證：39→15 選中、未選 opacity .8、再勾 action-menu → aiOn=false 且該卡變已選。
+
+### T3　需求匯總移除檢視版型 tab
+- 移除「分類展開／緊湊清單／分組網格」sum-tabs（HTML+handler），固定以 accordion（分類展開）呈現。makeRow/makeTile 留著未用（無害）。
+
+### T4　變數篩選器連動：未勾軸值 → Live 對應選項 disable
+- **機制**：`mountLive` 加 `gate:'<id>'` → 讀 `DIAL_SPECS[id].axes`（完整軸值）+ `CHOICE[id].active`（目前勾選）；seg 選項若屬某軸且未被勾 → `disabled`+`.is-off`。選中值被篩掉時自動跳到第一個仍啟用值。
+- **連動**：`LIVE_REFRESH`（Map: active 物件→syncActive fns）；`mountDial` 勾選改變時觸發同一 active 的 refresh；`renderView` 換頁先 `clear()` 避免累積。
+- **button 專屬**（renderLive/seg 非走 mountLive）：seg() 依 module `active` gate + renderLive 開頭 clamp、renderAxes 勾選改變加呼叫 renderLive。
+- 已接：button + 14 顆 mountLive 主 Live（input/dropdown/checkbox/radio/tag/tab/tooltip/notification/skeleton/loader/menu/action-menu/breadcrumb/icon/image）。price/pagination 自訂 Live 暫未接。
+- 驗證：button 取消 outline → Live outline disabled、pressed 留 solid、勾回還原；dropdown 取消 filled → disabled，且先選 filled 再篩掉 → 自動跳 outline。
+- CSS：`.seg button:disabled,.seg button.is-off{opacity:.32;cursor:not-allowed;box-shadow:none;}`
+
+### T5　分類磚 active 邊框只要 1px
+- `.cat-tile.is-active` 去掉外加 `box-shadow 0 0 0 1px`（原 1px 邊框+1px 影＝視覺 2px）→ 只留 1px 邊框變 accent；hover 態同步去環只留 drop shadow。
+- `.cat-gradient.is-active` 2px gap+2px accent → **1px gap(panel)+1px accent**。
+
+### T6　輸入框 / dropdown 內距縮小
+- `.field`（含 dropdown＝.field.dd）水平 padding `sp-4(12)` → `sp-3(8)`；`.tarea` 水平同縮；height 維持 40。filefield 本就 sp-3 免動。
+
+### T7　複製 Token CSS 鈕移右上角（同需求匯總 CTA）
+- Design Token 頁 header `.sum-top` 右上放 `#tokCopy`（class 改 `copybtn`，與匯出 CTA 一致）；原 tok-lead 內的複製鈕移除，重設鈕留原位。onclick 不變。
+
+### T8　Number 頁 section 節奏修正
+- 量測：段落實際節奏 6/6/16/**6**/32/32/32/32——唯一異數是 spec strip → 變數篩選器 只有 6px（`.spec` margin-bottom `sp-2`），讓篩選器貼著 spec、破壞節奏。
+- 修：`.spec` margin `sp-5 0 sp-2` → **`sp-5 0`**（上下皆 16）→ 節奏變 6/6/16/16/32。此為全站 `.spec` 通則（所有元件頁 spec→filter 一致變 16）。
+
+手法：batch_0716.js（T1/2/3/5/6/7，17 筆）+ task4_gate.js（T4，22 筆）確定性套用逐筆唯一匹配；`.spec` 單筆 Edit；node --check + Playwright computed/互動全驗證，0 error。
+
+---
+
 ## 2026-07-16（十）　站台 chrome 英文改 mono + 側邊欄收合/edge-peek + table 並排等分 + 骨架字級接 token
 
 ### T1　站台 chrome 英文 → Geist Mono（元件維持 sans）
