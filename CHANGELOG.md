@@ -6,6 +6,41 @@
 
 ---
 
+## 2026-07-17（二十二）　甘特直欄格線捲動消失＝絕對層丟格：改 in-flow cell 根治
+
+- **症狀**：甘特右滑後內文的直欄格線消失（表頭的線正常）。決定性線索：表頭線畫在 in-flow 的 `.gnt-g-hcell`（不掉），內文線畫在 `.gnt-g-bg`（`position:absolute` 背景層）→ **絕對定位層的 1px 線在橫向捲動時被 GPU 合成器丟格**（同層的實色週末底不會掉，所以灰底還在、線沒了）。
+- **根治**：廢除絕對背景層 `.gnt-g-bg`／`.gnt-g-col`，改由**每列 `.gnt-g-row`(display:flex) 內放 14 個 in-flow `.gnt-g-cell`** 提供直欄格線＋週末底——與表頭 hcell 同結構、同為 in-flow，捲動時可靠重繪且 x 自動對齊。JS `gntGantt` 移除 bg 迴圈、改在每列塞 cell；CSS `.gnt-g-col*`→`.gnt-g-cell*`。
+- 驗證：每列 14 cell、`.gnt-g-bg` 已不存在、內文格線 x 與表頭 diff=0、週末底 rgb(244,245,247) 保留、bar left% 定位正確、左右橫線 diff=0、今日線在、0 語法錯誤。
+
+## 2026-07-17（二十一）　甘特左右橫線對齊修正（真兇）＋圖表主色黑→品牌藍
+
+- **甘特左右分隔線錯位（真兇）**：量測發現左表頭 `.gnt-g-side-head` 高 34px、右表頭 `.gnt-g-head` 高 **35px**——因左側 border-bottom 在框內（border-box），右側 border-bottom 加在**容器**上（34+1=35）。這 1px 從表頭起讓左右每條橫線都差 1px。修法：把 border-bottom 從 `.gnt-g-head` 容器**移到 `.gnt-g-hcell`**（border-box 內含）→ 右表頭 35→34，與左側齊。驗證：sideHeadH=headH=34、每列底緣 diff=0。※（二十）的 `translateZ(0)` 是誤判重繪，本輪已撤除。
+- **圖表主色黑→品牌藍**：品牌改黑後圖表主色（`--accent`）= 黑。用 **scoped 覆寫** `.cht-box,.cht-tile,.cht-card,.cht-dash,.gnt-box{--accent:var(--c-brand2-500)}` 一條規則，讓 Chart（bar/line/curve/area/donut 主段/圖例點/hover dot）＋ Schedule Chart（gantt 預設 bar `c-accent`）的黑主色一次轉 #3358D4 品牌藍；狀態色（ok 綠/warn 橘/danger 紅）與 series B 綠不受影響。驗證：cht bar/line/donut/legend 全 rgb(51,88,212)、gantt c-accent bar #3358D4、c-ok/warn/danger 原色不變。※`--i-primary-tint` 在 :root 已算好不隨 scoped 翻，故 gantt 今日淺底維持中性、今日線/文字才轉藍。
+
+## 2026-07-17（二十）　甘特隔線重繪修正、月曆（去週數/事件點藍/M·S）、長條圖去圓角+M·S
+
+- **甘特隔線捲動斷裂**：DOM 量測證實格線像素完美（欄恆 46px 整數、表頭與內文欄 x 完全對齊 diff=0），斷裂是 `.gnt-g-bg`（絕對定位格線層）在捲動時的 GPU 重繪殘影。修法：`.gnt-g-bg` 加 `transform:translateZ(0)` 提升為獨立合成層，讓捲動時 crisp 重繪（不動版面）。※此頁環境無法截圖，需 Yuu 端目視確認。
+- **月曆**：①移除「週數」篩選項（CAL_BOOLS.month 拿掉 weeknum，元件仍支援只是不再可切）；②事件圓點 `--accent`→**`--c-brand2-500`（品牌藍 #3358D4）**；③size label 標準/精簡→**M/S**（DIAL_SPECS.calendar + Live calSeg 兩處）。
+- **長條圖**：①bar rect `rx="2"`→**`rx="0"`**（3 處，去圓角；hover 高亮 rx=3 保留）；②size label 標準/精簡→**M/S**（DIAL_SPECS.chart + Live segs 兩處）。
+- 驗證：Playwright 屬性查驗——事件點 rgb(51,88,212)=品牌藍、週數項不存在、chart/calendar Live 皆 M/S、bar rx=0、甘特 layer 提升後對齊 diff=0；0 語法錯誤。※預覽 server 有快取，驗證要加 `?v=` cache-buster。
+
+## 2026-07-17（十九）　Complex padding 二次收緊（list 放大/divider 對齊/collapse 縮/drawer 對齊 action menu/footer base）＋ 側邊欄拖曳調寬
+
+**padding 微調（承十八，Yuu 逐頁看效果後再調）**
+- **list**：`lst-item`/`lst-sel` 再大一級 sp-2(6)→**sp-3(8)**；`lst-divider` margin 12→**8** 對齊 item padding（原本分隔線比內容更內縮、沒對齊）。
+- **collapse**：縮小一級——`cps-head` 16→**12**、`cps-body` 橫向 16→**12**（跟 head 對齊）、body 底部 ::after 16→**12**。
+- **drawer**：縮到跟 action menu 同級——`drw-nav` 容器 12→**6**（＝am-panel）、`drw-foot` 16→**6**；`drw-navrow` 已是 6（＝am-item）。
+- **footer**：修正上輪漏改的 **base `.ftr-foot`（rich 預設）**——padding `32/32/24`→**16**（就是「看起來還很寬鬆」那顆）；連帶 `ftr-main`/`ftr-cols` 欄距 32/48→**24/32**、`ftr-bottom` 上緣 margin 24→**16**。
+
+**側邊欄拖曳調寬（新功能）**
+- sidebar 右緣加 `.sidebar-resize` 把手（hover/拖曳才亮 accent 線），pointer 拖曳即時更新 `--sb`，寬度夾在 **180 ~ min(480, 42vw)**，放開存 localStorage(`ds-sidebar-w`)、重整還原、**雙擊還原**預設 20vw。
+- `.layout` 加 position:relative 供把手定位；收合／行動抽屜模式自動隱藏把手；setPointerCapture 包 try/catch。
+- 驗證：Playwright 屬性查驗 padding 全部落地；拖曳 end-to-end（拖到 250px→存 250→放開清乾淨→下限 clamp 180）通過；0 真實 console error。
+
+## 2026-07-17（十八）　Complex 12 padding 首輪分類收緊（一般列/迷你列/大容器/標題底部）
+
+依 Yuu 訂的四類尺標一次收齊 Complex 內部 padding（18 筆確定性替換、match==1）：**一般列 sp-2(6)**（lst-item/lst-sel/am-item/drw-navrow）、**迷你列 sp-1(4)**（drw-pitem/flo-toolbar）、**大容器 sp-4(12)**（hdr-bar 橫向/footer×3/sch-demo/flo-stage/drw-nav/mdl-layer-wrap/mdl-vp-page/mdl-pop-body）、**標題/底部 sp-5(16)**（cps-head/drw-foot；modal head/foot 本就 16）。堆疊型元件（modal/collapse）橫向保持對齊避免歪位。
+
 ## 2026-07-16（十七）　Design Token Batch 4+5：Card 4 ＋ Table&Chart 5 內部值接 token（backlog 收尾）
 
 - Batch 4 Card：card(`.crd-`)／product-card(`.pcd-`)／category-tile(`.cat-`)／article-card(`.art-`)。
